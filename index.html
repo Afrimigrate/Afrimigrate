@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AfriMigrate – Free Migration Planning for Africans</title>
+  <meta name="description" content="Free tools to help Africans plan their move to Canada, UK, Australia and beyond. CRS calculator, document checklists, step-by-step guides." />
+  <meta property="og:title" content="AfriMigrate – Free Migration Planning for Africans" />
+  <meta property="og:description" content="Free tools to help Africans plan their move to Canada, UK, Australia and beyond." />
+  <meta property="og:url" content="https://afrimigrate.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:      #F7F4EF;
+      --bg2:     #EDEAE3;
+      --ink:     #141210;
+      --ink2:    #5C564E;
+      --green:   #2E8B2E;
+      --gold:    #C8960E;
+      --gold-bg: #FBF3DC;
+      --border:  #DDD8CF;
+      --white:   #FFFFFF;
+      --r:       10px;
+      --rl:      18px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(247,244,239,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5vw;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 62px;
+    }
+    .logo {
+      font-family: 'Fraunces', serif;
+      font-weight: 900;
+      font-size: 1.25rem;
+      color: var(--ink);
+      letter-spacing: -0.3px;
+    }
+    .logo span { color: var(--green); }
+    .nav-links {
+      display: flex; gap: 2rem; list-style: none;
+      font-size: 0.875rem; font-weight: 500; color: var(--ink2);
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta {
+      background: var(--ink);
+      color: var(--white);
+      padding: 0.55rem 1.35rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.8; }
+
+    /* HERO */
+    .hero {
+      padding: 7rem 5vw 5rem;
+      max-width: 1160px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.75rem;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 24px; height: 2px;
+      background: var(--gold);
+      display: block;
+      border-radius: 1px;
+    }
+
+    /* THE SIGNATURE: giant split headline */
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 900;
+      font-size: clamp(3.2rem, 7vw, 6rem);
+      line-height: 0.93;
+      letter-spacing: -3px;
+      color: var(--ink);
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    h1 .line1 { display: block; }
+    h1 .line2 { display: block; color: var(--ink2); font-weight: 400; }
+    h1 .line3 {
+      display: block;
+      font-style: italic;
+      color: var(--green);
+      position: relative;
+    }
+
+    .stamp { display: inline; }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--ink2);
+      line-height: 1.8;
+      font-weight: 300;
+      max-width: 420px;
+      margin-bottom: 2.5rem;
+    }
+    .hero-sub strong { color: var(--ink); font-weight: 600; }
+
+    .hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+    .btn-primary {
+      background: var(--green);
+      color: var(--white);
+      padding: 0.875rem 2rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: opacity 0.2s, transform 0.15s;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-ghost {
+      color: var(--ink2);
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-ghost:hover { color: var(--ink); border-color: var(--ink2); }
+
+    /* HERO CARD */
+    .hero-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--rl);
+      padding: 2.25rem;
+      box-shadow: 0 2px 32px rgba(20,18,16,0.07);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--green) 60%, var(--gold));
+    }
+    .card-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink2);
+      margin-bottom: 1rem;
+    }
+    .crs-num {
+      font-family: 'Fraunces', serif;
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1;
+      letter-spacing: -3px;
+      margin-bottom: 0.2rem;
+    }
+    .crs-num span { color: var(--green); }
+    .crs-of { font-size: 0.82rem; color: var(--ink2); margin-bottom: 1.25rem; font-weight: 300; }
+    .bar { height: 4px; background: var(--bg2); border-radius: 99px; overflow: hidden; margin-bottom: 1.5rem; }
+    .bar-inner { height: 100%; width: 0; background: linear-gradient(90deg, var(--green), #7bc97b); border-radius: 99px; transition: width 1.6s cubic-bezier(.16,1,.3,1); }
+    .rows { display: flex; flex-direction: column; }
+    .row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--bg2);
+      font-size: 0.85rem;
+    }
+    .row:last-child { border-bottom: none; }
+    .row .l { color: var(--ink2); font-weight: 300; }
+    .row .v { font-weight: 600; color: var(--ink); }
+    .card-badge {
+      margin-top: 1.25rem;
+      background: #EEF7EE;
+      border: 1px solid #C3DEC3;
+      color: var(--green);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.65rem 1rem;
+      border-radius: var(--r);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* MARQUEE */
+    .marquee-wrap {
+      background: var(--ink);
+      padding: 0.7rem 0;
+      overflow: hidden;
+    }
+    .marquee-track {
+      display: inline-flex; gap: 3rem; white-space: nowrap;
+      animation: marquee 24s linear infinite;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+    .marquee-item { display: inline-flex; align-items: center; gap: 0.6rem; }
+    .marquee-item b { color: rgba(255,255,255,0.85); }
+    .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* SECTIONS */
+    .section { padding: 6rem 5vw; }
+    .section-inner { max-width: 1160px; margin: 0 auto; }
+    .section-alt { background: var(--white); }
+    .section-dark { background: var(--ink); }
+
+    .eyebrow {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.85rem;
+    }
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.9rem, 3.5vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+    .lead {
+      font-size: 1rem;
+      color: var(--ink2);
+      line-height: 1.8;
+      font-weight: 300;
+      max-width: 500px;
+    }
+
+    /* TOOLS */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-top: 3.5rem;
+    }
+    .tool-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--rl);
+      padding: 2.25rem;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .tool-card:hover {
+      border-color: #bbb8b0;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(20,18,16,0.07);
+    }
+    .tool-icon {
+      width: 48px; height: 48px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1.25rem;
+    }
+    .tool-card h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.2px;
+    }
+    .tool-card p { font-size: 0.875rem; color: var(--ink2); line-height: 1.7; font-weight: 300; margin-bottom: 1.5rem; }
+    .tool-link { font-size: 0.82rem; font-weight: 600; color: var(--green); display: inline-flex; align-items: center; gap: 0.25rem; }
+    .tool-link:hover { text-decoration: underline; }
+    .tool-link.muted { color: var(--ink2); }
+    .hot {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      background: var(--gold-bg);
+      color: var(--gold);
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.2rem 0.6rem; border-radius: 999px;
+      border: 1px solid rgba(200,150,14,0.2);
+    }
+
+    /* HOW */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 4rem;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 27px; left: calc(12.5% + 12px); right: calc(12.5% + 12px);
+      height: 1px; background: var(--border);
+    }
+    .step { text-align: center; padding: 0 1rem; }
+    .step-icon {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      margin: 0 auto 1.25rem;
+      position: relative; z-index: 1;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .step:hover .step-icon { border-color: var(--green); box-shadow: 0 0 0 4px rgba(46,139,46,0.07); }
+    .step h3 { font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 900; margin-bottom: 0.4rem; color: var(--ink); }
+    .step p { font-size: 0.82rem; color: var(--ink2); line-height: 1.65; font-weight: 300; }
+
+    /* WAITLIST — the most important new section */
+    .waitlist-section { background: var(--ink); }
+    .waitlist-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 7rem 5vw;
+    }
+    .waitlist-inner .eyebrow { color: var(--gold); }
+    .waitlist-inner h2 { color: var(--white); font-size: clamp(2rem, 4vw, 3.2rem); margin-bottom: 1rem; }
+    .waitlist-inner p { color: rgba(247,244,239,0.55); font-size: 1rem; font-weight: 300; line-height: 1.8; margin-bottom: 2.5rem; }
+    .waitlist-form {
+      display: flex; gap: 0.75rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 999px;
+      padding: 0.35rem 0.35rem 0.35rem 1.5rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .waitlist-form input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--white);
+      font-weight: 300;
+    }
+    .waitlist-form input::placeholder { color: rgba(255,255,255,0.35); }
+    .waitlist-form button {
+      background: var(--green);
+      color: var(--white);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .waitlist-form button:hover { opacity: 0.85; }
+    .waitlist-note { margin-top: 1rem; font-size: 0.78rem; color: rgba(247,244,239,0.3); }
+    .waitlist-success {
+      display: none;
+      background: rgba(46,139,46,0.15);
+      border: 1px solid rgba(46,139,46,0.3);
+      color: #7bc97b;
+      padding: 1rem 1.5rem;
+      border-radius: var(--r);
+      font-size: 0.9rem;
+      font-weight: 500;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* DESTINATIONS */
+    .dest-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1rem;
+      margin-top: 3.5rem;
+    }
+    .dest-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--rl);
+      padding: 1.75rem 1rem;
+      text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .dest-card.live:hover { border-color: var(--green); transform: translateY(-3px); }
+    .dest-flag { font-size: 2rem; margin-bottom: 0.6rem; }
+    .dest-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 0.9rem; color: var(--ink); margin-bottom: 0.5rem; }
+    .live-pip {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-size: 0.68rem; font-weight: 600; color: var(--green);
+    }
+    .live-pip::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--green);
+      animation: blink 2.2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+    .soon-pip { font-size: 0.68rem; color: var(--ink2); opacity: 0.6; }
+
+    /* MANIFESTO */
+    .manifesto {
+      background: var(--green);
+      padding: 7rem 5vw;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .manifesto::before {
+      content: '£0';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Fraunces', serif;
+      font-size: 32vw;
+      font-weight: 900;
+      color: rgba(255,255,255,0.06);
+      pointer-events: none;
+      letter-spacing: -8px;
+      white-space: nowrap;
+    }
+    .manifesto h2 { color: var(--white); position: relative; z-index: 1; font-size: clamp(2rem, 4.5vw, 3.8rem); }
+    .manifesto h2 em { font-style: italic; }
+    .manifesto p { color: rgba(255,255,255,0.65); font-size: 1.05rem; font-weight: 300; line-height: 1.85; max-width: 540px; margin: 1.5rem auto 0; position: relative; z-index: 1; }
+
+    /* SOCIAL */
+    .social-wrap { text-align: center; }
+    .insta-btn {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+      color: #fff; padding: 0.9rem 2.25rem; border-radius: 999px;
+      font-weight: 600; font-size: 0.95rem;
+      transition: opacity 0.2s, transform 0.15s;
+      margin-top: 2.5rem;
+    }
+    .insta-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 3.5rem 5vw 2.5rem;
+    }
+    .footer-inner { max-width: 1160px; margin: 0 auto; }
+    .footer-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      flex-wrap: wrap; gap: 2.5rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .footer-logo { font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.2rem; color: var(--ink); margin-bottom: 0.5rem; }
+    .footer-logo span { color: var(--green); }
+    .footer-tagline { font-size: 0.85rem; color: var(--ink2); font-weight: 300; max-width: 220px; line-height: 1.6; }
+    .footer-col h4 { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink2); margin-bottom: 1rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .footer-col a { font-size: 0.875rem; color: var(--ink2); font-weight: 300; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--ink); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; font-size: 0.78rem; color: var(--ink2); flex-wrap: wrap; gap: 1rem; }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 3rem; padding-top: 4rem; }
+      .hero-card { display: none; }
+      .tools-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .steps::before { display: none; }
+      .dest-grid { grid-template-columns: repeat(3,1fr); }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 560px) {
+      h1 { letter-spacing: -1.5px; }
+      .dest-grid { grid-template-columns: repeat(2,1fr); }
+      .steps { grid-template-columns: 1fr; }
+      .footer-top { flex-direction: column; }
+      .waitlist-form { flex-direction: column; border-radius: var(--rl); padding: 1rem; }
+      .waitlist-form button { border-radius: var(--r); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bar-inner { transition: none; }
+      .marquee-track { animation: none; }
+      .live-pip::before { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Afri<span>Migrate</span></div>
+  <ul class="nav-links">
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#destinations">Destinations</a></li>
+    <li><a href="#waitlist">Get early access</a></li>
+  </ul>
+  <a href="https://japa--app.bubbleapps.io/version-test/canada_input" target="_blank" class="nav-cta">Start free →</a>
+</nav>
+
+<!-- HERO -->
+<div style="background:var(--bg);">
+  <div class="hero">
+    <div>
+      <div class="hero-tag">Built for Africans, by Africans</div>
+      <h1>
+        <span class="line1">Plan your</span>
+        <span class="line2">move abroad.</span>
+        <span class="line3"><span class="stamp">Pay nothing.</span></span>
+      </h1>
+      <p class="hero-sub">
+        Calculate your CRS score, build your document checklist, and map every step of moving to <strong>Canada, UK, or Australia</strong> — completely free. No consultant. No confusion.
+      </p>
+      <div class="hero-actions">
+        <a href="https://japa--app.bubbleapps.io/version-test/canada_input" target="_blank" class="btn-primary">Calculate my score →</a>
+        <a href="#waitlist" class="btn-ghost">Get early access ↓</a>
+      </div>
+    </div>
+
+    <div class="hero-card" id="heroCard">
+      <div class="card-eyebrow">Sample CRS Score</div>
+      <div class="crs-num"><span>426</span></div>
+      <div class="crs-of">out of 600 points</div>
+      <div class="bar"><div class="bar-inner" id="barFill"></div></div>
+      <div class="rows">
+        <div class="row"><span class="l">Age (28)</span><span class="v">110</span></div>
+        <div class="row"><span class="l">Education</span><span class="v">120</span></div>
+        <div class="row"><span class="l">Language — CLB 9</span><span class="v">136</span></div>
+        <div class="row"><span class="l">Work experience</span><span class="v">60</span></div>
+      </div>
+      <div class="card-badge">✅ Above recent Express Entry cut-off</div>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item"><span class="dot"></span><b>100% Free</b> — always</span>
+    <span class="marquee-item"><span class="dot"></span>Canada Express Entry</span>
+    <span class="marquee-item"><span class="dot"></span>UK Skilled Worker Visa</span>
+    <span class="marquee-item"><span class="dot"></span>Australia Points Test</span>
+    <span class="marquee-item"><span class="dot"></span>CRS Calculator</span>
+    <span class="marquee-item"><span class="dot"></span>Document Checklist</span>
+    <span class="marquee-item"><span class="dot"></span>No Consultant Fees</span>
+    <span class="marquee-item"><span class="dot"></span>Saskatchewan SINP</span>
+    <span class="marquee-item"><span class="dot"></span>Provincial Nominee Programs</span>
+    <span class="marquee-item"><span class="dot"></span><b>100% Free</b> — always</span>
+    <span class="marquee-item"><span class="dot"></span>Canada Express Entry</span>
+    <span class="marquee-item"><span class="dot"></span>UK Skilled Worker Visa</span>
+    <span class="marquee-item"><span class="dot"></span>Australia Points Test</span>
+    <span class="marquee-item"><span class="dot"></span>CRS Calculator</span>
+    <span class="marquee-item"><span class="dot"></span>Document Checklist</span>
+    <span class="marquee-item"><span class="dot"></span>No Consultant Fees</span>
+    <span class="marquee-item"><span class="dot"></span>Saskatchewan SINP</span>
+    <span class="marquee-item"><span class="dot"></span>Provincial Nominee Programs</span>
+  </div>
+</div>
+
+<!-- TOOLS -->
+<div class="section section-alt" id="tools">
+  <div class="section-inner reveal">
+    <div class="eyebrow">Free Tools</div>
+    <h2>Everything you need.<br>Nothing you don't.</h2>
+    <p class="lead">Tools consultants charge thousands for — free for every African, forever.</p>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="hot">Most used</div>
+        <div class="tool-icon">🧮</div>
+        <h3>CRS Score Calculator</h3>
+        <p>Enter your age, education, language scores and work history to instantly know your Comprehensive Ranking System score and whether you're competitive for an Express Entry invitation.</p>
+        <a href="https://japa--app.bubbleapps.io/version-test/canada_input" target="_blank" class="tool-link">Calculate now →</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">📊</div>
+        <h3>Results Dashboard</h3>
+        <p>See every Canadian immigration pathway you qualify for — Express Entry, SINP, PNP and more — side by side, with plain-language next steps tailored to your profile.</p>
+        <a href="https://japa--app.bubbleapps.io/version-test/canada_input" target="_blank" class="tool-link">View results →</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">📋</div>
+        <h3>Document Checklist</h3>
+        <p>A personalised checklist of every document you'll need, tailored to your destination, visa type and situation — with guidance on where to get each one and how long it takes.</p>
+        <a href="https://japa--app.bubbleapps.io/version-test/canada_input" target="_blank" class="tool-link">Build my checklist →</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🗺️</div>
+        <h3>Migration Roadmap</h3>
+        <p>A week-by-week plan from decision day to landing — so you always know what to do next, what to prepare, and what to expect at every stage of your journey.</p>
+        <span class="tool-link muted">Coming soon</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section" id="how">
+  <div class="section-inner reveal">
+    <div class="eyebrow">How It Works</div>
+    <h2>From idea to invitation</h2>
+    <p class="lead">Four steps. No jargon. One clear plan.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">🧮</div>
+        <h3>Calculate</h3>
+        <p>Get your CRS or points test score in under 3 minutes.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🔍</div>
+        <h3>Discover</h3>
+        <p>See which visa pathways you qualify for, ranked by your chances.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">📋</div>
+        <h3>Prepare</h3>
+        <p>Build your document checklist and know exactly what to gather.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">✈️</div>
+        <h3>Apply</h3>
+        <p>Follow your roadmap and submit with total confidence.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WAITLIST -->
+<div class="waitlist-section" id="waitlist">
+  <div class="waitlist-inner reveal">
+    <div class="eyebrow">Early Access</div>
+    <h2>Be the first to know</h2>
+    <p>New tools, visa updates, and migration guides dropping every week. Join thousands of Africans planning their move — get them free in your inbox.</p>
+    <div class="waitlist-form" id="waitlistForm">
+      <input type="email" id="emailInput" placeholder="your@email.com" autocomplete="email" />
+      <button onclick="handleSignup()">Join the waitlist</button>
+    </div>
+    <div class="waitlist-success" id="waitlistSuccess">
+      🎉 You're in! We'll be in touch soon.
+    </div>
+    <p class="waitlist-note">No spam. Unsubscribe anytime. Completely free.</p>
+  </div>
+</div>
+
+<!-- DESTINATIONS -->
+<div class="section" id="destinations">
+  <div class="section-inner reveal">
+    <div class="eyebrow">Destinations</div>
+    <h2>Where do you want to go?</h2>
+    <p class="lead">Tools for the most popular African migration destinations, with more added every month.</p>
+    <div class="dest-grid">
+      <div class="dest-card live"><div class="dest-flag">🇨🇦</div><div class="dest-name">Canada</div><div class="live-pip">Live</div></div>
+      <div class="dest-card live"><div class="dest-flag">🇬🇧</div><div class="dest-name">UK</div><div class="live-pip">Live</div></div>
+      <div class="dest-card live"><div class="dest-flag">🇦🇺</div><div class="dest-name">Australia</div><div class="live-pip">Live</div></div>
+      <div class="dest-card"><div class="dest-flag">🇩🇪</div><div class="dest-name">Germany</div><div class="soon-pip">Coming soon</div></div>
+      <div class="dest-card"><div class="dest-flag">🇳🇱</div><div class="dest-name">Netherlands</div><div class="soon-pip">Coming soon</div></div>
+      <div class="dest-card"><div class="dest-flag">🇵🇹</div><div class="dest-name">Portugal</div><div class="soon-pip">Coming soon</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<div class="manifesto">
+  <h2>Migration shouldn't cost<br>a fortune to <em>plan.</em></h2>
+  <p>Consultants charge thousands for information that should be free. AfriMigrate exists to change that — every tool, every checklist, every guide, free for every African, forever.</p>
+</div>
+
+<!-- SOCIAL -->
+<div class="section">
+  <div class="section-inner social-wrap reveal">
+    <div class="eyebrow">Community</div>
+    <h2>Follow the journey</h2>
+    <p class="lead" style="margin:0 auto;">Visa updates, success stories, and migration tips — on Instagram.</p>
+    <a href="https://instagram.com/afrimigrate.app" target="_blank" class="insta-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0-2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      Follow @afrimigrate.app
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">Afri<span>Migrate</span></div>
+        <p class="footer-tagline">Free migration planning for Africans moving to Canada, UK, Australia and beyond.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Tools</h4>
+        <ul>
+          <li><a href="https://japa--app.bubbleapps.io/version-test/canada_input" target="_blank">CRS Calculator</a></li>
+          <li><a href="https://japa--app.bubbleapps.io/version-test/canada_input" target="_blank">Document Checklist</a></li>
+          <li><a href="https://japa--app.bubbleapps.io/version-test/canada_input" target="_blank">Results Dashboard</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Destinations</h4>
+        <ul>
+          <li><a href="#destinations">Canada</a></li>
+          <li><a href="#destinations">United Kingdom</a></li>
+          <li><a href="#destinations">Australia</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://instagram.com/afrimigrate.app" target="_blank">Instagram</a></li>
+          <li><a href="#waitlist">Join waitlist</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AfriMigrate · Free migration planning for Africans</span>
+      <span>Made with ♥ for the African diaspora</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  els.forEach(el => io.observe(el));
+
+  // Bar animation
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const b = document.getElementById('barFill');
+      if (b) b.style.width = '71%';
+    }, 600);
+  });
+
+  // Waitlist signup
+  function handleSignup() {
+    const email = document.getElementById('emailInput').value;
+    if (!email || !email.includes('@')) {
+      document.getElementById('emailInput').style.outline = '2px solid #e74c3c';
+      return;
+    }
+    document.getElementById('waitlistForm').style.display = 'none';
+    document.getElementById('waitlistSuccess').style.display = 'block';
+    // You can connect this to Mailchimp, ConvertKit etc later
+    console.log('Signup:', email);
+  }
+
+  // Enter key on waitlist
+  document.getElementById('emailInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleSignup();
+  });
+</script>
+
+</body>
+</html>
