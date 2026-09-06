@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="Premium Add-Ons | AfriMigrate"
+  description="Optional paid add-ons that build on AfriMigrate's free tools — a personalised PDF report and an AI-generated cover letter. The core tools stay free forever."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / Premium</div>
+  <div class="eyebrow">Optional, Never Required</div>
+  <h1>Everything free stays free. These are extras.</h1>
+  <p class="lead" style="margin-bottom: 2.5rem;">
+    The CRS calculator, every visa guide, the document checklists and all country profiles are free forever — that's not changing. These are optional add-ons for people who want a little more.
+  </p>
+
+  <section class="section" style="padding-top: 0;">
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-icon">📄</div>
+        <h3>Personalised PDF Report</h3>
+        <p>Your CRS breakdown, recommended pathway, and document checklist as one polished, downloadable PDF you can save, print, or share.</p>
+        <div style="font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.8rem; margin: 1rem 0;">$9</div>
+        <button class="btn-primary premium-buy" data-product="pdf-report" style="width: 100%; justify-content: center; border: none; cursor: pointer;">Get my PDF report →</button>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">✍️</div>
+        <h3>AI Cover Letter / SOP</h3>
+        <p>A first draft cover letter or Statement of Purpose tailored to your destination and visa route, generated from your profile — a starting point, not a final submission.</p>
+        <div style="font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.8rem; margin: 1rem 0;">$15</div>
+        <button class="btn-primary premium-buy" data-product="ai-cover-letter" style="width: 100%; justify-content: center; border: none; cursor: pointer;">Generate my draft →</button>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">💾</div>
+        <h3>Saved Profile &amp; Progress</h3>
+        <p>Come back later and pick up where you left off, across every tool and country. Needs a free account — coming once that's built.</p>
+        <div style="font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.8rem; margin: 1rem 0; color: var(--ink2);">Coming soon</div>
+        <span class="tool-link muted">Not yet available</span>
+      </div>
+    </div>
+    <p id="premiumStatus" class="lead" style="margin-top: 1.5rem; display: none;"></p>
+  </section>
+
+  <section class="section">
+    <div class="card">
+      <p style="font-size: 0.85rem; color: var(--ink2); margin-bottom: 0;">
+        Payments are processed securely by Stripe — AfriMigrate never sees or stores your card details.
+      </p>
+    </div>
+  </section>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>('.premium-buy').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const status = document.getElementById('premiumStatus')!;
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Redirecting to secure checkout…';
+        try {
+          const res = await fetch('/api/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ product: btn.dataset.product }),
+          });
+          const data = await res.json();
+          if (data.url) {
+            window.location.href = data.url;
+            return;
+          }
+          throw new Error(data.error || 'Something went wrong.');
+        } catch (err) {
+          status.hidden = false;
+          status.style.display = 'block';
+          status.textContent = "⚠️ Payments aren't switched on for this site yet — check back soon.";
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      });
+    });
+  </script>
+</Layout>
