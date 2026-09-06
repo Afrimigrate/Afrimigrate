@@ -1,0 +1,211 @@
+---
+import type { CountryProfile } from '../data/types';
+
+export interface Props {
+  country: CountryProfile;
+}
+const { country } = Astro.props;
+
+const statusLabel: Record<string, string> = {
+  open: 'Open',
+  paused: 'Paused',
+  seasonal: 'Seasonal',
+  closed: 'Closed',
+};
+
+const prLabel: Record<string, string> = {
+  yes: 'Leads to PR',
+  no: 'No direct PR path',
+  conditional: 'Conditional path to PR',
+};
+---
+<div class="cp-hero">
+  <div class="cp-flag">{country.flag}</div>
+  <div class="eyebrow">{country.heroTagline}</div>
+  <h1>Move to {country.name}, every legal route</h1>
+  <p class="lead" style="margin-bottom: 1.5rem;">{country.heroDescription}</p>
+  <div class="cp-facts">
+    {country.quickFacts.map((f) => (
+      <div class="cp-fact"><span class="cp-fact-label">{f.label}</span><span class="cp-fact-value">{f.value}</span></div>
+    ))}
+  </div>
+  {country.relatedTools.length > 0 && (
+    <div class="cp-tool-links">
+      {country.relatedTools.map((t) => <a href={t.href} class="btn-ghost">{t.label} →</a>)}
+    </div>
+  )}
+</div>
+
+<section class="section">
+  <div class="eyebrow">Every Legal Route</div>
+  <h2>Visa &amp; immigration routes</h2>
+  <p class="lead" style="margin-bottom: 2rem;">Tap a category to expand it. Figures are indicative — always confirm current details on the official government site before applying.</p>
+
+  <div class="cp-accordion">
+    {country.visaCategories.map((cat) => (
+      <details class="cp-accordion-item">
+        <summary class="cp-accordion-header">
+          <span class="cp-accordion-icon">{cat.icon}</span>
+          <span class="cp-accordion-title">{cat.category}</span>
+          <span class="cp-accordion-count">{cat.routes.length} {cat.routes.length === 1 ? 'route' : 'routes'}</span>
+          <span class="cp-accordion-chevron">▾</span>
+        </summary>
+        <div class="cp-accordion-body">
+          <p class="lead" style="margin-bottom: 1.5rem;">{cat.intro}</p>
+          {cat.routes.map((route) => (
+            <div class="cp-route-card">
+              <div class="cp-route-head">
+                <h3 style="margin-bottom: 0;">{route.name}</h3>
+                <div class="cp-badges">
+                  <span class={`cp-badge cp-badge-${route.status}`}>{statusLabel[route.status]}</span>
+                  <span class={`cp-badge cp-badge-pr-${route.leadsToPR}`}>{prLabel[route.leadsToPR]}</span>
+                </div>
+              </div>
+              <p style="color: var(--ink2); font-size: 0.92rem; margin-bottom: 1rem;">{route.summary}</p>
+              {route.statusNote && <div class="cp-note">ℹ️ {route.statusNote}</div>}
+              <div class="cp-route-grid">
+                <div><span class="cp-route-label">Approx. cost</span><p>{route.cost}</p></div>
+                <div><span class="cp-route-label">Typical timeline</span><p>{route.timeline}</p></div>
+              </div>
+              <div class="cp-route-grid">
+                <div>
+                  <span class="cp-route-label">Eligibility</span>
+                  <ul class="cp-list">{route.eligibility.map((e) => <li>{e}</li>)}</ul>
+                </div>
+                <div>
+                  <span class="cp-route-label">Documents needed</span>
+                  <ul class="cp-list">{route.documents.map((d) => <li>{d}</li>)}</ul>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </details>
+    ))}
+  </div>
+</section>
+
+<section class="section section-alt" style="border-radius: var(--rl);">
+  <div class="eyebrow">Careers</div>
+  <h2>Best career pathways right now</h2>
+  <div class="tools-grid">
+    {country.careerPathways.map((c) => (
+      <div class="tool-card">
+        <h3>{c.field}</h3>
+        <p>{c.description}</p>
+        <div class="cp-tags">{c.inDemandRoles.map((r) => <span class="cp-tag">{r}</span>)}</div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<section class="section">
+  <div class="eyebrow">Culture</div>
+  <h2>Workplace culture &amp; etiquette</h2>
+  <div class="tools-grid">
+    {country.culture.map((c) => (
+      <div class="tool-card"><h3>{c.title}</h3><p style="margin-bottom: 0;">{c.description}</p></div>
+    ))}
+  </div>
+</section>
+
+<section class="section section-alt" style="border-radius: var(--rl);">
+  <div class="eyebrow">Budgeting</div>
+  <h2>Cost of living snapshot</h2>
+  <div style="overflow-x: auto;">
+    <table>
+      <thead><tr><th>City</th><th>1-bed rent</th><th>Groceries</th><th>Transport</th></tr></thead>
+      <tbody>
+        {country.costOfLiving.map((c) => (
+          <tr><td style="color: var(--ink); font-weight: 600;">{c.city}{c.notes && <><br/><span style="font-weight: 300; color: var(--ink2); font-size: 0.8rem;">{c.notes}</span></>}</td><td>{c.rentOneBed}</td><td>{c.groceries}</td><td>{c.transport}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section">
+  <div class="eyebrow">Settling In</div>
+  <h2>Your first 30 days</h2>
+  <div class="cp-checklist">
+    {country.first30Days.map((item, i) => (
+      <div class="cp-checklist-item">
+        <div class="cp-checklist-num">{i + 1}</div>
+        <div><h3 style="font-size: 1rem;">{item.title}</h3><p style="margin-bottom: 0;">{item.description}</p></div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<section class="section section-alt" style="border-radius: var(--rl);">
+  <div class="eyebrow">While You're There</div>
+  <h2>Places worth seeing</h2>
+  <div class="tools-grid">
+    {country.touristSites.map((t) => (
+      <div class="tool-card"><h3>{t.name}</h3><p style="margin-bottom: 0;">{t.description}</p></div>
+    ))}
+  </div>
+</section>
+
+<section class="section">
+  <div class="card">
+    <p style="font-size: 0.82rem; color: var(--ink2); margin-bottom: 0;">{country.sourceNote}</p>
+  </div>
+</section>
+
+<style>
+  .cp-hero { text-align: left; margin-bottom: 1rem; }
+  .cp-flag { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .cp-facts { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem; }
+  .cp-fact { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 0.5rem 0.9rem; display: flex; flex-direction: column; gap: 0.15rem; }
+  .cp-fact-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2); }
+  .cp-fact-value { font-size: 0.85rem; font-weight: 600; color: var(--ink); }
+  .cp-tool-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+
+  .cp-accordion { display: flex; flex-direction: column; gap: 0.75rem; }
+  .cp-accordion-item { background: var(--white); border: 1px solid var(--border); border-radius: var(--rl); overflow: hidden; }
+  .cp-accordion-header {
+    list-style: none; cursor: pointer; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 0.85rem;
+    font-family: 'Fraunces', serif; font-weight: 900; color: var(--ink); font-size: 1rem;
+  }
+  .cp-accordion-header::-webkit-details-marker { display: none; }
+  .cp-accordion-icon { font-size: 1.3rem; }
+  .cp-accordion-title { flex: 1; }
+  .cp-accordion-count { font-size: 0.72rem; font-weight: 500; color: var(--ink2); font-family: 'DM Sans', sans-serif; }
+  .cp-accordion-chevron { font-size: 0.9rem; color: var(--ink2); transition: transform 0.2s; }
+  details[open] .cp-accordion-chevron { transform: rotate(180deg); }
+  .cp-accordion-body { padding: 0 1.5rem 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+
+  .cp-route-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); padding: 1.5rem; margin-bottom: 1.25rem; }
+  .cp-route-card:last-child { margin-bottom: 0; }
+  .cp-route-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+  .cp-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .cp-badge { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.03em; padding: 0.25rem 0.65rem; border-radius: 999px; white-space: nowrap; }
+  .cp-badge-open { background: #EEF7EE; color: var(--green); border: 1px solid #C3DEC3; }
+  .cp-badge-paused { background: #FBEAEA; color: #C0392B; border: 1px solid #E8C3C3; }
+  .cp-badge-seasonal { background: var(--gold-bg); color: var(--gold); border: 1px solid rgba(200,150,14,0.25); }
+  .cp-badge-closed { background: #EDEAE3; color: var(--ink2); border: 1px solid var(--border); }
+  .cp-badge-pr-yes { background: #EEF7EE; color: var(--green); border: 1px solid #C3DEC3; }
+  .cp-badge-pr-no { background: #EDEAE3; color: var(--ink2); border: 1px solid var(--border); }
+  .cp-badge-pr-conditional { background: var(--gold-bg); color: var(--gold); border: 1px solid rgba(200,150,14,0.25); }
+  .cp-note { background: var(--gold-bg); border: 1px solid rgba(200,150,14,0.25); color: #8a6a0a; font-size: 0.82rem; padding: 0.75rem 1rem; border-radius: var(--r); margin-bottom: 1rem; }
+  .cp-route-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem; }
+  .cp-route-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2); display: block; margin-bottom: 0.4rem; }
+  .cp-route-grid p { font-size: 0.88rem; color: var(--ink); font-weight: 500; }
+  .cp-list { list-style: disc; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; color: var(--ink2); font-weight: 300; }
+
+  .cp-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+  .cp-tag { font-size: 0.72rem; background: var(--bg); border: 1px solid var(--border); color: var(--ink2); padding: 0.25rem 0.6rem; border-radius: 999px; }
+
+  .cp-checklist { display: flex; flex-direction: column; gap: 1rem; }
+  .cp-checklist-item { display: flex; gap: 1rem; align-items: flex-start; background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 1.1rem 1.25rem; }
+  .cp-checklist-num {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--green); color: var(--white);
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;
+  }
+  .cp-checklist-item p { color: var(--ink2); font-size: 0.88rem; }
+
+  @media (max-width: 640px) {
+    .cp-route-grid { grid-template-columns: 1fr; }
+  }
+</style>
