@@ -1,0 +1,223 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="AfriMigrate – Free Migration Planning Tools for Africans"
+  description="Free tools to help Africans plan their move to Canada, UK, Australia and beyond. CRS calculator, document checklists, step-by-step guides. 100% free, forever."
+>
+  <style>
+    .hero { display: grid; grid-template-columns: 1fr 420px; gap: 3rem; align-items: center; margin-bottom: 3rem; }
+    .hero h1 { font-size: clamp(2.8rem, 5.5vw, 5rem); letter-spacing: -3px; line-height: 0.95; }
+    .hero h1 .muted { color: var(--ink2); font-weight: 400; display: block; }
+    .hero h1 em { color: var(--green); font-style: italic; display: block; }
+    .hero-sub { font-size: 1.05rem; color: var(--ink2); line-height: 1.8; font-weight: 300; max-width: 420px; margin-bottom: 2rem; }
+    .hero-sub strong { color: var(--ink); font-weight: 600; }
+    .hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+    .hero-card { position: relative; overflow: hidden; }
+    .hero-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--green) 60%, var(--gold)); }
+    .card-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink2); margin-bottom: 1rem; }
+    .crs-num { font-family: 'Fraunces', serif; font-size: 4.5rem; font-weight: 900; color: var(--ink); line-height: 1; letter-spacing: -3px; margin-bottom: 0.2rem; }
+    .crs-num span { color: var(--green); }
+    .crs-of { font-size: 0.82rem; color: var(--ink2); margin-bottom: 1.25rem; font-weight: 300; }
+    .bar { height: 4px; background: var(--bg2); border-radius: 99px; overflow: hidden; margin-bottom: 1.5rem; }
+    .bar-inner { height: 100%; width: 71%; background: linear-gradient(90deg, var(--green), #7bc97b); border-radius: 99px; }
+    .rows { display: flex; flex-direction: column; }
+    .row { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--bg2); font-size: 0.85rem; }
+    .row:last-child { border-bottom: none; }
+    .row .l { color: var(--ink2); font-weight: 300; }
+    .row .v { font-weight: 600; color: var(--ink); }
+    .social-wrap { text-align: center; }
+    .insta-btn {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+      color: #fff; padding: 0.9rem 2.25rem; border-radius: 999px; font-weight: 600; font-size: 0.95rem;
+      transition: opacity 0.2s, transform 0.15s; margin-top: 1.5rem;
+    }
+    .insta-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .hero-card { display: none; } }
+  </style>
+
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Built for Africans, by Africans</div>
+      <h1>
+        Plan your
+        <span class="muted">move abroad.</span>
+        <em>Pay nothing.</em>
+      </h1>
+      <p class="hero-sub">
+        Calculate your CRS score, build your document checklist, and map every step of moving to <strong>Canada, UK, or Australia</strong> — completely free. No consultant. No confusion.
+      </p>
+      <div class="hero-actions">
+        <a href="/canada/crs-calculator" class="btn-primary">Calculate my score →</a>
+        <a href="/tools" class="btn-ghost">See all free tools ↓</a>
+      </div>
+    </div>
+
+    <div class="card hero-card">
+      <div class="card-eyebrow">Sample CRS Score</div>
+      <div class="crs-num"><span>426</span></div>
+      <div class="crs-of">out of 600 points</div>
+      <div class="bar"><div class="bar-inner"></div></div>
+      <div class="rows">
+        <div class="row"><span class="l">Age (28)</span><span class="v">110</span></div>
+        <div class="row"><span class="l">Education</span><span class="v">120</span></div>
+        <div class="row"><span class="l">Language — CLB 9</span><span class="v">136</span></div>
+        <div class="row"><span class="l">Work experience</span><span class="v">60</span></div>
+      </div>
+      <div class="badge" style="margin-top: 1.25rem;">✅ Above recent Express Entry cut-off</div>
+    </div>
+  </section>
+
+  <div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee-track">
+      <span class="marquee-item"><span class="dot"></span><b>100% Free</b> — always</span>
+      <span class="marquee-item"><span class="dot"></span>Canada Express Entry</span>
+      <span class="marquee-item"><span class="dot"></span>UK Skilled Worker Visa</span>
+      <span class="marquee-item"><span class="dot"></span>Australia Points Test</span>
+      <span class="marquee-item"><span class="dot"></span>CRS Calculator</span>
+      <span class="marquee-item"><span class="dot"></span>Document Checklist</span>
+      <span class="marquee-item"><span class="dot"></span>No Consultant Fees</span>
+      <span class="marquee-item"><span class="dot"></span>Saskatchewan SINP</span>
+      <span class="marquee-item"><span class="dot"></span>Provincial Nominee Programs</span>
+      <span class="marquee-item"><span class="dot"></span><b>100% Free</b> — always</span>
+      <span class="marquee-item"><span class="dot"></span>Canada Express Entry</span>
+      <span class="marquee-item"><span class="dot"></span>UK Skilled Worker Visa</span>
+      <span class="marquee-item"><span class="dot"></span>Australia Points Test</span>
+      <span class="marquee-item"><span class="dot"></span>CRS Calculator</span>
+      <span class="marquee-item"><span class="dot"></span>Document Checklist</span>
+      <span class="marquee-item"><span class="dot"></span>No Consultant Fees</span>
+    </div>
+  </div>
+
+  <section class="section" id="tools">
+    <div class="eyebrow">Free Tools</div>
+    <h2>Everything you need.<br>Nothing you don't.</h2>
+    <p class="lead">Tools consultants charge thousands for — free for every African, forever.</p>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="hot">Most used</div>
+        <div class="tool-icon">🧮</div>
+        <h3>CRS Score Calculator</h3>
+        <p>Enter your age, education, language scores and work history to instantly know your Comprehensive Ranking System score and whether you're competitive for an Express Entry invitation.</p>
+        <a href="/canada/crs-calculator" class="tool-link">Calculate now →</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">📊</div>
+        <h3>PNP Finder</h3>
+        <p>See every Canadian Provincial Nominee Program you qualify for, side by side, with plain-language next steps tailored to your profile.</p>
+        <a href="/canada/pnp" class="tool-link">Find my province →</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">📋</div>
+        <h3>Document Checklist</h3>
+        <p>A personalised checklist of every document you'll need, tailored to your destination and visa type — with guidance on where to get each one.</p>
+        <a href="/canada/document-checklist" class="tool-link">Build my checklist →</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🗺️</div>
+        <h3>PR Timeline Estimator</h3>
+        <p>Estimate how long your Canadian permanent residence application will take, from profile submission to landing.</p>
+        <a href="/canada/pr-timeline" class="tool-link">Estimate my timeline →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="how" style="border-radius: var(--rl);">
+    <div class="eyebrow">How It Works</div>
+    <h2>From idea to invitation</h2>
+    <p class="lead">Four steps. No jargon. One clear plan.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">🧮</div>
+        <h3>Calculate</h3>
+        <p>Get your CRS or points test score in under 3 minutes.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🔍</div>
+        <h3>Discover</h3>
+        <p>See which visa pathways you qualify for, ranked by your chances.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">📋</div>
+        <h3>Prepare</h3>
+        <p>Build your document checklist and know exactly what to gather.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">✈️</div>
+        <h3>Apply</h3>
+        <p>Follow your roadmap and submit with total confidence.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="waitlist">
+    <div class="waitlist-section">
+      <div class="eyebrow">Early Access</div>
+      <h2>Be the first to know</h2>
+      <p>New tools, visa updates, and migration guides dropping every week. Join thousands of Africans planning their move — get them free in your inbox.</p>
+      <form class="waitlist-form" id="waitlistForm" onsubmit="return false;">
+        <input type="email" id="emailInput" placeholder="your@email.com" autocomplete="email" required />
+        <button type="submit" id="waitlistBtn">Join the waitlist</button>
+      </form>
+      <div class="waitlist-success" id="waitlistSuccess">🎉 You're in! We'll be in touch soon.</div>
+      <p class="waitlist-note">No spam. Unsubscribe anytime. Completely free.</p>
+    </div>
+  </section>
+
+  <section class="section" id="destinations">
+    <div class="eyebrow">Destinations</div>
+    <h2>Where do you want to go?</h2>
+    <p class="lead">Tools for the most popular African migration destinations, with more added every month.</p>
+    <div class="dest-grid">
+      <a href="/canada" class="dest-card live"><div class="dest-flag">🇨🇦</div><div class="dest-name">Canada</div><div class="live-pip">Live</div></a>
+      <a href="/uk" class="dest-card live"><div class="dest-flag">🇬🇧</div><div class="dest-name">UK</div><div class="live-pip">Live</div></a>
+      <a href="/australia" class="dest-card live"><div class="dest-flag">🇦🇺</div><div class="dest-name">Australia</div><div class="live-pip">Live</div></a>
+      <div class="dest-card"><div class="dest-flag">🇩🇪</div><div class="dest-name">Germany</div><div class="soon-pip">Coming soon</div></div>
+      <div class="dest-card"><div class="dest-flag">🇳🇱</div><div class="dest-name">Netherlands</div><div class="soon-pip">Coming soon</div></div>
+      <div class="dest-card"><div class="dest-flag">🇵🇹</div><div class="dest-name">Portugal</div><div class="soon-pip">Coming soon</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="manifesto">
+      <h2>Migration shouldn't cost<br>a fortune to <em>plan.</em></h2>
+      <p>Consultants charge thousands for information that should be free. AfriMigrate exists to change that — every tool, every checklist, every guide, free for every African, forever.</p>
+    </div>
+  </section>
+
+  <section class="section social-wrap">
+    <div class="eyebrow">Community</div>
+    <h2>Follow the journey</h2>
+    <p class="lead" style="margin:0 auto;">Visa updates, success stories, and migration tips — on Instagram.</p>
+    <a href="https://instagram.com/afrimigrate.app" target="_blank" rel="noopener" class="insta-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      Follow @afrimigrate.app
+    </a>
+  </section>
+
+  <script>
+    const els = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { threshold: 0.1 });
+      els.forEach((el) => io.observe(el));
+    }
+
+    const form = document.getElementById('waitlistForm');
+    if (form) {
+      form.addEventListener('submit', () => {
+        const input = document.getElementById('emailInput');
+        const email = input.value;
+        if (!email || !email.includes('@')) {
+          input.style.outline = '2px solid #e74c3c';
+          return;
+        }
+        // TODO: connect to Mailchimp/ConvertKit — see CLAUDE.md Outstanding Ops Items
+        form.style.display = 'none';
+        document.getElementById('waitlistSuccess').style.display = 'block';
+      });
+    }
+  </script>
+</Layout>

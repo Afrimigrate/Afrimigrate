@@ -1,0 +1,81 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout
+  title="Australia Points Calculator – Subclass 189 & 190 | AfriMigrate"
+  description="Free Australia skilled migration points calculator for subclass 189 and 190 visas. Estimate your score from age, English, experience and education."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/australia">Australia</a> / Points Calculator</div>
+  <div class="eyebrow">Australia · Points Test</div>
+  <h1>Points Calculator</h1>
+  <p class="lead" style="margin-bottom: 2rem;">
+    Estimate your score for Australia's General Skilled Migration points test (minimum 65 points to be eligible, though invited scores are often higher). This is a simplified estimate for planning purposes — always confirm your exact score using the official Department of Home Affairs points table.
+  </p>
+
+  <div class="card" style="max-width: 600px; display: flex; flex-direction: column; gap: 1.25rem;">
+    <div>
+      <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Age</label>
+      <select id="age" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--r); border: 1px solid var(--border); background: var(--bg); font-size: 0.95rem;">
+        <option value="25">18–24</option>
+        <option value="30">25–32</option>
+        <option value="25">33–39</option>
+        <option value="15">40–44</option>
+        <option value="0">45+</option>
+      </select>
+    </div>
+    <div>
+      <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">English ability</label>
+      <select id="english" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--r); border: 1px solid var(--border); background: var(--bg); font-size: 0.95rem;">
+        <option value="0">Competent (IELTS 6 each band)</option>
+        <option value="10">Proficient (IELTS 7 each band)</option>
+        <option value="20">Superior (IELTS 8 each band)</option>
+      </select>
+    </div>
+    <div>
+      <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Skilled work experience (outside Australia)</label>
+      <select id="exp-overseas" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--r); border: 1px solid var(--border); background: var(--bg); font-size: 0.95rem;">
+        <option value="0">Less than 3 years</option>
+        <option value="5">3–4 years</option>
+        <option value="10">5–7 years</option>
+        <option value="15">8+ years</option>
+      </select>
+    </div>
+    <div>
+      <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Educational qualification</label>
+      <select id="edu" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--r); border: 1px solid var(--border); background: var(--bg); font-size: 0.95rem;">
+        <option value="10">Diploma or trade qualification</option>
+        <option value="15">Bachelor's degree</option>
+        <option value="20">Master's degree or Doctorate</option>
+      </select>
+    </div>
+    <div>
+      <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">State/territory nomination (subclass 190)?</label>
+      <select id="nom" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--r); border: 1px solid var(--border); background: var(--bg); font-size: 0.95rem;">
+        <option value="0">No</option>
+        <option value="5">Yes</option>
+      </select>
+    </div>
+    <div id="score" class="badge" style="width: 100%; justify-content: center; font-size: 1rem;"></div>
+  </div>
+
+  <section class="section">
+    <div class="eyebrow">Before You Can Apply</div>
+    <h2>You need a positive skills assessment first</h2>
+    <p class="lead" style="max-width: 700px;">
+      Every General Skilled Migration applicant must have their occupation formally assessed by the relevant authority before submitting an Expression of Interest — this determines whether your qualifications and experience count at all.
+    </p>
+    <a href="/australia/skills-assessment" class="btn-primary" style="margin-top: 1rem;">Find my skills assessing body →</a>
+  </section>
+
+  <script>
+    function calc() {
+      const ids = ['age', 'english', 'exp-overseas', 'edu', 'nom'];
+      const total = ids.reduce((sum, id) => sum + parseInt(document.getElementById(id).value, 10), 0);
+      const el = document.getElementById('score');
+      el.style.display = 'flex';
+      el.textContent = `🧮 Estimated score: ${total} points` + (total >= 65 ? ' — above the 65-point minimum' : ' — below the 65-point minimum');
+    }
+    ['age', 'english', 'exp-overseas', 'edu', 'nom'].forEach((id) => document.getElementById(id).addEventListener('change', calc));
+    calc();
+  </script>
+</Layout>

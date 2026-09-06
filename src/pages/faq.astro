@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const faqs = [
+  { q: 'Is AfriMigrate really free?', a: 'Yes. Every calculator, checklist and guide is 100% free, and always will be. We plan to offer optional paid add-ons in the future (like a downloadable PDF report), but the core tools stay free forever — that\'s our founding promise.' },
+  { q: 'Which countries does AfriMigrate cover?', a: 'Canada, the UK and Australia are fully live today. Germany, the Netherlands and Portugal guides are coming soon.' },
+  { q: 'Do I need to create an account?', a: 'No. Most tools can be used without signing up. We\'re building optional accounts for saving your progress across visits.' },
+  { q: 'Is this official immigration advice?', a: 'No. AfriMigrate provides free educational tools and general information, not regulated immigration advice. Always confirm requirements on official government websites, and consult a licensed immigration professional for advice specific to your situation.' },
+  { q: 'How is AfriMigrate different from other tools?', a: 'We\'re pan-African (not focused on one country), 100% free (not a paid-tier upsell), and tool-based (real calculators and checklists, not just a chatbot).' },
+  { q: 'How do I get in touch?', a: 'Follow @afrimigrate.app on Instagram, or join the waitlist on our homepage for updates and early access to new tools.' },
+];
+---
+<Layout
+  title="Frequently Asked Questions | AfriMigrate"
+  description="Answers to common questions about AfriMigrate: is it free, which countries are covered, is it official advice, and how to get in touch."
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  })} />
+
+  <div class="breadcrumb"><a href="/">Home</a> / FAQ</div>
+  <div class="eyebrow">FAQ</div>
+  <h1>Frequently asked questions</h1>
+  <p class="lead" style="margin-bottom: 2.5rem;">Everything you need to know about AfriMigrate.</p>
+
+  <section class="section" style="padding-top: 0;">
+    {faqs.map((f) => (
+      <div class="faq-item">
+        <h3>{f.q}</h3>
+        <p>{f.a}</p>
+      </div>
+    ))}
+  </section>
+</Layout>

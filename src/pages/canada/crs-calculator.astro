@@ -1,0 +1,86 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const faqs = [
+  {
+    q: 'What is a good CRS score?',
+    a: 'Recent Express Entry draws have invited candidates with scores ranging from the high 300s (for Provincial Nominee or category-based draws) to around 470-540 for general draws. There is no fixed "passing" score — it moves every draw based on the size and profile of the candidate pool.',
+  },
+  {
+    q: 'How is my CRS score calculated?',
+    a: 'Your score combines core human capital factors (age, education, official language ability, Canadian work experience), spouse factors if you have an accompanying partner, and additional points for a valid job offer, a provincial nomination, or a Canadian degree.',
+  },
+  {
+    q: 'Can I improve my CRS score?',
+    a: 'Yes. The fastest gains usually come from improving your language test results (a jump from CLB 9 to CLB 10 in all four abilities adds meaningful points), gaining a Canadian educational credential, or securing a provincial nomination, which adds 600 points and effectively guarantees an invitation.',
+  },
+  {
+    q: 'Do I need a job offer to apply through Express Entry?',
+    a: 'No. Most successful Express Entry candidates never had a Canadian job offer. Your core score from age, education, language and experience is usually enough if it clears the draw cut-off, especially when combined with a provincial nomination.',
+  },
+];
+---
+<Layout
+  title="Free CRS Score Calculator for Canada Express Entry | AfriMigrate"
+  description="Calculate your Comprehensive Ranking System (CRS) score for Canada Express Entry in under 3 minutes. 100% free — no sign-up required."
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  })} />
+
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/canada">Canada</a> / CRS Calculator</div>
+  <div class="eyebrow">Canada · Express Entry</div>
+  <h1>CRS Score Calculator</h1>
+  <p class="lead" style="margin-bottom: 2.5rem;">
+    Enter your age, education, language scores and work experience to instantly know your Comprehensive Ranking System score — and whether you're competitive for an Express Entry invitation. Completely free, no sign-up required.
+  </p>
+
+  <iframe
+    src="https://japa--app.bubbleapps.io/version-test/canada_input"
+    class="tool-embed"
+    loading="lazy"
+    title="AfriMigrate CRS Calculator"
+  ></iframe>
+
+  <section class="section">
+    <div class="eyebrow">How It Works</div>
+    <h2>How CRS scoring works</h2>
+    <p class="lead" style="max-width: 700px;">
+      The Comprehensive Ranking System (CRS) scores every Express Entry candidate out of 1,200 points across four areas. The highest-scoring candidates in each draw receive an Invitation to Apply for permanent residence.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Factor</th><th>Max points (no spouse)</th><th>Max points (with spouse)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Age</td><td>110</td><td>100</td></tr>
+        <tr><td>Education</td><td>150</td><td>140</td></tr>
+        <tr><td>Official language proficiency</td><td>160</td><td>150</td></tr>
+        <tr><td>Canadian work experience</td><td>80</td><td>70</td></tr>
+        <tr><td>Spouse factors (education, language, experience)</td><td>—</td><td>40</td></tr>
+        <tr><td>Skill transferability</td><td>100</td><td>100</td></tr>
+        <tr><td>Additional points (PNP, job offer, sibling in Canada, French ability)</td><td>up to 600</td><td>up to 600</td></tr>
+      </tbody>
+    </table>
+    <p class="lead" style="max-width: 700px;">
+      A provincial nomination is the single biggest lever available — it adds 600 points on its own, which is more than enough to guarantee an invitation in almost every draw. That's why we built a dedicated <a href="/canada/pnp" style="color: var(--green); font-weight: 600;">PNP Finder</a> to help you check if you qualify for one.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="eyebrow">FAQ</div>
+    <h2>Common questions</h2>
+    {faqs.map((f) => (
+      <div class="faq-item">
+        <h3>{f.q}</h3>
+        <p>{f.a}</p>
+      </div>
+    ))}
+  </section>
+</Layout>

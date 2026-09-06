@@ -1,0 +1,56 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout
+  title="How Long Does Canada PR Take? Timeline Estimator | AfriMigrate"
+  description="Free estimator for how long a Canadian permanent residence application takes by pathway — Express Entry, PNP, and family sponsorship. Indicative timelines only."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/canada">Canada</a> / PR Timeline Estimator</div>
+  <div class="eyebrow">Canada · Timeline</div>
+  <h1>PR Timeline Estimator</h1>
+  <p class="lead" style="margin-bottom: 2rem;">
+    Pick your pathway to see a realistic, indicative timeline from profile submission to landing. These are general averages, not official processing guarantees — actual times vary by case complexity and IRCC's current workload.
+  </p>
+
+  <div class="card" style="max-width: 500px;">
+    <label for="pathway" style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Choose your pathway</label>
+    <select id="pathway" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--r); border: 1px solid var(--border); background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--ink); margin-bottom: 1.5rem;">
+      <option value="ee">Express Entry (no provincial nomination)</option>
+      <option value="pnp">Provincial Nominee Program</option>
+      <option value="family">Family sponsorship (spouse/partner)</option>
+    </select>
+    <div id="result" class="badge" style="display: none; width: 100%; justify-content: center;"></div>
+  </div>
+
+  <section class="section">
+    <div class="eyebrow">Typical Ranges</div>
+    <h2>What each stage usually takes</h2>
+    <table>
+      <thead><tr><th>Pathway</th><th>Profile to invitation</th><th>Invitation to decision</th><th>Total (indicative)</th></tr></thead>
+      <tbody>
+        <tr><td>Express Entry (general draw)</td><td>1 day – 12 months</td><td>~6 months</td><td>~6–18 months</td></tr>
+        <tr><td>Provincial Nominee Program</td><td>2–12 months</td><td>~6–12 months</td><td>~8–24 months</td></tr>
+        <tr><td>Family sponsorship (spouse/partner)</td><td>—</td><td>~12 months</td><td>~12 months</td></tr>
+      </tbody>
+    </table>
+    <p class="lead" style="max-width: 700px; margin-top: 1rem;">
+      Incomplete documents, background checks, or a request for additional information can add months to any pathway — this is why starting your <a href="/canada/document-checklist" style="color: var(--green); font-weight: 600;">document checklist</a> early matters so much.
+    </p>
+  </section>
+
+  <script>
+    const data = {
+      ee: '~6–18 months, from CRS profile to landing',
+      pnp: '~8–24 months, from application to landing',
+      family: '~12 months, from application to landing',
+    };
+    const select = document.getElementById('pathway');
+    const result = document.getElementById('result');
+    function update() {
+      result.textContent = '⏱️ Estimated total: ' + data[select.value];
+      result.style.display = 'flex';
+    }
+    select.addEventListener('change', update);
+    update();
+  </script>
+</Layout>

@@ -1,0 +1,49 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const checklist = [
+  { cat: 'Identity', items: ['Valid passport (all pages, valid for the length of your application)', 'National ID / birth certificate', 'Marriage certificate (if applicable)'] },
+  { cat: 'Language', items: ['IELTS General Training or CELPIP results (less than 2 years old)', 'TEF Canada results if claiming French points'] },
+  { cat: 'Education', items: ['Educational Credential Assessment (ECA) from an approved body (WES, ICAS, IQAS, etc.)', 'Degree certificates and transcripts'] },
+  { cat: 'Work experience', items: ['Reference letters on company letterhead confirming job title, duties, salary and dates', 'Payslips or tax records as supporting proof'] },
+  { cat: 'Police & medical', items: ['Police clearance certificate from every country lived in for 6+ months since age 18', 'Panel physician medical exam (only after an Invitation to Apply)'] },
+  { cat: 'Proof of funds', items: ['Bank statements covering the last 6 months showing settlement funds (unless exempt)'] },
+];
+---
+<Layout
+  title="Canada PR Document Checklist for Africans | AfriMigrate"
+  description="The complete, free document checklist for a Canada permanent residence application — identity, language, education, work experience, police and medical documents."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/canada">Canada</a> / Document Checklist</div>
+  <div class="eyebrow">Canada · Documents</div>
+  <h1>Document Checklist</h1>
+  <p class="lead" style="margin-bottom: 2.5rem;">
+    A personalised checklist of every document you'll need for a Canadian PR application, tailored to your pathway. Use the tool below to generate your own list, or use the general checklist further down to start gathering documents now.
+  </p>
+
+  <iframe
+    src="https://japa--app.bubbleapps.io/version-test/canada_input"
+    class="tool-embed"
+    loading="lazy"
+    title="AfriMigrate Document Checklist Builder"
+  ></iframe>
+
+  <section class="section">
+    <div class="eyebrow">General Checklist</div>
+    <h2>What almost every applicant needs</h2>
+    <p class="lead" style="max-width: 700px; margin-bottom: 1.5rem;">
+      Some documents (like police clearances and medicals) take weeks or months to arrive. Start early — this is the biggest cause of avoidable delay.
+    </p>
+    {checklist.map((group) => (
+      <div class="card" style="margin-bottom: 1.25rem;">
+        <h3>{group.cat}</h3>
+        <ul style="list-style: disc; padding-left: 1.25rem; color: var(--ink2); font-weight: 300; display: flex; flex-direction: column; gap: 0.4rem;">
+          {group.items.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    ))}
+    <p class="lead" style="max-width: 700px;">
+      Requirements vary by program and country of residence — always confirm the exact list for your case on the official IRCC website before submitting.
+    </p>
+  </section>
+</Layout>
