@@ -1,0 +1,62 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout
+  title="UK Skilled Worker Visa Eligibility Checker | AfriMigrate"
+  description="Free UK Skilled Worker visa eligibility checker for Africans. Answer a few questions to see whether you meet the core requirements — no sign-up needed."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/uk">UK</a> / Skilled Worker Visa Checker</div>
+  <div class="eyebrow">UK · Skilled Worker Visa</div>
+  <h1>Skilled Worker Visa Checker</h1>
+  <p class="lead" style="margin-bottom: 2rem;">
+    Answer these questions honestly to get an instant, informal read on whether you meet the UK Skilled Worker visa's core requirements. This is a free guide, not immigration advice — always confirm with a licensed sponsor or the official gov.uk guidance before making decisions.
+  </p>
+
+  <div class="card" id="checker" style="max-width: 600px; display: flex; flex-direction: column; gap: 1.25rem;">
+    <label style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.9rem; color: var(--ink2);">
+      <input type="checkbox" class="chk" style="margin-top: 3px;" />
+      I have a confirmed job offer from a UK Home Office-licensed sponsor
+    </label>
+    <label style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.9rem; color: var(--ink2);">
+      <input type="checkbox" class="chk" style="margin-top: 3px;" />
+      The role is on the UK's list of eligible skilled occupations (RQF level 3 or above)
+    </label>
+    <label style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.9rem; color: var(--ink2);">
+      <input type="checkbox" class="chk" style="margin-top: 3px;" />
+      My offered salary meets the going rate for the role and the general salary threshold
+    </label>
+    <label style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.9rem; color: var(--ink2);">
+      <input type="checkbox" class="chk" style="margin-top: 3px;" />
+      I can demonstrate English language ability at CEFR level B1 or above
+    </label>
+    <label style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.9rem; color: var(--ink2);">
+      <input type="checkbox" class="chk" style="margin-top: 3px;" />
+      I can show at least £1,270 in personal savings (unless my sponsor is certifying maintenance)
+    </label>
+    <div id="checkerResult" class="badge" style="display: none;"></div>
+  </div>
+
+  <section class="section">
+    <div class="eyebrow">If You Qualify</div>
+    <h2>What happens next</h2>
+    <p class="lead" style="max-width: 700px;">
+      Your sponsor issues a Certificate of Sponsorship, you apply online and pay the visa fee and Immigration Health Surcharge, then attend a biometrics appointment. Most decisions for applications made outside the UK arrive within 3 weeks.
+    </p>
+    <a href="/uk/visa-cost-calculator" class="btn-primary" style="margin-top: 1rem;">Calculate the total cost →</a>
+  </section>
+
+  <script>
+    const boxes = Array.from(document.querySelectorAll('.chk'));
+    const result = document.getElementById('checkerResult');
+    function update() {
+      const checked = boxes.filter((b) => b.checked).length;
+      result.style.display = 'flex';
+      if (checked === boxes.length) {
+        result.textContent = '✅ You likely meet the core requirements — talk to your sponsor about next steps.';
+      } else {
+        result.textContent = `☑️ ${checked}/${boxes.length} core requirements met so far — check the remaining boxes as they apply.`;
+      }
+    }
+    boxes.forEach((b) => b.addEventListener('change', update));
+  </script>
+</Layout>

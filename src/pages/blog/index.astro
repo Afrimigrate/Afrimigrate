@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const posts = [
+  { href: '/blog/nigeria-to-canada-guide', flag: '🇳🇬→🇨🇦', title: 'Moving from Nigeria to Canada: The Complete Guide', desc: 'Every route from Lagos or Abuja to Canadian permanent residence, with real cost and timeline expectations.' },
+  { href: '/blog/ghana-to-uk-guide', flag: '🇬🇭→🇬🇧', title: 'Moving from Ghana to the UK: The Complete Guide', desc: 'How Ghanaian professionals qualify for the Skilled Worker visa and what to budget for.' },
+  { href: '/blog/kenya-to-australia-guide', flag: '🇰🇪→🇦🇺', title: 'Moving from Kenya to Australia: The Complete Guide', desc: 'The skills assessment, points test and visa subclasses that matter most for Kenyan applicants.' },
+  { href: '/blog/how-crs-score-works', flag: '🧮', title: 'How Does the CRS Score Work?', desc: 'A deep dive into Canada’s Comprehensive Ranking System — every factor, explained simply.' },
+  { href: '/blog/document-checklist-guide', flag: '📋', title: 'The Immigration Document Checklist Guide', desc: 'How to gather police clearances, ECAs and reference letters without losing months to delays.' },
+];
+---
+<Layout
+  title="Migration Guides for Africans | AfriMigrate Blog"
+  description="Free, practical migration guides for Africans moving to Canada, UK and Australia — country-specific roadmaps, CRS scoring explained, and document prep tips."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / Blog</div>
+  <div class="eyebrow">Guides</div>
+  <h1>Migration guides for Africans</h1>
+  <p class="lead" style="margin-bottom: 2.5rem;">
+    Practical, no-jargon guides written for African applicants — not general audiences. New guides added regularly.
+  </p>
+
+  <div class="tools-grid" style="grid-template-columns: 1fr;">
+    {posts.map((p) => (
+      <a href={p.href} class="tool-card" style="display: flex; align-items: flex-start; gap: 1.5rem;">
+        <div class="tool-icon" style="flex-shrink: 0;">{p.flag}</div>
+        <div>
+          <h3>{p.title}</h3>
+          <p style="margin-bottom: 0;">{p.desc}</p>
+        </div>
+      </a>
+    ))}
+  </div>
+</Layout>

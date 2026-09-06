@@ -1,0 +1,76 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout
+  title="UK Visa Cost Calculator – IHS & Application Fees | AfriMigrate"
+  description="Free UK visa cost calculator. Estimate your Skilled Worker visa application fee and Immigration Health Surcharge (IHS) for you and your dependents."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/uk">UK</a> / Visa Cost Calculator</div>
+  <div class="eyebrow">UK · Budgeting</div>
+  <h1>Visa Cost Calculator</h1>
+  <p class="lead" style="margin-bottom: 2rem;">
+    Estimate the total upfront cost of a UK Skilled Worker visa, including the Immigration Health Surcharge (IHS). Figures below use indicative published rates — always confirm exact current fees on gov.uk before you pay, as they change periodically.
+  </p>
+
+  <div class="card" style="max-width: 560px; display: flex; flex-direction: column; gap: 1.25rem;">
+    <div>
+      <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Visa length</label>
+      <select id="years" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--r); border: 1px solid var(--border); background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 0.95rem;">
+        <option value="2">2 years</option>
+        <option value="3" selected>3 years</option>
+        <option value="5">5 years</option>
+      </select>
+    </div>
+    <div>
+      <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Number of dependents (spouse/children)</label>
+      <select id="deps" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--r); border: 1px solid var(--border); background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 0.95rem;">
+        <option value="0" selected>0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+    </div>
+    <div>
+      <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Is your role on the Immigration Salary List (discounted fee)?</label>
+      <select id="discount" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--r); border: 1px solid var(--border); background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 0.95rem;">
+        <option value="no" selected>No</option>
+        <option value="yes">Yes</option>
+      </select>
+    </div>
+    <div id="total" class="badge" style="width: 100%; justify-content: center; font-size: 1rem;"></div>
+    <p style="font-size: 0.75rem; color: var(--ink2);">Estimate only — excludes sponsor-side costs, English tests, and any priority service fees.</p>
+  </div>
+
+  <section class="section">
+    <div class="eyebrow">What Goes Into the Total</div>
+    <h2>The two big line items</h2>
+    <table>
+      <thead><tr><th>Item</th><th>Approx. rate</th></tr></thead>
+      <tbody>
+        <tr><td>Application fee (standard occupation, per person)</td><td>~£719–£1,639 depending on length/location</td></tr>
+        <tr><td>Application fee (Immigration Salary List occupation)</td><td>~£479–£949</td></tr>
+        <tr><td>Immigration Health Surcharge</td><td>~£1,035 per year, per person</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <script>
+    const APP_FEE_STANDARD = 719;
+    const APP_FEE_DISCOUNT = 479;
+    const IHS_PER_YEAR = 1035;
+
+    function calc() {
+      const years = parseInt(document.getElementById('years').value, 10);
+      const deps = parseInt(document.getElementById('deps').value, 10);
+      const discounted = document.getElementById('discount').value === 'yes';
+      const people = 1 + deps;
+      const feePerPerson = discounted ? APP_FEE_DISCOUNT : APP_FEE_STANDARD;
+      const total = people * feePerPerson + people * years * IHS_PER_YEAR;
+      document.getElementById('total').style.display = 'flex';
+      document.getElementById('total').textContent = `💷 Estimated total: £${total.toLocaleString()} for ${people} ${people === 1 ? 'person' : 'people'}`;
+    }
+    ['years', 'deps', 'discount'].forEach((id) => document.getElementById(id).addEventListener('change', calc));
+    calc();
+  </script>
+</Layout>

@@ -1,0 +1,12 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CountryProfile from '../../components/CountryProfile.astro';
+import { canada } from '../../data/countries/canada';
+---
+<Layout
+  title="Move to Canada from Africa – Every Visa Route & Free Tools | AfriMigrate"
+  description="Every legal way to move to Canada from Africa: Express Entry, PNP, employer sponsorship, family visas, and more — plus careers, culture, cost of living and free tools."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / Canada</div>
+  <CountryProfile country={canada} />
+</Layout>

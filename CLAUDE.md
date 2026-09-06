@@ -4,26 +4,94 @@
 
 ## What This Is
 
-AfriMigrate is a free web-based migration planning tool for Africans moving abroad
-(Canada, UK, Australia). Founder: Augustine Okafor, Manchester UK. Tagline:
-"Connecting Africa to the World." Live at **afrimigrate.com** (GitHub Pages,
-custom domain via Namecheap DNS). Currently a single static `index.html` page —
-tonight's job is to turn it into a proper multi-page, SEO-indexable site while
-preserving the existing design system exactly, and to continue the in-app product
-build (currently in Bubble).
+AfriMigrate is becoming a comprehensive migration platform for Africans moving
+abroad — not just a calculator site. Founder: Augustine Okafor, Manchester UK.
+Tagline: "Connecting Africa to the World." Live at **afrimigrate.com** (custom
+domain via Namecheap DNS; hosting is moving from GitHub Pages to Vercel — see
+"Deployment" below). Built as a multi-page Astro static site.
 
-## Your Job Tonight, In Priority Order
+**Status as of the current expansion:** the original 30-page SEO site (see
+"Phase 1 Sitemap — Completed" below) is live. We are now building Phase 2: a
+full **country profile** system covering every realistic legal migration route
+for six countries, plus career/culture/cost-of-living content, a "find your
+best-fit country" quiz, and a multi-country comparison tool. Canada is the
+reference implementation — built first, shown to Augustine, then replicated to
+the other five countries so adding a 7th or 8th country later is a content
+task (fill in a data file), not a rebuild.
 
-1. Scaffold this repo as a static site generator (Astro is pre-selected below —
-   already set up in this folder) so 20-30 pages can share one layout.
-2. Port the existing `index.html` design (colours, type, spacing — see Design
+## Phase 2 Vision — Comprehensive Country Coverage
+
+**Countries covered:** Canada, United Kingdom, Australia, Netherlands, Belgium,
+United States. All six pull from one reusable **country profile** content
+structure (see "Country Profile Schema" below) so the page layout, design and
+content categories stay consistent as countries are added.
+
+**Visa/route coverage per country** — research each country's actual, current
+system; the categories below are a floor, not a ceiling. Wherever a route
+genuinely exists for that country, document it with: eligibility, approximate
+cost, typical timeline, required documents, and whether it leads to permanent
+residency.
+- Points-based / highly-skilled visas
+- Employer-sponsored visas
+- Intra-company transfer visas
+- Startup / entrepreneur / investor visas
+- Working holiday visas
+- Family / spousal / partner visas
+- Digital nomad visas (where one formally exists — note clearly where it
+  doesn't, rather than inventing one)
+- Seasonal / agricultural visas
+- Graduate / post-study work visas
+- Student visas
+- Tourist / visitor visas
+
+**Beyond visas — what else belongs on a country page:**
+- Best career pathways and in-demand skills right now
+- Culture and workplace etiquette — what to actually expect day to day
+- Best tourist sites and things to do
+- Cost-of-living snapshot for 2–3 major cities (rent, food, transport)
+- A "first 30 days" checklist: banking, SIM card, housing, healthcare
+  registration
+- (Open to more categories as they prove useful — e.g. a "diaspora community"
+  section, healthcare system overview, or schooling/childcare notes for
+  families. Propose before building a new category so it can be added to the
+  shared schema once, not per-country.)
+
+**Country Profile Schema:** one TypeScript data shape (`src/data/types.ts`)
+that every country's data file (`src/data/countries/<slug>.ts`) implements,
+rendered by one shared component (`src/components/CountryProfile.astro`).
+Visa routes are grouped by category and shown as accordions/cards (not a wall
+of text) so pages stay scannable on mobile. Country-specific bespoke tools
+(like Canada's CRS calculator) live alongside the profile as their own pages
+and link back into it — the profile doesn't replace them.
+
+**Additional features:**
+1. **"Find your best-fit country" quiz** — a short, free questionnaire (budget,
+   timeline, education, goals) recommending a country + visa route. Prominent
+   homepage entry point.
+2. **Side-by-side comparison tool** for 2–3 countries at once (extends the
+   existing `/compare` page, which currently only has static prose for
+   Canada/UK/Australia).
+
+**Freemium model:** all visa/route information, the country quiz, the
+comparison tool, and basic checklists stay free forever — never paywalled.
+Premium add-ons (via Stripe) are proposed to Augustine with 3–4 concrete
+options before any Stripe integration work starts; environment variables only
+for keys, never hardcoded or committed. See "Monetisation" below for the
+process once Augustine has approved a direction.
+
+## Original Job (Phase 1 — completed)
+
+1. Scaffold this repo as a static site generator (Astro) so pages share one layout.
+2. Port the original `index.html` design (colours, type, spacing — see Design
    System below) into `src/layouts/Layout.astro` as the shared shell.
-3. Build the pages listed in "Sitemap" below. Start with Canada (highest priority
-   — the only tool that actually works today).
+3. Build the 30 pages listed in "Phase 1 Sitemap" below.
 4. Generate `sitemap.xml` and `robots.txt` as part of the build.
 5. Do NOT touch the Bubble app — that's a separate no-code product surface
    (see "Bubble App" section) and is out of scope for this repo. Tool pages here
    should link to or iframe-embed the Bubble tool, not reimplement its logic yet.
+
+This phase is done. Its output (`src/pages/*`, `src/layouts/Layout.astro`,
+`public/`) is the foundation Phase 2 builds on — don't redo it, extend it.
 
 ## Non-Negotiables
 
@@ -73,7 +141,7 @@ already in use: "Plan your move abroad. Pay nothing.", "No jargon. One clear pla
 
 ---
 
-## Sitemap — Build These Pages (30 total, minimum 20 required for SEO)
+## Phase 1 Sitemap — Completed (30 pages, live on the `claude/nice-cannon-wuunzz` branch)
 
 | # | Page | Path | Target Keyword |
 |---|------|------|-----------------|
@@ -108,8 +176,35 @@ already in use: "Plan your move abroad. Pay nothing.", "No jargon. One clear pla
 | 29 | Privacy Policy | `/privacy-policy` | legal/trust |
 | 30 | Terms of Service | `/terms` | legal/trust |
 
-Starter files for #1, #4, #5 are already scaffolded in `src/pages/` — use them as
-the pattern for the rest.
+All 30 pages above are built. Do not rebuild them — Phase 2 adds a new layer
+(country profiles, quiz, comparison tool) alongside this existing sitemap, and
+may extend individual pages (e.g. `/compare`) rather than replace them.
+
+---
+
+## Deployment
+
+Hosting is moving from GitHub Pages to Vercel (Astro static output needs no
+`vercel.json` — Vercel auto-detects it). Augustine needs to: (1) import the
+repo into Vercel, (2) point afrimigrate.com's DNS at Vercel in Namecheap once
+Vercel shows the required records. The `public/CNAME` file is kept either way
+so nothing breaks if GitHub Pages is used instead.
+
+---
+
+## Monetisation
+
+Core promise: every visa/route guide, calculator, checklist, the country quiz
+and the comparison tool are **free forever**. Premium is additive only.
+
+Process: propose 3–4 concrete premium features to Augustine (with reasoning
+on build effort vs. likely willingness to pay) → wait for explicit approval on
+a direction → only then wire up Stripe, using environment variables for all
+keys (never hardcoded, never committed) and clear instructions for what
+Augustine needs to set up on the Stripe dashboard himself, since only he can
+create that account. Flag clearly if a chosen feature requires user accounts
+and a database decision (e.g. saved progress/comparisons) — that's a bigger
+architectural step than a stateless PDF export.
 
 ---
 
