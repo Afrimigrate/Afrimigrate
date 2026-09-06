@@ -206,6 +206,26 @@ create that account. Flag clearly if a chosen feature requires user accounts
 and a database decision (e.g. saved progress/comparisons) — that's a bigger
 architectural step than a stateless PDF export.
 
+**Decided (current):** Personalised PDF report ($9) and AI-generated cover
+letter/SOP ($15) are built as `/premium` with real Stripe Checkout wiring in
+`api/create-checkout-session.js` and `api/stripe-webhook.js` — these live at
+the project root, not under `src/`, so they run as Vercel serverless
+functions without needing an Astro SSR adapter; the rest of the site stays a
+plain static build. **This only works once the site is actually hosted on
+Vercel** (GitHub Pages can't run server code) — until then the buttons on
+`/premium` fail gracefully with a "not switched on yet" message rather than
+breaking. See `.env.example` for the exact environment variables Vercel
+needs and where each one comes from in the Stripe Dashboard.
+
+Saved profile/progress is intentionally NOT wired yet — it needs a real user
+accounts + database decision first, not just a Stripe button. It's shown on
+`/premium` as "Coming soon."
+
+The webhook currently only logs a successful payment — actual PDF rendering
+and AI letter generation need their own follow-up decisions (a PDF library
+needs no new account; the AI cover letter needs an LLM API key from
+whichever provider Augustine picks) before that fulfillment logic gets built.
+
 ---
 
 ## Competitive Landscape (researched — do not re-research, act on this)
