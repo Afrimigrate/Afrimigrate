@@ -71,7 +71,9 @@ export interface CountryProfile {
   heroDescription: string;
   quickFacts: QuickFact[];
   relatedTools: RelatedTool[]; // links to existing bespoke tool pages, e.g. CRS calculator
-  visaCategories: VisaCategory[];
+  visaCategories: VisaCategory[]; // work/study/family/etc. routes — NOT tourist visas, see visitingVisas
+  visitingVisas: VisaRoute[]; // kept explicitly separate from visaCategories per product requirement:
+  // every country must show a clearly distinct "visiting/tourist visa" section, paired with touristSites
   careerPathways: CareerPathway[];
   culture: CultureNote[];
   costOfLiving: CostOfLivingCity[];

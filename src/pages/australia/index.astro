@@ -1,38 +1,12 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import CountryProfile from '../../components/CountryProfile.astro';
+import { australia } from '../../data/countries/australia';
 ---
 <Layout
-  title="Move to Australia from Africa – Free Tools & Guides | AfriMigrate"
-  description="Everything you need to move to Australia from Africa: points calculator for subclass 189/190, skills assessment body finder, and step-by-step guides — all free."
+  title="Move to Australia from Africa – Every Visa Route & Free Tools | AfriMigrate"
+  description="Every legal way to move to Australia from Africa: points-tested visas, employer sponsorship, family visas, and more — plus careers, culture, cost of living and free tools."
 >
   <div class="breadcrumb"><a href="/">Home</a> / Australia</div>
-  <div class="eyebrow">Australia</div>
-  <h1>Move to Australia, step by step</h1>
-  <p class="lead" style="margin-bottom: 2.5rem;">
-    Australia's points-tested skilled migration system (subclasses 189, 190 and 491) rewards age, English ability, skilled work experience and qualifications — with no job offer required for the main independent visa. Free tools to score yourself and find your skills assessment body.
-  </p>
-
-  <div class="tools-grid">
-    <div class="tool-card">
-      <div class="hot">Most used</div>
-      <div class="tool-icon">🧮</div>
-      <h3>Points Calculator</h3>
-      <p>Estimate your score for the subclass 189 (independent) and 190 (state nominated) points test.</p>
-      <a href="/australia/points-calculator" class="tool-link">Calculate my points →</a>
-    </div>
-    <div class="tool-card">
-      <div class="tool-icon">🎓</div>
-      <h3>Skills Assessment Guide</h3>
-      <p>Find the right assessing body for your occupation — the mandatory first step before you can apply.</p>
-      <a href="/australia/skills-assessment" class="tool-link">Find my assessing body →</a>
-    </div>
-  </div>
-
-  <section class="section">
-    <div class="eyebrow">Why Australia</div>
-    <h2>A skills-first system</h2>
-    <p class="lead">
-      Australia doesn't require a job offer for its main General Skilled Migration visas — your points score and a positive skills assessment do the work. State and territory nomination (subclass 190) can add points and access to more visa invitation rounds throughout the year.
-    </p>
-  </section>
+  <CountryProfile country={australia} />
 </Layout>

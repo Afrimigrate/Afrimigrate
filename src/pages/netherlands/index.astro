@@ -1,0 +1,12 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CountryProfile from '../../components/CountryProfile.astro';
+import { netherlands } from '../../data/countries/netherlands';
+---
+<Layout
+  title="Move to the Netherlands from Africa – Every Visa Route | AfriMigrate"
+  description="Every legal way to move to the Netherlands from Africa: Highly Skilled Migrant permit, startup visa, family visas, and more — plus careers, culture, cost of living and free guides."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / Netherlands</div>
+  <CountryProfile country={netherlands} />
+</Layout>

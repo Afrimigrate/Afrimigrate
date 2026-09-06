@@ -1,0 +1,12 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CountryProfile from '../../components/CountryProfile.astro';
+import { belgium } from '../../data/countries/belgium';
+---
+<Layout
+  title="Move to Belgium from Africa – Every Visa Route | AfriMigrate"
+  description="Every legal way to move to Belgium from Africa: Single Permit, EU Blue Card, family visas, and more — plus careers, culture, cost of living and free guides."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / Belgium</div>
+  <CountryProfile country={belgium} />
+</Layout>
