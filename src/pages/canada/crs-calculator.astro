@@ -7,22 +7,22 @@ const faqs = [
     a: 'Recent Express Entry draws have invited candidates with scores ranging from the high 300s (for Provincial Nominee or category-based draws) to around 470-540 for general draws. There is no fixed "passing" score — it moves every draw based on the size and profile of the candidate pool.',
   },
   {
-    q: 'How is my CRS score calculated?',
-    a: 'Your score combines core human capital factors (age, education, official language ability, Canadian work experience), spouse factors if you have an accompanying partner, and additional points for a valid job offer, a provincial nomination, or a Canadian degree.',
+    q: 'Does a job offer still add CRS points?',
+    a: 'No. IRCC removed CRS points for a valid job offer as of March 25, 2025. A job offer can still help you meet eligibility for some programs, but it no longer boosts your score directly — this calculator reflects that change.',
   },
   {
     q: 'Can I improve my CRS score?',
-    a: 'Yes. The fastest gains usually come from improving your language test results (a jump from CLB 9 to CLB 10 in all four abilities adds meaningful points), gaining a Canadian educational credential, or securing a provincial nomination, which adds 600 points and effectively guarantees an invitation.',
+    a: 'Yes. The fastest gains usually come from improving your language test results (a jump from CLB 7 to CLB 9 in all four abilities adds meaningful points), gaining a Canadian educational credential, or securing a provincial nomination, which adds 600 points and effectively guarantees an invitation.',
   },
   {
-    q: 'Do I need a job offer to apply through Express Entry?',
-    a: 'No. Most successful Express Entry candidates never had a Canadian job offer. Your core score from age, education, language and experience is usually enough if it clears the draw cut-off, especially when combined with a provincial nomination.',
+    q: 'How accurate is this calculator?',
+    a: "We've built this natively using IRCC's published point tables, cross-checked across multiple current sources. IRCC updates these tables periodically, so treat your result as a strong estimate and confirm anything decision-critical against the official CRS tool on canada.ca.",
   },
 ];
 ---
 <Layout
-  title="Free CRS Score Calculator for Canada Express Entry | AfriMigrate"
-  description="Calculate your Comprehensive Ranking System (CRS) score for Canada Express Entry in under 3 minutes. 100% free — no sign-up required."
+  title="Free CRS Score Calculator for Canada Express Entry (2026) | AfriMigrate"
+  description="Calculate your real Comprehensive Ranking System (CRS) score for Canada Express Entry — built natively with current IRCC point tables, full breakdown included. 100% free."
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify({
     '@context': 'https://schema.org',
@@ -37,39 +37,196 @@ const faqs = [
   <div class="breadcrumb"><a href="/">Home</a> / <a href="/canada">Canada</a> / CRS Calculator</div>
   <div class="eyebrow">Canada · Express Entry</div>
   <h1>CRS Score Calculator</h1>
-  <p class="lead" style="margin-bottom: 2.5rem;">
-    Enter your age, education, language scores and work experience to instantly know your Comprehensive Ranking System score — and whether you're competitive for an Express Entry invitation. Completely free, no sign-up required.
+  <p class="lead" style="margin-bottom: 2rem;">
+    A genuinely native calculator — no external embed. Answer a few short steps to get your Comprehensive Ranking System score with a full breakdown of exactly where every point came from. Built with IRCC's current point tables, including the March 2025 removal of job-offer points that many older calculators still get wrong.
   </p>
 
-  <iframe
-    src="https://japa--app.bubbleapps.io/version-test/canada_input"
-    class="tool-embed"
-    loading="lazy"
-    title="AfriMigrate CRS Calculator"
-  ></iframe>
+  <div class="crs-widget">
+    <div class="crs-progress">
+      <div class="crs-progress-bar"><div class="crs-progress-fill" id="crsProgressFill"></div></div>
+      <div class="crs-progress-label" id="crsProgressLabel">Step 1 of 7</div>
+    </div>
+
+    <form id="crsForm">
+      <section class="crs-step" data-step="1">
+        <h2>Marital status</h2>
+        <p class="crs-hint">This changes several point maximums, since a spouse can contribute to your score.</p>
+        <div class="crs-options">
+          <label class="crs-option"><input type="radio" name="maritalStatus" value="single" checked /> Single</label>
+          <label class="crs-option"><input type="radio" name="maritalStatus" value="spouse-accompanying" /> Married / common-law, spouse coming with me</label>
+          <label class="crs-option"><input type="radio" name="maritalStatus" value="spouse-not-accompanying" /> Married, but spouse is <strong>not</strong> coming to Canada</label>
+        </div>
+      </section>
+
+      <section class="crs-step" data-step="2" hidden>
+        <h2>Your age</h2>
+        <p class="crs-hint">Age is scored as of the day you'd submit your profile.</p>
+        <input type="number" name="age" id="crsAge" min="17" max="60" value="30" class="crs-input" />
+      </section>
+
+      <section class="crs-step" data-step="3" hidden>
+        <h2>Your highest level of education</h2>
+        <div class="crs-options">
+          <label class="crs-option"><input type="radio" name="education" value="none" /> None / less than high school</label>
+          <label class="crs-option"><input type="radio" name="education" value="high-school" /> High school</label>
+          <label class="crs-option"><input type="radio" name="education" value="one-year-post-secondary" /> 1-year post-secondary credential</label>
+          <label class="crs-option"><input type="radio" name="education" value="two-year-post-secondary" /> 2-year post-secondary credential</label>
+          <label class="crs-option"><input type="radio" name="education" value="bachelors" checked /> Bachelor's degree (3+ years)</label>
+          <label class="crs-option"><input type="radio" name="education" value="two-or-more-credentials" /> Two or more post-secondary credentials (one 3+ years)</label>
+          <label class="crs-option"><input type="radio" name="education" value="masters" /> Master's degree</label>
+          <label class="crs-option"><input type="radio" name="education" value="phd" /> PhD / doctorate</label>
+        </div>
+      </section>
+
+      <section class="crs-step" data-step="4" hidden>
+        <h2>First official language (English or French)</h2>
+        <p class="crs-hint">Enter your CLB (Canadian Language Benchmark) level for each ability, from your IELTS/CELPIP/TEF/TCF results.</p>
+        <div class="crs-clb-grid" data-lang="firstLanguage">
+          <label>Listening <select name="firstLanguage.listening" class="crs-clb"></select></label>
+          <label>Speaking <select name="firstLanguage.speaking" class="crs-clb"></select></label>
+          <label>Reading <select name="firstLanguage.reading" class="crs-clb"></select></label>
+          <label>Writing <select name="firstLanguage.writing" class="crs-clb"></select></label>
+        </div>
+        <label class="crs-option" style="margin-top: 1.5rem;">
+          <input type="checkbox" name="hasSecondLanguage" id="crsHasSecondLang" /> I also have a test result in my second official language
+        </label>
+        <div class="crs-clb-grid" data-lang="secondLanguage" id="crsSecondLangGrid" hidden>
+          <label>Listening <select name="secondLanguage.listening" class="crs-clb"></select></label>
+          <label>Speaking <select name="secondLanguage.speaking" class="crs-clb"></select></label>
+          <label>Reading <select name="secondLanguage.reading" class="crs-clb"></select></label>
+          <label>Writing <select name="secondLanguage.writing" class="crs-clb"></select></label>
+        </div>
+      </section>
+
+      <section class="crs-step" data-step="5" hidden>
+        <h2>Work experience</h2>
+        <label class="crs-field">
+          Years of skilled work experience <strong>in Canada</strong> (last 10 years)
+          <select name="canadianWorkYears" class="crs-input">
+            <option value="0">None</option>
+            <option value="1">1 year</option>
+            <option value="2">2 years</option>
+            <option value="3">3 years</option>
+            <option value="4">4 years</option>
+            <option value="5">5+ years</option>
+          </select>
+        </label>
+        <label class="crs-field">
+          Years of skilled work experience <strong>outside Canada</strong> (last 10 years)
+          <select name="foreignWorkYears" class="crs-input">
+            <option value="0">None</option>
+            <option value="1">1–2 years</option>
+            <option value="3">3+ years</option>
+          </select>
+        </label>
+        <label class="crs-option">
+          <input type="checkbox" name="hasTradesCertificate" /> I hold a certificate of qualification in a skilled trade
+        </label>
+      </section>
+
+      <section class="crs-step" data-step="6" hidden>
+        <h2>Your spouse's profile</h2>
+        <p class="crs-hint">Shown because you said your spouse is coming with you — their profile can add up to 40 points.</p>
+        <label class="crs-field">
+          Spouse's highest education
+          <select name="spouseEducation" class="crs-input">
+            <option value="none">None / less than high school</option>
+            <option value="high-school">High school</option>
+            <option value="one-year-post-secondary">1-year post-secondary</option>
+            <option value="two-year-post-secondary">2-year post-secondary</option>
+            <option value="bachelors" selected>Bachelor's degree</option>
+            <option value="two-or-more-credentials">Two or more credentials</option>
+            <option value="masters">Master's degree</option>
+            <option value="phd">PhD</option>
+          </select>
+        </label>
+        <p class="crs-hint" style="margin-top: 1rem;">Spouse's first official language (CLB per ability)</p>
+        <div class="crs-clb-grid" data-lang="spouseLanguage">
+          <label>Listening <select name="spouseLanguage.listening" class="crs-clb"></select></label>
+          <label>Speaking <select name="spouseLanguage.speaking" class="crs-clb"></select></label>
+          <label>Reading <select name="spouseLanguage.reading" class="crs-clb"></select></label>
+          <label>Writing <select name="spouseLanguage.writing" class="crs-clb"></select></label>
+        </div>
+        <label class="crs-field" style="margin-top: 1rem;">
+          Spouse's years of Canadian work experience
+          <select name="spouseCanadianWorkYears" class="crs-input">
+            <option value="0">None</option>
+            <option value="1">1 year</option>
+            <option value="2">2 years</option>
+            <option value="3">3 years</option>
+            <option value="4">4 years</option>
+            <option value="5">5+ years</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="crs-step" data-step="7" hidden>
+        <h2>Additional points</h2>
+        <label class="crs-option">
+          <input type="checkbox" name="hasProvincialNomination" /> I have a Provincial Nomination (+600)
+        </label>
+        <label class="crs-field">
+          French ability (NCLC), if assessed
+          <select name="frenchNCLC" class="crs-input">
+            <option value="0">Not assessed / below NCLC 4</option>
+            <option value="4">NCLC 4</option>
+            <option value="5">NCLC 5</option>
+            <option value="6">NCLC 6</option>
+            <option value="7">NCLC 7</option>
+            <option value="8">NCLC 8</option>
+            <option value="9">NCLC 9</option>
+            <option value="10">NCLC 10+</option>
+          </select>
+        </label>
+        <label class="crs-field">
+          Canadian study experience
+          <select name="hasCanadianStudy" class="crs-input">
+            <option value="none">None</option>
+            <option value="one-or-two-year">1–2 year credential earned in Canada</option>
+            <option value="three-year-or-more">3+ year credential earned in Canada</option>
+          </select>
+        </label>
+        <label class="crs-option">
+          <input type="checkbox" name="hasSiblingInCanada" /> I have a sibling who is a Canadian citizen or PR, living in Canada
+        </label>
+      </section>
+
+      <div class="crs-nav">
+        <button type="button" id="crsBack" class="btn-ghost" disabled>← Back</button>
+        <button type="button" id="crsNext" class="btn-primary">Next →</button>
+      </div>
+    </form>
+
+    <div class="crs-results" id="crsResults" hidden>
+      <div class="crs-score-headline">
+        <div class="crs-score-num" id="crsScoreNum">0</div>
+        <div class="crs-score-of">out of 1,200 points</div>
+      </div>
+      <div id="crsBreakdown"></div>
+      <button type="button" id="crsRestart" class="btn-ghost" style="margin-top: 1.5rem;">Start over</button>
+    </div>
+  </div>
 
   <section class="section">
     <div class="eyebrow">How It Works</div>
     <h2>How CRS scoring works</h2>
     <p class="lead" style="max-width: 700px;">
-      The Comprehensive Ranking System (CRS) scores every Express Entry candidate out of 1,200 points across four areas. The highest-scoring candidates in each draw receive an Invitation to Apply for permanent residence.
+      The Comprehensive Ranking System scores every Express Entry candidate out of 1,200 points across four areas: core human capital (age, education, language, Canadian work experience), spouse factors, skill transferability, and additional points like a provincial nomination.
     </p>
     <table>
-      <thead>
-        <tr><th>Factor</th><th>Max points (no spouse)</th><th>Max points (with spouse)</th></tr>
-      </thead>
+      <thead><tr><th>Factor</th><th>Max (no spouse)</th><th>Max (with spouse)</th></tr></thead>
       <tbody>
         <tr><td>Age</td><td>110</td><td>100</td></tr>
         <tr><td>Education</td><td>150</td><td>140</td></tr>
         <tr><td>Official language proficiency</td><td>160</td><td>150</td></tr>
         <tr><td>Canadian work experience</td><td>80</td><td>70</td></tr>
-        <tr><td>Spouse factors (education, language, experience)</td><td>—</td><td>40</td></tr>
+        <tr><td>Spouse factors</td><td>—</td><td>40</td></tr>
         <tr><td>Skill transferability</td><td>100</td><td>100</td></tr>
-        <tr><td>Additional points (PNP, job offer, sibling in Canada, French ability)</td><td>up to 600</td><td>up to 600</td></tr>
+        <tr><td>Additional points (PNP, French, Canadian study, sibling)</td><td>up to 600</td><td>up to 600</td></tr>
       </tbody>
     </table>
     <p class="lead" style="max-width: 700px;">
-      A provincial nomination is the single biggest lever available — it adds 600 points on its own, which is more than enough to guarantee an invitation in almost every draw. That's why we built a dedicated <a href="/canada/pnp" style="color: var(--green); font-weight: 600;">PNP Finder</a> to help you check if you qualify for one.
+      A provincial nomination is the single biggest lever available — it adds 600 points, more than enough to guarantee an invitation in almost every draw. Check our <a href="/canada/pnp" style="color: var(--green); font-weight: 600;">PNP Finder</a> to see if you qualify for one.
     </p>
   </section>
 
@@ -83,4 +240,208 @@ const faqs = [
       </div>
     ))}
   </section>
+
+  <style is:global>
+    .crs-widget { background: var(--white); border: 1px solid var(--border); border-radius: var(--rl); padding: 2rem; max-width: 680px; }
+    .crs-progress { margin-bottom: 2rem; }
+    .crs-progress-bar { height: 6px; background: var(--bg2); border-radius: 99px; overflow: hidden; margin-bottom: 0.6rem; }
+    .crs-progress-fill { height: 100%; width: 14.28%; background: linear-gradient(90deg, var(--green), #7bc97b); border-radius: 99px; transition: width 0.3s ease; }
+    .crs-progress-label { font-size: 0.75rem; font-weight: 600; color: var(--ink2); letter-spacing: 0.04em; text-transform: uppercase; }
+    .crs-step h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .crs-hint { font-size: 0.85rem; color: var(--ink2); font-weight: 300; margin-bottom: 1.25rem; }
+    .crs-options { display: flex; flex-direction: column; gap: 0.75rem; }
+    .crs-option {
+      display: flex; align-items: center; gap: 0.75rem; font-size: 0.92rem; color: var(--ink);
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); padding: 0.85rem 1rem; cursor: pointer;
+    }
+    .crs-input, .crs-clb {
+      width: 100%; padding: 0.7rem 0.9rem; border-radius: var(--r); border: 1px solid var(--border);
+      background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 0.92rem; color: var(--ink); margin-top: 0.4rem;
+    }
+    .crs-field { display: block; font-size: 0.85rem; font-weight: 600; color: var(--ink); margin-bottom: 1.25rem; }
+    .crs-clb-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .crs-clb-grid label { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
+    .crs-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .crs-nav button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .crs-results { text-align: center; }
+    .crs-score-headline { margin-bottom: 2rem; }
+    .crs-score-num { font-family: 'Fraunces', serif; font-size: 4.5rem; font-weight: 900; color: var(--green); letter-spacing: -3px; line-height: 1; }
+    .crs-score-of { font-size: 0.85rem; color: var(--ink2); margin-top: 0.3rem; }
+    .crs-breakdown-group { text-align: left; margin-bottom: 1.25rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); padding: 1.25rem 1.5rem; }
+    .crs-breakdown-group h3 { font-size: 0.95rem; display: flex; justify-content: space-between; margin-bottom: 0.75rem; }
+    .crs-breakdown-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--ink2); padding: 0.35rem 0; border-bottom: 1px solid var(--border); }
+    .crs-breakdown-row:last-child { border-bottom: none; }
+    .crs-breakdown-row span:last-child { font-weight: 600; color: var(--ink); }
+
+    @media (max-width: 560px) {
+      .crs-widget { padding: 1.5rem; }
+      .crs-clb-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <script>
+    import { scoreCRS } from '../../lib/crs';
+    import type { CRSInput, CLB } from '../../lib/crs';
+
+    const CLB_OPTIONS: { value: CLB | 3; label: string }[] = [
+      { value: 3, label: 'CLB 3 or below' },
+      { value: 4, label: 'CLB 4' },
+      { value: 5, label: 'CLB 5' },
+      { value: 6, label: 'CLB 6' },
+      { value: 7, label: 'CLB 7' },
+      { value: 8, label: 'CLB 8' },
+      { value: 9, label: 'CLB 9' },
+      { value: 10, label: 'CLB 10+' },
+    ];
+    document.querySelectorAll<HTMLSelectElement>('.crs-clb').forEach((select) => {
+      select.innerHTML = CLB_OPTIONS.map((o) => `<option value="${o.value}">${o.label}</option>`).join('');
+      select.value = '7';
+    });
+
+    const form = document.getElementById('crsForm') as HTMLFormElement;
+    const steps = Array.from(document.querySelectorAll<HTMLElement>('.crs-step'));
+    const backBtn = document.getElementById('crsBack') as HTMLButtonElement;
+    const nextBtn = document.getElementById('crsNext') as HTMLButtonElement;
+    const progressFill = document.getElementById('crsProgressFill') as HTMLElement;
+    const progressLabel = document.getElementById('crsProgressLabel') as HTMLElement;
+    const resultsPanel = document.getElementById('crsResults') as HTMLElement;
+    const restartBtn = document.getElementById('crsRestart') as HTMLButtonElement;
+
+    let current = 0;
+
+    function visibleSteps(): HTMLElement[] {
+      const maritalStatus = (form.elements.namedItem('maritalStatus') as RadioNodeList)?.value;
+      return steps.filter((s) => {
+        if (s.dataset.step === '6') return maritalStatus === 'spouse-accompanying';
+        return true;
+      });
+    }
+
+    function render() {
+      const active = visibleSteps();
+      steps.forEach((s) => { s.hidden = !active.includes(s); });
+      active.forEach((s, i) => { s.hidden = i !== current; });
+      progressFill.style.width = `${((current + 1) / active.length) * 100}%`;
+      progressLabel.textContent = `Step ${current + 1} of ${active.length}`;
+      backBtn.disabled = current === 0;
+      nextBtn.textContent = current === active.length - 1 ? 'See my score →' : 'Next →';
+    }
+
+    document.getElementById('crsHasSecondLang')?.addEventListener('change', (e) => {
+      const grid = document.getElementById('crsSecondLangGrid') as HTMLElement;
+      grid.hidden = !(e.target as HTMLInputElement).checked;
+    });
+
+    function getCLB(name: string): CLB {
+      const el = form.elements.namedItem(name) as HTMLSelectElement | null;
+      return (el ? parseInt(el.value, 10) : 7) as CLB;
+    }
+
+    function buildInput(): CRSInput {
+      const fd = new FormData(form);
+      const maritalStatus = fd.get('maritalStatus') as CRSInput['maritalStatus'];
+      return {
+        maritalStatus,
+        age: parseInt(fd.get('age') as string, 10) || 30,
+        education: fd.get('education') as CRSInput['education'],
+        firstLanguage: {
+          listening: getCLB('firstLanguage.listening'),
+          speaking: getCLB('firstLanguage.speaking'),
+          reading: getCLB('firstLanguage.reading'),
+          writing: getCLB('firstLanguage.writing'),
+        },
+        hasSecondLanguage: fd.get('hasSecondLanguage') === 'on',
+        secondLanguage: {
+          listening: getCLB('secondLanguage.listening'),
+          speaking: getCLB('secondLanguage.speaking'),
+          reading: getCLB('secondLanguage.reading'),
+          writing: getCLB('secondLanguage.writing'),
+        },
+        canadianWorkYears: parseInt(fd.get('canadianWorkYears') as string, 10) || 0,
+        foreignWorkYears: parseInt(fd.get('foreignWorkYears') as string, 10) || 0,
+        hasTradesCertificate: fd.get('hasTradesCertificate') === 'on',
+        spouseEducation: fd.get('spouseEducation') as CRSInput['education'],
+        spouseLanguage: {
+          listening: getCLB('spouseLanguage.listening'),
+          speaking: getCLB('spouseLanguage.speaking'),
+          reading: getCLB('spouseLanguage.reading'),
+          writing: getCLB('spouseLanguage.writing'),
+        },
+        spouseCanadianWorkYears: parseInt(fd.get('spouseCanadianWorkYears') as string, 10) || 0,
+        hasProvincialNomination: fd.get('hasProvincialNomination') === 'on',
+        frenchNCLC: (parseInt(fd.get('frenchNCLC') as string, 10) || 0) as CRSInput['frenchNCLC'],
+        hasCanadianStudy: fd.get('hasCanadianStudy') as CRSInput['hasCanadianStudy'],
+        hasSiblingInCanada: fd.get('hasSiblingInCanada') === 'on',
+      };
+    }
+
+    function showResults() {
+      const result = scoreCRS(buildInput());
+      form.hidden = true;
+      document.querySelector('.crs-progress')!.setAttribute('hidden', 'true');
+      resultsPanel.hidden = false;
+      document.getElementById('crsScoreNum')!.textContent = String(result.total);
+
+      const groups = [
+        { title: 'Core human capital', subtotal: result.coreHumanCapital.subtotal, rows: [
+          ['Age', result.coreHumanCapital.age],
+          ['Education', result.coreHumanCapital.education],
+          ['First official language', result.coreHumanCapital.firstLanguage],
+          ['Second official language', result.coreHumanCapital.secondLanguage],
+          ['Canadian work experience', result.coreHumanCapital.canadianWorkExperience],
+        ]},
+        { title: 'Spouse factors', subtotal: result.spouseFactors.subtotal, rows: [
+          ['Spouse education', result.spouseFactors.education],
+          ['Spouse language', result.spouseFactors.language],
+          ['Spouse Canadian work experience', result.spouseFactors.canadianWorkExperience],
+        ]},
+        { title: 'Skill transferability', subtotal: result.skillTransferability.subtotal, rows: [
+          ['Education + language/experience', result.skillTransferability.educationLanguage],
+          ['Foreign experience + language/experience', result.skillTransferability.foreignExperienceLanguage],
+          ['Trades certificate + language', result.skillTransferability.tradesLanguage],
+        ]},
+        { title: 'Additional points', subtotal: result.additionalPoints.subtotal, rows: [
+          ['Provincial nomination', result.additionalPoints.provincialNomination],
+          ['French language bonus', result.additionalPoints.frenchLanguage],
+          ['Canadian study experience', result.additionalPoints.canadianStudy],
+          ['Sibling in Canada', result.additionalPoints.sibling],
+        ]},
+      ];
+
+      document.getElementById('crsBreakdown')!.innerHTML = groups
+        .filter((g) => g.subtotal > 0 || g.title === 'Core human capital')
+        .map((g) => `
+          <div class="crs-breakdown-group">
+            <h3><span>${g.title}</span><span>${g.subtotal}</span></h3>
+            ${g.rows.filter(([, v]) => (v as number) > 0).map(([label, v]) => `
+              <div class="crs-breakdown-row"><span>${label}</span><span>${v}</span></div>
+            `).join('') || '<div class="crs-breakdown-row"><span>No points in this category</span><span>0</span></div>'}
+          </div>
+        `).join('');
+    }
+
+    nextBtn.addEventListener('click', () => {
+      const active = visibleSteps();
+      if (current < active.length - 1) {
+        current += 1;
+        render();
+      } else {
+        showResults();
+      }
+    });
+    backBtn.addEventListener('click', () => {
+      if (current > 0) { current -= 1; render(); }
+    });
+    restartBtn.addEventListener('click', () => {
+      form.reset();
+      form.hidden = false;
+      document.querySelector('.crs-progress')!.removeAttribute('hidden');
+      resultsPanel.hidden = true;
+      current = 0;
+      render();
+    });
+
+    render();
+  </script>
 </Layout>

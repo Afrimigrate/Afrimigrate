@@ -137,9 +137,42 @@ const prLabel: Record<string, string> = {
   </div>
 </section>
 
+<section class="section" id="visiting">
+  <div class="eyebrow">Just Visiting?</div>
+  <h2>Tourist &amp; visiting visas</h2>
+  <p class="lead" style="margin-bottom: 1.5rem;">Kept deliberately separate from the work/study/family routes above — this is specifically for a holiday, family visit, or short trip.</p>
+  {country.visitingVisas.map((route) => (
+    <div class="cp-route-card">
+      <div class="cp-route-head">
+        <h3 style="margin-bottom: 0;">{route.name}</h3>
+        <div class="cp-badges">
+          <span class={`cp-badge cp-badge-${route.status}`}>{statusLabel[route.status]}</span>
+          <span class={`cp-badge cp-badge-pr-${route.leadsToPR}`}>{prLabel[route.leadsToPR]}</span>
+        </div>
+      </div>
+      <p style="color: var(--ink2); font-size: 0.92rem; margin-bottom: 1rem;">{route.summary}</p>
+      {route.statusNote && <div class="cp-note">ℹ️ {route.statusNote}</div>}
+      <div class="cp-route-grid">
+        <div><span class="cp-route-label">Approx. cost</span><p>{route.cost}</p></div>
+        <div><span class="cp-route-label">Typical timeline</span><p>{route.timeline}</p></div>
+      </div>
+      <div class="cp-route-grid">
+        <div>
+          <span class="cp-route-label">Eligibility</span>
+          <ul class="cp-list">{route.eligibility.map((e) => <li>{e}</li>)}</ul>
+        </div>
+        <div>
+          <span class="cp-route-label">Documents needed</span>
+          <ul class="cp-list">{route.documents.map((d) => <li>{d}</li>)}</ul>
+        </div>
+      </div>
+    </div>
+  ))}
+</section>
+
 <section class="section section-alt" style="border-radius: var(--rl);">
   <div class="eyebrow">While You're There</div>
-  <h2>Places worth seeing</h2>
+  <h2>Best places to visit</h2>
   <div class="tools-grid">
     {country.touristSites.map((t) => (
       <div class="tool-card"><h3>{t.name}</h3><p style="margin-bottom: 0;">{t.description}</p></div>
