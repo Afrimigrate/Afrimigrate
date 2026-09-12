@@ -63,6 +63,35 @@ export interface RelatedTool {
   href: string;
 }
 
+export type RatingTier = 'budget' | 'mid' | 'expensive';
+export type PresenceTier = 'low' | 'moderate' | 'high';
+
+export interface Neighbourhood {
+  name: string;
+  affordability: RatingTier;
+  diasporaPresence: PresenceTier;
+  safety: PresenceTier;
+  commute: string; // short, concrete, e.g. "40 min by train to the CBD"
+  description: string;
+}
+
+export interface AreaGuide {
+  city: string; // the flagship city this guide covers
+  neighbourhoods: Neighbourhood[];
+  officialHousingPlatform: { name: string; url: string }; // link out, never scraped/hosted listings
+}
+
+export interface StudentHousingGuidance {
+  universityPortalNote: string; // how university housing offices/portals typically work
+  trustedPlatforms: string[]; // named platforms/approaches, not scraped listings
+}
+
+export interface AccommodationGuidance {
+  guidance: string; // what visa officers look for in proof of accommodation for a visit
+  platformName: string;
+  platformUrl: string;
+}
+
 export interface CountryProfile {
   slug: string;
   name: string;
@@ -79,5 +108,8 @@ export interface CountryProfile {
   costOfLiving: CostOfLivingCity[];
   first30Days: ChecklistItem[];
   touristSites: TouristSite[];
+  areaGuide: AreaGuide;
+  studentHousing: StudentHousingGuidance;
+  touristAccommodation: AccommodationGuidance;
   sourceNote: string; // disclaimer about figures changing / verify officially
 }

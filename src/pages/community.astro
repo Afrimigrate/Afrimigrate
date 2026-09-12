@@ -1,0 +1,87 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="Find Your Community | AfriMigrate"
+  description="Find African grocery stores, churches, mosques and community centres near you in Canada, the UK, Australia, Netherlands, Belgium and the US."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / Find Your Community</div>
+  <div class="eyebrow">You're Not Starting From Zero</div>
+  <h1>Find your community</h1>
+  <p class="lead" style="margin-bottom: 2rem;">
+    Moving abroad doesn't mean leaving everything familiar behind. Search for African grocery stores, churches, mosques and community centres already established where you're headed — real places, with live ratings and hours from Google.
+  </p>
+
+  <div class="card" style="max-width: 640px; display: flex; flex-direction: column; gap: 1.25rem;">
+    <label class="crs-field">
+      City
+      <select id="communityCity" class="crs-input">
+        <option value="Toronto, Canada">Toronto, Canada</option>
+        <option value="London, UK">London, UK</option>
+        <option value="Sydney, Australia">Sydney, Australia</option>
+        <option value="Amsterdam, Netherlands">Amsterdam, Netherlands</option>
+        <option value="Brussels, Belgium">Brussels, Belgium</option>
+        <option value="New York City, USA">New York City, USA</option>
+      </select>
+    </label>
+    <label class="crs-field">
+      What are you looking for?
+      <select id="communityCategory" class="crs-input">
+        <option value="African grocery store">African grocery store</option>
+        <option value="African restaurant">African restaurant</option>
+        <option value="Church">Church</option>
+        <option value="Mosque">Mosque</option>
+        <option value="African community centre">Community centre</option>
+      </select>
+    </label>
+    <button id="communitySearch" class="btn-primary" style="border: none; cursor: pointer;">Search →</button>
+  </div>
+
+  <div id="communityStatus" class="cp-note" style="margin-top: 1.5rem; max-width: 640px;" hidden></div>
+  <div id="communityResults" class="tools-grid" style="margin-top: 2rem;"></div>
+
+  <script>
+    import { searchPlacesText, isPlacesConfigured } from '../lib/places';
+
+    const citySelect = document.getElementById('communityCity') as HTMLSelectElement;
+    const categorySelect = document.getElementById('communityCategory') as HTMLSelectElement;
+    const searchBtn = document.getElementById('communitySearch') as HTMLButtonElement;
+    const status = document.getElementById('communityStatus') as HTMLElement;
+    const results = document.getElementById('communityResults') as HTMLElement;
+
+    async function runSearch() {
+      results.innerHTML = '';
+      if (!isPlacesConfigured) {
+        status.hidden = false;
+        status.textContent = "⚠️ This feature isn't switched on for this site yet — check back soon.";
+        return;
+      }
+      status.hidden = false;
+      status.textContent = 'Searching…';
+      searchBtn.disabled = true;
+
+      const query = `${categorySelect.value} in ${citySelect.value}`;
+      const places = await searchPlacesText(query);
+
+      searchBtn.disabled = false;
+      if (places.length === 0) {
+        status.textContent = 'No results found — try a different city or category.';
+        return;
+      }
+      status.hidden = true;
+      results.innerHTML = places.map((p) => `
+        <div class="tool-card">
+          <h3>${p.name}</h3>
+          <p style="margin-bottom: 0.5rem;">${p.address}</p>
+          <p style="font-size: 0.85rem; color: var(--ink2); margin-bottom: 1rem;">
+            ${p.rating ? `⭐ ${p.rating} (${p.userRatingCount ?? 0} reviews)` : 'No rating yet'}
+            ${p.openNow !== undefined ? (p.openNow ? ' · 🟢 Open now' : ' · 🔴 Closed now') : ''}
+          </p>
+          <a href="${p.mapsUrl}" target="_blank" rel="noopener" class="tool-link">View on Google Maps →</a>
+        </div>
+      `).join('');
+    }
+
+    searchBtn.addEventListener('click', runSearch);
+  </script>
+</Layout>

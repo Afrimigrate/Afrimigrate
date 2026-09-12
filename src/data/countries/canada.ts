@@ -329,6 +329,25 @@ export const canada: CountryProfile = {
     { name: 'Stanley Park, Vancouver', description: 'A massive urban rainforest park with ocean views, minutes from downtown Vancouver.' },
     { name: 'CN Tower, Toronto', description: 'An iconic skyline landmark with a glass floor observation deck.' },
   ],
+  areaGuide: {
+    city: 'Toronto',
+    officialHousingPlatform: { name: 'Realtor.ca', url: 'https://www.realtor.ca' },
+    neighbourhoods: [
+      { name: 'Scarborough', affordability: 'budget', diasporaPresence: 'high', safety: 'moderate', commute: '30-45 min to downtown by GO Train/subway', description: 'One of the most diverse parts of Toronto, with large African and Caribbean communities, affordable housing, and strong transit links.' },
+      { name: 'North York', affordability: 'mid', diasporaPresence: 'high', safety: 'high', commute: '20-30 min to downtown by subway', description: 'A balance of affordability and accessibility, with good schools, growing job opportunities, and established immigrant communities.' },
+      { name: 'Etobicoke', affordability: 'mid', diasporaPresence: 'moderate', safety: 'high', commute: '25-35 min to downtown by GO Train', description: 'A quieter, more suburban feel with larger homes, green space near Lake Ontario, and a strong sense of community.' },
+      { name: 'Danforth (East York)', affordability: 'mid', diasporaPresence: 'moderate', safety: 'high', commute: '15-20 min to downtown by subway', description: 'Walkable, close to grocery stores, pharmacies and a major hospital, with relatively affordable housing for its central location.' },
+    ],
+  },
+  studentHousing: {
+    universityPortalNote: 'Most Canadian universities run their own housing portal for on-campus residence, usually first-come or lottery-based — apply the moment you accept your offer, as spots fill fast. For off-campus housing, never wire money for a place you haven\'t verified is real.',
+    trustedPlatforms: ['Your university\'s official off-campus housing listing service', 'Rentals.ca', 'PadMapper', 'Facebook groups specific to your university (verify admin legitimacy first)'],
+  },
+  touristAccommodation: {
+    guidance: 'For a Temporary Resident Visa application, a confirmed hotel booking or a signed invitation letter from whoever you\'re staying with (plus their ID) is normally sufficient — you don\'t need to prepay a non-refundable stay before your visa is approved. Look for free-cancellation bookings you can use as proof, then cancel if your dates change.',
+    platformName: 'Booking.com',
+    platformUrl: 'https://www.booking.com',
+  },
   sourceNote:
     'Immigration programs, fees and processing times change frequently and without notice. Figures above are indicative and current as of our last research pass — always confirm details directly on IRCC\'s official website (canada.ca) before making decisions or payments.',
 };

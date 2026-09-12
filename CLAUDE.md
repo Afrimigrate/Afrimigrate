@@ -220,6 +220,83 @@ the default "Demo" tier) — cache fetched photo URLs (e.g. in the database
 alongside each tourist site, refreshed periodically) rather than calling the
 API on every page load.
 
+## Architecture — Google Places (Live Ratings/Hours + "Find Your Community")
+
+Added to supplement the free tourist-attraction listings with live data, and
+to power a distinct, purpose-built feature for the diaspora audience:
+
+- **Tourist site supplement**: each tourist site card on a country page has a
+  "See live rating & hours" button. Clicking it calls the Places API (New)
+  Text Search endpoint and shows the live rating, review count, open/closed
+  status, and a Google Maps link — click-to-reveal, not eager-loaded, to
+  conserve API quota.
+- **"Find Your Community"** (`/community`): its own distinct, warm feature —
+  deliberately separate from the tourist-site supplement — that searches for
+  African grocery stores, African restaurants, churches, mosques, and
+  community centres in each of the six flagship cities, with the same live
+  rating/hours/maps-link data. This is free-tier content (discovery layer),
+  not gated.
+
+**Implementation** (`src/lib/places.ts`): calls
+`https://places.googleapis.com/v1/places:searchText` directly from the
+browser with the API key sent as an `X-Goog-Api-Key` header — this is
+Google's own supported browser pattern. In-memory `Map` cache avoids
+repeat-searching the same query within a session.
+
+**Important difference from Supabase/Unsplash — this key needs restricting.**
+Supabase's anon key and Unsplash's Access Key are both designed to be safely
+exposed in browser code. A Google Places key is not — anyone who copies an
+unrestricted key from the page source could run up the bill on your account.
+Every consumer of this feature checks `isPlacesConfigured` first and shows a
+friendly "not switched on yet" message if the key is absent, so nothing
+breaks before it's set up — but the restriction step below is not optional
+once it is.
+
+**What Augustine needs to do to get this working:**
+1. In Google Cloud Console (console.cloud.google.com), create a project (or
+   reuse an existing one).
+2. **Add a billing account to the project.** Unlike Supabase and Unsplash,
+   Google requires a card on file before the Places API will respond at
+   all — even though normal usage for this site should stay within Google's
+   free monthly credit. No card, no data, even in testing.
+3. APIs & Services → Library → search "Places API (New)" → Enable.
+4. APIs & Services → Credentials → Create Credentials → API key.
+5. Click the new key → under "Application restrictions" choose "Websites"
+   and add `afrimigrate.com` (plus `localhost` while testing). This step is
+   what makes it safe to use in browser code the way Supabase's anon key is.
+6. Paste the restricted key into Vercel as `PUBLIC_GOOGLE_PLACES_API_KEY`
+   (see `.env.example`).
+
+## Neighbourhood Guides, Student Housing & Accommodation Guidance
+
+Added alongside the country profile schema for each of the six flagship
+cities (Toronto, London, Sydney, Amsterdam, Brussels, New York):
+
+- **`areaGuide`** (per country, in `src/data/types.ts` /
+  `src/data/countries/<slug>.ts`, rendered by `CountryProfile.astro`'s "Where
+  To Live" section): rates real neighbourhoods on affordability
+  (budget/mid/expensive), diaspora/immigrant community presence, safety, and
+  commute — e.g. Peckham and Croydon for London, Scarborough and North York
+  for Toronto, Ixelles/Matongé for Brussels. **This is ratings and
+  description only — we never scrape or host live rental listings.** Every
+  area guide links out to that country's trusted official platform
+  (Realtor.ca for Canada, Rightmove for UK, Domain.com.au for Australia,
+  Pararius for Netherlands, Immoweb for Belgium, Zillow for US).
+- **Student housing safety** (`studentHousing` field + the dedicated
+  universal guide at `/guides/student-housing-safety`): explains how
+  university housing portals work, lists trusted off-campus platforms per
+  country, and — this is the part that matters most — a clear, concrete
+  warning guide on common rental scams targeting international students
+  (suspiciously cheap rent, pay-before-viewing, wire/gift-card/crypto
+  requests, "can't show the property" excuses, instant approval with no
+  verification, urgency pressure, generic photos), so people don't lose
+  money before they've even landed.
+- **Tourist-visa accommodation guidance** (`touristAccommodation` field,
+  shown as a callout in the visiting-visa section of each country page):
+  general guidance on what visa officers look for in proof of accommodation
+  and typical booking platforms, linking out to Booking.com — never a list
+  of specific hotels, same "guide, don't host" principle as the area guides.
+
 ## Data Sourcing Flags (real data required — do not fabricate)
 
 - **UK sponsor licence register**: the UK government publishes the full,
@@ -345,6 +422,26 @@ Hosting is moving from GitHub Pages to Vercel (Astro static output needs no
 repo into Vercel, (2) point afrimigrate.com's DNS at Vercel in Namecheap once
 Vercel shows the required records. The `public/CNAME` file is kept either way
 so nothing breaks if GitHub Pages is used instead.
+
+**Confirmed status (checked via DNS lookup, most recently 2026-09-12):**
+`afrimigrate.com` still resolves to GitHub Pages' IPs
+(`185.199.108.153`/`.109.153`/`.110.153`/`.111.153`), not Vercel — the DNS
+move described above has not happened yet. GitHub Actions deploys to Pages
+are succeeding on every merge to this branch, so the site not looking
+"updated" is not a broken build; it's that the live domain is still pointed
+at the old host rather than wherever the newest work is being previewed.
+**What Augustine needs to do to switch it over:**
+1. Go to vercel.com, sign in (GitHub login works), and "Add New Project" →
+   import the `afrimigrate/afrimigrate` repo. Vercel auto-detects Astro, no
+   config needed.
+2. Once the Vercel project exists, add the environment variables from
+   `.env.example` under Project Settings → Environment Variables.
+3. Vercel will show a screen with the DNS records afrimigrate.com needs
+   (typically an A record to `76.76.21.21` and/or a CNAME for `www`).
+4. In Namecheap → Domain List → afrimigrate.com → Advanced DNS, replace the
+   current GitHub Pages A records with the ones Vercel just showed.
+5. DNS changes can take up to 24-48 hours to propagate globally, so the
+   switch won't be instant even once saved correctly.
 
 ---
 

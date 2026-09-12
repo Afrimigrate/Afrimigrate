@@ -228,6 +228,25 @@ export const netherlands: CountryProfile = {
     { name: 'Kinderdijk Windmills', description: 'A UNESCO World Heritage site with 19 iconic 18th-century windmills.' },
     { name: 'Zaanse Schans', description: 'A living, working windmill village just outside Amsterdam, with traditional craft workshops.' },
   ],
+  areaGuide: {
+    city: 'Amsterdam',
+    officialHousingPlatform: { name: 'Pararius', url: 'https://www.pararius.com' },
+    neighbourhoods: [
+      { name: 'Indische Buurt (East)', affordability: 'mid', diasporaPresence: 'high', safety: 'high', commute: '~15-20 min to centre by tram', description: 'A diverse neighbourhood where over half the residents are foreign-born, with mainly affordable apartments and a rich expat history.' },
+      { name: 'Bos en Lommer (West)', affordability: 'mid', diasporaPresence: 'high', safety: 'moderate', commute: '~15-20 min to centre by tram/metro', description: 'An increasingly popular choice thanks to affordable housing, a diverse community, and proximity to the city centre.' },
+      { name: 'Noord', affordability: 'mid', diasporaPresence: 'moderate', safety: 'high', commute: '~10-15 min to centre by free ferry + walk', description: 'Up-and-coming with more affordable housing than the centre, modern developments, and a strong sense of community.' },
+      { name: 'Watergraafsmeer', affordability: 'mid', diasporaPresence: 'moderate', safety: 'high', commute: '~15-20 min to centre by tram', description: 'One of Amsterdam\'s greenest residential areas, with a low crime rate — a good balance of affordability and convenience.' },
+    ],
+  },
+  studentHousing: {
+    universityPortalNote: 'Dutch student housing is genuinely scarce — register with your university\'s housing office or a recognised student housing corporation (like DUWO or SSH) the moment you accept your offer, often many months before arrival.',
+    trustedPlatforms: ['DUWO / SSH (official student housing corporations)', 'Your university\'s housing office', 'Pararius', 'Kamernet (verify the listing and never pay before viewing, in person or via video call)'],
+  },
+  touristAccommodation: {
+    guidance: 'For a Schengen visa application, a hotel booking confirmation or a formal invitation letter from your host in the Netherlands (with their residence permit copy) is standard supporting evidence — a free-cancellation booking works well since you can cancel if your visa is delayed.',
+    platformName: 'Booking.com',
+    platformUrl: 'https://www.booking.com',
+  },
   sourceNote:
     'Dutch visa fees, salary thresholds and permit rules change periodically — figures above are indicative and current as of our last research pass. Always confirm details on the official IND (Immigratie- en Naturalisatiedienst) website before making decisions or payments.',
 };

@@ -235,6 +235,25 @@ export const us: CountryProfile = {
     { name: 'Walt Disney World, Orlando', description: 'The world\'s most visited theme park resort.' },
     { name: 'Niagara Falls (US side)', description: 'Massive waterfalls straddling the US-Canada border, with dramatic viewing points on both sides.' },
   ],
+  areaGuide: {
+    city: 'New York City',
+    officialHousingPlatform: { name: 'Zillow', url: 'https://www.zillow.com' },
+    neighbourhoods: [
+      { name: 'Jackson Heights, Queens', affordability: 'mid', diasporaPresence: 'high', safety: 'high', commute: '~25-30 min to Manhattan by subway', description: 'One of the most diverse neighbourhoods in the US, with over 160 languages spoken, good transit, and a genuine sense of community.' },
+      { name: 'Sunset Park, Brooklyn', affordability: 'budget', diasporaPresence: 'high', safety: 'moderate', commute: '~30-35 min to Manhattan by subway', description: 'Diverse and bustling with markets from many immigrant communities, among the more affordable walkable neighbourhoods in NYC.' },
+      { name: 'Bedford-Stuyvesant, Brooklyn', affordability: 'mid', diasporaPresence: 'high', safety: 'moderate', commute: '~30 min to Manhattan by subway', description: 'A historic Black and immigrant neighbourhood with a strong sense of community and relatively lower price tags than much of Brooklyn.' },
+      { name: 'Bay Ridge, Brooklyn', affordability: 'mid', diasporaPresence: 'moderate', safety: 'high', commute: '~40-45 min to Manhattan by subway', description: 'One of Brooklyn\'s safest neighbourhoods by crime statistics, increasingly diverse, with a strong family-oriented feel.' },
+    ],
+  },
+  studentHousing: {
+    universityPortalNote: 'US universities typically guarantee on-campus housing for first-year international students through their own housing portal — apply as soon as you accept your offer. Off campus, never send a deposit or first month\'s rent by wire transfer before seeing the unit in person or via a live video call with the actual leasing office.',
+    trustedPlatforms: ['Your university\'s official housing office', 'StreetEasy (for NYC)', 'Zillow', 'Facebook groups specific to your university (verify admin legitimacy first)'],
+  },
+  touristAccommodation: {
+    guidance: 'For a B-1/B-2 visitor visa, a hotel booking confirmation or a signed invitation letter from your US host (with their status/ID) is standard supporting evidence for your interview — a free-cancellation hotel booking is safer than a non-refundable one while your visa is pending.',
+    platformName: 'Booking.com',
+    platformUrl: 'https://www.booking.com',
+  },
   sourceNote:
     'US visa fees, caps and program rules change frequently — figures above are indicative and current as of our last research pass. Always confirm details on the official USCIS or State Department websites before making decisions or payments, and never pay anyone to enter the Diversity Visa lottery, which is always free to enter.',
 };
