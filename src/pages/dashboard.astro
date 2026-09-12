@@ -1,0 +1,157 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="Dashboard | AfriMigrate"
+  description="Your personalised AfriMigrate dashboard — recommended country, CRS score, migration timeline, and document vault."
+>
+  <div id="dashboardGate" class="lead" style="text-align: center; padding: 4rem 0;">Loading your dashboard…</div>
+
+  <div id="dashboardRoot" hidden>
+    <div class="dash-header">
+      <div>
+        <div class="eyebrow">Your Dashboard</div>
+        <h1 id="dashGreeting">Welcome back</h1>
+      </div>
+      <button id="logoutBtn" class="btn-ghost" style="background: none; border: none; cursor: pointer;">Log out</button>
+    </div>
+
+    <section class="section" style="padding-top: 1.5rem;">
+      <div class="card dash-readiness">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <h3 style="margin-bottom: 0;">Migration readiness</h3>
+          <span id="readinessPct" style="font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.4rem; color: var(--green);">0%</span>
+        </div>
+        <div class="crs-progress-bar"><div class="crs-progress-fill" id="readinessFill" style="width: 0%;"></div></div>
+        <p style="font-size: 0.8rem; color: var(--ink2); margin-top: 0.75rem; margin-bottom: 0;">Based on your profile, documents, and timeline progress — this will get more accurate as later features ship.</p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 0.5rem;">
+      <div class="tools-grid">
+        <div class="tool-card">
+          <div class="tool-icon">🎯</div>
+          <h3>Recommended pathway</h3>
+          <p id="dashRecommendation">Coming in the next update — your answers are saved, and the recommendation engine is next on the build list.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-icon">🧮</div>
+          <h3>CRS score</h3>
+          <p id="dashCrs">Not calculated yet.</p>
+          <a href="/canada/crs-calculator" class="tool-link">Calculate now →</a>
+        </div>
+        <div class="tool-card">
+          <div class="tool-icon">🗓️</div>
+          <h3>Migration timeline</h3>
+          <p>Your staged, month-by-month plan — coming soon.</p>
+          <span class="tool-link muted">Not built yet</span>
+        </div>
+        <div class="tool-card">
+          <div class="tool-icon">🔒</div>
+          <h3>Document vault</h3>
+          <p>Securely store your passport, language certs and degree certificates here — coming soon.</p>
+          <span class="tool-link muted">Not built yet</span>
+        </div>
+        <div class="tool-card">
+          <div class="tool-icon">🔔</div>
+          <h3>Reminders</h3>
+          <p>No reminders yet — these appear once your timeline is set up.</p>
+        </div>
+        <div class="tool-card">
+          <div class="tool-icon">🏆</div>
+          <h3>Badges</h3>
+          <p id="dashBadges">None earned yet.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <h3>Your profile</h3>
+        <div id="dashProfile" class="cp-route-grid" style="margin-top: 1rem;"></div>
+      </div>
+    </section>
+  </div>
+
+  <style is:global>
+    .dash-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; }
+    .dash-readiness { max-width: 100%; }
+  </style>
+
+  <script>
+    import { supabase, isSupabaseConfigured } from '../lib/supabase';
+
+    const gate = document.getElementById('dashboardGate') as HTMLElement;
+    const root = document.getElementById('dashboardRoot') as HTMLElement;
+
+    async function init() {
+      if (!isSupabaseConfigured) {
+        gate.textContent = '⚠️ Accounts aren\'t switched on for this site yet — check back soon.';
+        return;
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = '/login';
+        return;
+      }
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+      if (error) {
+        gate.textContent = `⚠️ Couldn't load your dashboard: ${error.message}`;
+        return;
+      }
+
+      if (!profile || !profile.onboarding_completed_at) {
+        window.location.href = '/onboarding';
+        return;
+      }
+
+      gate.hidden = true;
+      root.hidden = false;
+      render(profile);
+
+      document.getElementById('logoutBtn')!.addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = '/';
+      });
+    }
+
+    function render(profile: Record<string, any>) {
+      document.getElementById('dashGreeting')!.textContent = `Welcome, ${profile.full_name || 'there'}`;
+
+      if (profile.recommended_country) {
+        document.getElementById('dashRecommendation')!.textContent =
+          `${profile.recommended_country} — ${profile.recommendation_reasoning || ''}`;
+      }
+      if (profile.crs_score) {
+        document.getElementById('dashCrs')!.textContent = `${profile.crs_score} / 1,200`;
+      }
+
+      // Readiness is a simple placeholder for now: onboarding done = 20%,
+      // real weighting (documents, milestones, confirmed pathway) arrives
+      // with the vault and timeline features.
+      const readiness = profile.onboarding_completed_at ? 20 : 0;
+      document.getElementById('readinessPct')!.textContent = `${readiness}%`;
+      (document.getElementById('readinessFill') as HTMLElement).style.width = `${readiness}%`;
+
+      const fields: [string, string][] = [
+        ['Location', profile.current_location],
+        ['Education', profile.education_level],
+        ['Career field', profile.career_field],
+        ['Language ability', profile.language_ability],
+        ['Timeline', profile.timeline_urgency],
+        ['Country interest', profile.country_interest || 'Not sure yet'],
+      ];
+      document.getElementById('dashProfile')!.innerHTML = fields
+        .map(([label, value]) => `<div><span class="cp-route-label">${label}</span><p>${value ?? '—'}</p></div>`)
+        .join('');
+    }
+
+    init();
+  </script>
+</Layout>

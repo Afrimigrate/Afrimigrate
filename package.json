@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",
+    "@supabase/supabase-js": "^2.116.0",
     "astro": "^4.15.0",
     "stripe": "^22.6.1"
   }

@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="Log In | AfriMigrate"
+  description="Log in to your AfriMigrate account to access your dashboard, saved plan, and migration timeline."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / Log In</div>
+  <div class="auth-wrap">
+    <div class="eyebrow">Welcome Back</div>
+    <h1>Log in</h1>
+    <p class="lead" style="margin-bottom: 2rem;">Pick up right where you left off.</p>
+
+    <form id="loginForm" class="auth-card">
+      <label class="crs-field">
+        Email
+        <input type="email" name="email" required class="crs-input" autocomplete="email" />
+      </label>
+      <label class="crs-field">
+        Password
+        <input type="password" name="password" required class="crs-input" autocomplete="current-password" />
+      </label>
+      <div id="authMessage" class="cp-note" hidden></div>
+      <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; border: none; cursor: pointer;">Log in →</button>
+    </form>
+    <p class="lead" style="margin-top: 1.5rem; font-size: 0.9rem;">New here? <a href="/signup" style="color: var(--green); font-weight: 600;">Create a free account</a></p>
+  </div>
+
+  <script>
+    import { supabase, isSupabaseConfigured } from '../lib/supabase';
+
+    const form = document.getElementById('loginForm') as HTMLFormElement;
+    const message = document.getElementById('authMessage') as HTMLElement;
+
+    function showMessage(text: string) {
+      message.hidden = false;
+      message.textContent = text;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!isSupabaseConfigured) {
+        showMessage('⚠️ Accounts aren\'t switched on for this site yet — check back soon.');
+        return;
+      }
+      const fd = new FormData(form);
+      const email = fd.get('email') as string;
+      const password = fd.get('password') as string;
+      const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Logging in…';
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        showMessage(`⚠️ ${error.message}`);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Log in →';
+        return;
+      }
+      window.location.href = '/dashboard';
+    });
+  </script>
+</Layout>
