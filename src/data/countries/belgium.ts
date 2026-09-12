@@ -187,6 +187,25 @@ export const belgium: CountryProfile = {
     { name: 'Ghent', description: 'A creative, youthful university city with striking medieval architecture and a strong music scene.' },
     { name: 'Antwerp', description: 'Belgium\'s fashion and diamond capital, with a historic port and vibrant design scene.' },
   ],
+  areaGuide: {
+    city: 'Brussels',
+    officialHousingPlatform: { name: 'Immoweb', url: 'https://www.immoweb.be' },
+    neighbourhoods: [
+      { name: 'Ixelles / Matongé', affordability: 'mid', diasporaPresence: 'high', safety: 'high', commute: '~15-20 min to centre by tram/metro', description: 'Home to Matongé, Brussels\' well-known African quarter, with a multicultural, cosmopolitan feel and excellent transit connections.' },
+      { name: 'Schaerbeek', affordability: 'budget', diasporaPresence: 'high', safety: 'moderate', commute: '~15-20 min to centre by tram/train', description: 'More affordable and spacious than Ixelles, with a large and growing expat and migrant community.' },
+      { name: 'Etterbeek', affordability: 'mid', diasporaPresence: 'moderate', safety: 'high', commute: '~10-15 min to centre by metro', description: 'Modern, clean and safe, close to the European Parliament — popular with EU officials, expats and young families.' },
+      { name: 'Woluwe-Saint-Lambert', affordability: 'expensive', diasporaPresence: 'moderate', safety: 'high', commute: '~20-25 min to centre by metro', description: 'A quieter, more residential option with strong safety and green space, at a higher price point.' },
+    ],
+  },
+  studentHousing: {
+    universityPortalNote: 'Belgian universities and university colleges typically run their own "kot" (student room) housing services — register early, as demand in Brussels and Leuven especially outstrips supply. Never transfer a deposit for a room you haven\'t seen in person or via a live video call.',
+    trustedPlatforms: ['Your university\'s official kot/housing service', 'Immoweb', 'Kotplanet / Stuvo student housing platforms'],
+  },
+  touristAccommodation: {
+    guidance: 'For a Schengen visa application, a hotel booking confirmation or a formal invitation letter from your Belgian host (with proof of their residence status) is standard — a free-cancellation booking is the safer choice while your visa is pending.',
+    platformName: 'Booking.com',
+    platformUrl: 'https://www.booking.com',
+  },
   sourceNote:
     'Belgian visa rules are set regionally (Flanders, Wallonia, Brussels) and change periodically — figures above are indicative and current as of our last research pass. Always confirm details with the relevant regional immigration authority before making decisions or payments.',
 };

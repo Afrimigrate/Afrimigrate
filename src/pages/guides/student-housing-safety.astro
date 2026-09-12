@@ -1,0 +1,86 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const redFlags = [
+  { title: 'Rent that\'s suspiciously cheap', description: 'If the price is well below every comparable listing nearby, treat it as a warning, not a bargain — scammers use unrealistically low rent to attract urgent replies.' },
+  { title: 'Any request to pay before viewing', description: 'A real landlord or agent lets you view the property (in person, or via a live video call where you can ask the person to walk around and show details) before any money changes hands.' },
+  { title: 'Wire transfers, gift cards, or crypto', description: 'These payment methods are very hard to reverse and are never how legitimate landlords or agents ask to be paid. A real landlord accepts a bank transfer to a verified business account, or payment through a recognised platform.' },
+  { title: 'They "can\'t" show you the property', description: 'Common excuses: "I\'m out of the country," "it\'s being renovated," "my agent has the only key." Real landlords or their agents can always arrange a viewing or a live video walkthrough.' },
+  { title: 'Approval with zero verification', description: 'If you\'re "approved" instantly with no ID check, no reference request, and no real application — that\'s backwards. Legitimate landlords check who they\'re renting to.' },
+  { title: 'Pressure to act immediately', description: '"Three other people are looking at it today" is a classic urgency tactic to stop you from thinking it through or verifying anything.' },
+  { title: 'Poor-quality or generic photos', description: 'Stock photos, or only 1-2 low-quality images, can mean the listing was copied from somewhere else — reverse-image-search a suspicious photo if you can.' },
+];
+---
+<Layout
+  title="Student Housing: Avoiding Rental Scams | AfriMigrate"
+  description="A clear, practical guide to finding safe student housing abroad and spotting the rental scams that specifically target international students."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/tools">Guides</a> / Student Housing Safety</div>
+  <div class="eyebrow">Student Housing</div>
+  <h1>Finding safe student housing — and avoiding scams</h1>
+  <p class="lead" style="margin-bottom: 2.5rem;">
+    Rental fraud is one of the most common scams targeting international students, precisely because you're searching for a home from thousands of miles away, under time pressure, before you've even landed. This guide exists so you don't lose money before your journey even starts.
+  </p>
+
+  <section class="section" style="padding-top: 0;">
+    <div class="eyebrow">Start Here</div>
+    <h2>How to search safely</h2>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-icon">🏫</div>
+        <h3>Your university's housing office first</h3>
+        <p>Every country page on this site links to that country's official student housing bodies and platforms. This is always the safest starting point — your university has already vetted these options.</p>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">📹</div>
+        <h3>Insist on a live video viewing</h3>
+        <p>If you can't view in person, ask for a live video call where you direct the viewing yourself — ask them to show the door lock, the view from the window, the meter readings. Scammers can't do this with a property they don't control.</p>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">💳</div>
+        <h3>Pay through traceable, reversible methods</h3>
+        <p>A bank transfer to a verified business/landlord account, or payment through a recognised platform's own payment system, gives you far more recourse than a wire transfer or gift card ever will.</p>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">📄</div>
+        <h3>Get everything in writing</h3>
+        <p>A real tenancy agreement, in writing, with the landlord's full legal name and ID — before any payment. No contract is itself a red flag.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" style="border-radius: var(--rl);">
+    <div class="eyebrow">Red Flags</div>
+    <h2>Warning signs of a rental scam</h2>
+    <div class="cp-checklist">
+      {redFlags.map((f, i) => (
+        <div class="cp-checklist-item">
+          <div class="cp-checklist-num" style="background: #C0392B;">⚠</div>
+          <div><h3 style="font-size: 1rem;">{f.title}</h3><p style="margin-bottom: 0;">{f.description}</p></div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="eyebrow">If Something Feels Wrong</div>
+    <h2>What to do</h2>
+    <p class="lead" style="max-width: 700px;">
+      Stop the conversation and verify independently — search the landlord's name and the property address together with the word "scam," call the university housing office to ask if they recognise the listing, and never let urgency override your own judgement. If you've already sent money, report it immediately to your bank, the platform the listing was on, and your university's international student office — the faster you act, the better the chance of recovering funds.
+    </p>
+  </section>
+
+  <section class="section">
+    <div class="eyebrow">Country-Specific Platforms</div>
+    <h2>Where to actually search</h2>
+    <p class="lead" style="margin-bottom: 1.5rem;">Every country page on AfriMigrate links to the housing platforms and student housing bodies that are genuinely trusted for that country — find yours below.</p>
+    <div class="tools-grid">
+      <div class="tool-card"><div class="tool-icon">🇨🇦</div><h3>Canada</h3><p style="margin-bottom: 0;">Rentals.ca, PadMapper, your university's off-campus housing office.</p></div>
+      <div class="tool-card"><div class="tool-icon">🇬🇧</div><h3>UK</h3><p style="margin-bottom: 0;">SpareRoom, Rightmove/Zoopla verified agents, your students' union housing advice service.</p></div>
+      <div class="tool-card"><div class="tool-icon">🇦🇺</div><h3>Australia</h3><p style="margin-bottom: 0;">Flatmates.com.au, realestate.com.au, your university's accommodation service.</p></div>
+      <div class="tool-card"><div class="tool-icon">🇳🇱</div><h3>Netherlands</h3><p style="margin-bottom: 0;">DUWO/SSH student housing corporations, Kamernet (verify carefully), Pararius.</p></div>
+      <div class="tool-card"><div class="tool-icon">🇧🇪</div><h3>Belgium</h3><p style="margin-bottom: 0;">Your university's kot service, Immoweb, Kotplanet.</p></div>
+      <div class="tool-card"><div class="tool-icon">🇺🇸</div><h3>United States</h3><p style="margin-bottom: 0;">Your university's housing office, StreetEasy (NYC), Zillow.</p></div>
+    </div>
+  </section>
+</Layout>

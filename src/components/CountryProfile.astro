@@ -125,6 +125,35 @@ const prLabel: Record<string, string> = {
 </section>
 
 <section class="section">
+  <div class="eyebrow">Where To Live</div>
+  <h2>Neighbourhood guide: {country.areaGuide.city}</h2>
+  <p class="lead" style="margin-bottom: 1.5rem;">Ratings only — we don't list or scrape live rentals. For actual listings, use {country.areaGuide.officialHousingPlatform.name}, the trusted platform for {country.name}.</p>
+  <div class="tools-grid">
+    {country.areaGuide.neighbourhoods.map((n) => (
+      <div class="tool-card">
+        <h3>{n.name}</h3>
+        <div class="cp-badges" style="margin-bottom: 0.75rem;">
+          <span class={`cp-badge cp-tier-${n.affordability}`}>{n.affordability === 'budget' ? '💰 Budget' : n.affordability === 'mid' ? '💰💰 Mid-range' : '💰💰💰 Expensive'}</span>
+          <span class={`cp-badge cp-tier-${n.diasporaPresence === 'high' ? 'budget' : n.diasporaPresence === 'moderate' ? 'mid' : 'expensive'}`}>🌍 {n.diasporaPresence} diaspora presence</span>
+          <span class={`cp-badge cp-tier-${n.safety === 'high' ? 'budget' : n.safety === 'moderate' ? 'mid' : 'expensive'}`}>🛡️ {n.safety} safety</span>
+        </div>
+        <p>{n.description}</p>
+        <p style="font-size: 0.8rem; color: var(--ink2); margin-top: 0.5rem; margin-bottom: 0;"><strong style="color: var(--ink);">Commute:</strong> {n.commute}</p>
+      </div>
+    ))}
+  </div>
+  <a href={country.areaGuide.officialHousingPlatform.url} target="_blank" rel="noopener" class="btn-ghost" style="margin-top: 1.5rem; display: inline-block;">Search real listings on {country.areaGuide.officialHousingPlatform.name} →</a>
+
+  <div class="cp-route-card" style="margin-top: 2rem;">
+    <h3>Studying? Watch for rental scams</h3>
+    <p style="color: var(--ink2); font-size: 0.9rem; margin-bottom: 0.75rem;">{country.studentHousing.universityPortalNote}</p>
+    <p style="font-size: 0.85rem; color: var(--ink); font-weight: 600; margin-bottom: 0.5rem;">Trusted platforms to search instead of random social media listings:</p>
+    <ul class="cp-list" style="margin-bottom: 1rem;">{country.studentHousing.trustedPlatforms.map((p) => <li>{p}</li>)}</ul>
+    <a href="/guides/student-housing-safety" style="color: var(--green); font-weight: 600; font-size: 0.9rem;">Read the full rental scam warning guide →</a>
+  </div>
+</section>
+
+<section class="section">
   <div class="eyebrow">Settling In</div>
   <h2>Your first 30 days</h2>
   <div class="cp-checklist">
@@ -141,6 +170,10 @@ const prLabel: Record<string, string> = {
   <div class="eyebrow">Just Visiting?</div>
   <h2>Tourist &amp; visiting visas</h2>
   <p class="lead" style="margin-bottom: 1.5rem;">Kept deliberately separate from the work/study/family routes above — this is specifically for a holiday, family visit, or short trip.</p>
+  <div class="cp-note" style="margin-bottom: 1.5rem;">
+    🏨 <strong>Booking accommodation for your visa application:</strong> {country.touristAccommodation.guidance}
+    {' '}<a href={country.touristAccommodation.platformUrl} target="_blank" rel="noopener" style="color: #8a6a0a; font-weight: 700; text-decoration: underline;">Search on {country.touristAccommodation.platformName} →</a>
+  </div>
   {country.visitingVisas.map((route) => (
     <div class="cp-route-card">
       <div class="cp-route-head">
@@ -175,10 +208,46 @@ const prLabel: Record<string, string> = {
   <h2>Best places to visit</h2>
   <div class="tools-grid">
     {country.touristSites.map((t) => (
-      <div class="tool-card"><h3>{t.name}</h3><p style="margin-bottom: 0;">{t.description}</p></div>
+      <div class="tool-card cp-tourist-card" data-place-query={t.name}>
+        <h3>{t.name}</h3>
+        <p>{t.description}</p>
+        <button class="tool-link cp-live-info-btn" style="background: none; border: none; padding: 0; cursor: pointer; font: inherit;">See live rating &amp; hours →</button>
+        <div class="cp-live-info-result" hidden></div>
+      </div>
     ))}
   </div>
 </section>
+
+<script>
+  import { searchPlacesText, isPlacesConfigured } from '../lib/places';
+
+  document.querySelectorAll<HTMLElement>('.cp-tourist-card').forEach((card) => {
+    const btn = card.querySelector('.cp-live-info-btn') as HTMLButtonElement;
+    const result = card.querySelector('.cp-live-info-result') as HTMLElement;
+    btn?.addEventListener('click', async () => {
+      if (!isPlacesConfigured) {
+        result.hidden = false;
+        result.innerHTML = '<p style="font-size: 0.8rem; color: var(--ink2); margin-top: 0.5rem;">⚠️ Live info isn\'t switched on for this site yet.</p>';
+        return;
+      }
+      btn.textContent = 'Loading…';
+      const [place] = await searchPlacesText(card.dataset.placeQuery || '');
+      btn.hidden = true;
+      result.hidden = false;
+      if (!place) {
+        result.innerHTML = '<p style="font-size: 0.8rem; color: var(--ink2);">No live info found.</p>';
+        return;
+      }
+      result.innerHTML = `
+        <p style="font-size: 0.85rem; color: var(--ink2); margin: 0.5rem 0;">
+          ${place.rating ? `⭐ ${place.rating} (${place.userRatingCount ?? 0} reviews)` : 'No rating yet'}
+          ${place.openNow !== undefined ? (place.openNow ? ' · 🟢 Open now' : ' · 🔴 Closed now') : ''}
+        </p>
+        <a href="${place.mapsUrl}" target="_blank" rel="noopener" class="tool-link">View on Google Maps →</a>
+      `;
+    });
+  });
+</script>
 
 <section class="section">
   <div class="card">
@@ -221,6 +290,9 @@ const prLabel: Record<string, string> = {
   .cp-badge-pr-yes { background: #EEF7EE; color: var(--green); border: 1px solid #C3DEC3; }
   .cp-badge-pr-no { background: #EDEAE3; color: var(--ink2); border: 1px solid var(--border); }
   .cp-badge-pr-conditional { background: var(--gold-bg); color: var(--gold); border: 1px solid rgba(200,150,14,0.25); }
+  .cp-tier-budget { background: #EEF7EE; color: var(--green); border: 1px solid #C3DEC3; }
+  .cp-tier-mid { background: var(--gold-bg); color: var(--gold); border: 1px solid rgba(200,150,14,0.25); }
+  .cp-tier-expensive { background: #FBEAEA; color: #C0392B; border: 1px solid #E8C3C3; }
   .cp-note { background: var(--gold-bg); border: 1px solid rgba(200,150,14,0.25); color: #8a6a0a; font-size: 0.82rem; padding: 0.75rem 1rem; border-radius: var(--r); margin-bottom: 1rem; }
   .cp-route-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem; }
   .cp-route-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2); display: block; margin-bottom: 0.4rem; }

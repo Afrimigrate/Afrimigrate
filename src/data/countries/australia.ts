@@ -238,6 +238,25 @@ export const australia: CountryProfile = {
     { name: 'Kings Park and Botanic Garden, Perth', description: 'One of the world\'s largest inner-city parks, voted Australia\'s top attraction.' },
     { name: 'Kangaroo Island', description: 'See kangaroos, koalas and echidnas in the wild off the South Australian coast.' },
   ],
+  areaGuide: {
+    city: 'Sydney',
+    officialHousingPlatform: { name: 'Domain', url: 'https://www.domain.com.au' },
+    neighbourhoods: [
+      { name: 'Blacktown', affordability: 'budget', diasporaPresence: 'high', safety: 'moderate', commute: '~40 min to CBD by train', description: 'One of Sydney\'s most diverse and affordable areas, with jobs nearby at Olympic Park and quick train access to the city.' },
+      { name: 'Liverpool', affordability: 'budget', diasporaPresence: 'high', safety: 'moderate', commute: '~45 min to CBD by train', description: 'A major hub for newly arrived migrant communities with affordable housing and everyday amenities.' },
+      { name: 'Fairfield / Cabramatta', affordability: 'budget', diasporaPresence: 'high', safety: 'moderate', commute: '~45-50 min to CBD by train', description: 'Deeply established migrant communities, affordable daily living, and excellent, diverse food options.' },
+      { name: 'Mount Druitt', affordability: 'budget', diasporaPresence: 'moderate', safety: 'moderate', commute: '~50 min to CBD by train', description: 'One of the most budget-friendly parts of greater Sydney, with a large shopping centre and nearby TAFE colleges.' },
+    ],
+  },
+  studentHousing: {
+    universityPortalNote: 'Australian universities run their own on-campus and affiliated accommodation portals — apply as early as your offer allows, since places near the CBD-based campuses go quickly. For share housing, always inspect (or have someone inspect) before transferring any bond money.',
+    trustedPlatforms: ['Your university\'s official accommodation service', 'Flatmates.com.au', 'realestate.com.au', 'Domain'],
+  },
+  touristAccommodation: {
+    guidance: 'For a Visitor visa (subclass 600), a hotel booking or a signed invitation letter from your host in Australia (with their visa/citizenship evidence) is normally sufficient — use a free-cancellation booking rather than prepaying in full.',
+    platformName: 'Booking.com',
+    platformUrl: 'https://www.booking.com',
+  },
   sourceNote:
     'Australian visa fees, thresholds and program availability change frequently — figures above are indicative and current as of our last research pass. Always confirm details on the official Department of Home Affairs website before making decisions or payments.',
 };

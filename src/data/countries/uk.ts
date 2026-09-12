@@ -246,6 +246,25 @@ export const uk: CountryProfile = {
     { name: 'York', description: 'Britain\'s best-preserved Roman and medieval city, with intact city walls and cobbled streets.' },
     { name: 'Natural History Museum, London', description: 'World-class collections from dinosaurs to deep-sea creatures — and free to enter.' },
   ],
+  areaGuide: {
+    city: 'London',
+    officialHousingPlatform: { name: 'Rightmove', url: 'https://www.rightmove.co.uk' },
+    neighbourhoods: [
+      { name: 'Peckham (Southwark)', affordability: 'mid', diasporaPresence: 'high', safety: 'moderate', commute: '20-25 min to central London by Overground', description: 'Known as one of London\'s Nigerian and wider African diaspora hubs, with African grocery shops, hair salons and churches throughout.' },
+      { name: 'Walthamstow (Waltham Forest)', affordability: 'budget', diasporaPresence: 'moderate', safety: 'high', commute: '20-30 min to central London by Victoria line', description: 'Increasingly popular for its community feel and relative affordability compared to central zones, with a large market and green spaces.' },
+      { name: 'Croydon', affordability: 'budget', diasporaPresence: 'high', safety: 'moderate', commute: '20-30 min to central London by train', description: 'One of London\'s most affordable zones with a large, established African and Caribbean community.' },
+      { name: 'Brixton (Lambeth)', affordability: 'mid', diasporaPresence: 'high', safety: 'moderate', commute: '15-20 min to central London by Victoria line', description: 'London\'s most iconic Caribbean neighbourhood, home to the Windrush generation\'s community for over 75 years, now a lively, diverse area.' },
+    ],
+  },
+  studentHousing: {
+    universityPortalNote: 'Most UK universities guarantee first-year accommodation through their own halls portal if you apply by their deadline — always start there first. For later years, be extremely cautious of "too good to be true" off-campus listings asking for deposits before a viewing.',
+    trustedPlatforms: ['Your university\'s official accommodation office', 'SpareRoom', 'Rightmove / Zoopla (for verified lettings agents)', 'Your university students\' union housing advice service'],
+  },
+  touristAccommodation: {
+    guidance: 'For a Standard Visitor visa, a hotel booking confirmation or a signed invitation letter from your UK host (with their ID and immigration status) is normally enough — avoid prepaying non-refundable accommodation before your visa decision.',
+    platformName: 'Booking.com',
+    platformUrl: 'https://www.booking.com',
+  },
   sourceNote:
     'UK visa fees, salary thresholds and route rules change frequently — figures above are indicative and current as of our last research pass. Always confirm details on the official gov.uk website before making decisions or payments.',
 };
