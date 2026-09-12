@@ -1,0 +1,179 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="Get Started | AfriMigrate"
+  description="Tell us a bit about yourself so AfriMigrate can recommend the best country and visa pathway for you."
+>
+  <div id="onboardingGate" class="lead" style="text-align: center; padding: 4rem 0;">Checking your account…</div>
+
+  <div id="onboardingRoot" hidden>
+    <div class="eyebrow" style="text-align: center;">Quick Setup</div>
+    <h1 style="text-align: center;">A few questions, then we'll recommend your best path</h1>
+    <p class="lead" style="text-align: center; margin: 0 auto 2rem; max-width: 480px;">Takes about 2 minutes. Nothing here is shared, sold, or shown to anyone but you.</p>
+
+    <div class="crs-widget" style="margin: 0 auto;">
+      <div class="crs-progress">
+        <div class="crs-progress-bar"><div class="crs-progress-fill" id="obProgressFill"></div></div>
+        <div class="crs-progress-label" id="obProgressLabel">Step 1 of 6</div>
+      </div>
+
+      <form id="onboardingForm">
+        <section class="crs-step" data-step="1">
+          <h2>Let's start with you</h2>
+          <label class="crs-field">Your name<input type="text" name="fullName" required class="crs-input" /></label>
+          <label class="crs-field">Where are you currently living? (city, country)<input type="text" name="currentLocation" required class="crs-input" /></label>
+        </section>
+
+        <section class="crs-step" data-step="2" hidden>
+          <h2>Your education</h2>
+          <div class="crs-options">
+            <label class="crs-option"><input type="radio" name="educationLevel" value="high-school" /> High school</label>
+            <label class="crs-option"><input type="radio" name="educationLevel" value="diploma" /> Diploma / 1-2 year post-secondary</label>
+            <label class="crs-option"><input type="radio" name="educationLevel" value="bachelors" checked /> Bachelor's degree</label>
+            <label class="crs-option"><input type="radio" name="educationLevel" value="masters" /> Master's degree</label>
+            <label class="crs-option"><input type="radio" name="educationLevel" value="phd" /> PhD / doctorate</label>
+          </div>
+        </section>
+
+        <section class="crs-step" data-step="3" hidden>
+          <h2>Career &amp; language</h2>
+          <label class="crs-field">What field do you work in?<input type="text" name="careerField" placeholder="e.g. Software engineering, Nursing, Accounting" required class="crs-input" /></label>
+          <label class="crs-field">
+            English (or French/Dutch, depending on destination) ability
+            <select name="languageAbility" class="crs-input">
+              <option value="beginner">Beginner</option>
+              <option value="intermediate" selected>Intermediate</option>
+              <option value="advanced">Advanced / fluent</option>
+              <option value="native">Native / first language</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="crs-step" data-step="4" hidden>
+          <h2>Budget</h2>
+          <label class="crs-field">
+            Funds you realistically have available for the whole process (visa fees, tests, travel, settlement)
+            <select name="budgetAmount" class="crs-input">
+              <option value="2000">Under $2,000</option>
+              <option value="5000" selected>$2,000 – $5,000</option>
+              <option value="10000">$5,000 – $10,000</option>
+              <option value="20000">$10,000 – $20,000</option>
+              <option value="50000">$20,000+</option>
+            </select>
+          </label>
+          <p class="crs-hint">Rough figures are fine — this just helps rule out pathways you can't realistically afford yet.</p>
+        </section>
+
+        <section class="crs-step" data-step="5" hidden>
+          <h2>Timeline</h2>
+          <div class="crs-options">
+            <label class="crs-option"><input type="radio" name="timelineUrgency" value="asap" /> As soon as possible</label>
+            <label class="crs-option"><input type="radio" name="timelineUrgency" value="6-12-months" checked /> Within 6–12 months</label>
+            <label class="crs-option"><input type="radio" name="timelineUrgency" value="1-2-years" /> 1–2 years</label>
+            <label class="crs-option"><input type="radio" name="timelineUrgency" value="just-exploring" /> Just exploring for now</label>
+          </div>
+        </section>
+
+        <section class="crs-step" data-step="6" hidden>
+          <h2>Destination</h2>
+          <p class="crs-hint">Already have a country in mind? Otherwise we'll recommend one for you.</p>
+          <div class="crs-options">
+            <label class="crs-option"><input type="radio" name="countryInterest" value="" checked /> Not sure yet — recommend one for me</label>
+            <label class="crs-option"><input type="radio" name="countryInterest" value="canada" /> Canada</label>
+            <label class="crs-option"><input type="radio" name="countryInterest" value="uk" /> United Kingdom</label>
+            <label class="crs-option"><input type="radio" name="countryInterest" value="australia" /> Australia</label>
+            <label class="crs-option"><input type="radio" name="countryInterest" value="netherlands" /> Netherlands</label>
+            <label class="crs-option"><input type="radio" name="countryInterest" value="belgium" /> Belgium</label>
+            <label class="crs-option"><input type="radio" name="countryInterest" value="us" /> United States</label>
+          </div>
+        </section>
+
+        <div id="obMessage" class="cp-note" hidden></div>
+
+        <div class="crs-nav">
+          <button type="button" id="obBack" class="btn-ghost" disabled>← Back</button>
+          <button type="button" id="obNext" class="btn-primary">Next →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    import { supabase, isSupabaseConfigured } from '../lib/supabase';
+
+    const gate = document.getElementById('onboardingGate') as HTMLElement;
+    const root = document.getElementById('onboardingRoot') as HTMLElement;
+
+    async function init() {
+      if (!isSupabaseConfigured) {
+        gate.textContent = '⚠️ Accounts aren\'t switched on for this site yet — check back soon.';
+        return;
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = '/login';
+        return;
+      }
+      gate.hidden = true;
+      root.hidden = false;
+      wireForm(session.user.id);
+    }
+
+    function wireForm(userId: string) {
+      const form = document.getElementById('onboardingForm') as HTMLFormElement;
+      const steps = Array.from(document.querySelectorAll<HTMLElement>('.crs-step'));
+      const backBtn = document.getElementById('obBack') as HTMLButtonElement;
+      const nextBtn = document.getElementById('obNext') as HTMLButtonElement;
+      const progressFill = document.getElementById('obProgressFill') as HTMLElement;
+      const progressLabel = document.getElementById('obProgressLabel') as HTMLElement;
+      const message = document.getElementById('obMessage') as HTMLElement;
+      let current = 0;
+
+      function render() {
+        steps.forEach((s, i) => { s.hidden = i !== current; });
+        progressFill.style.width = `${((current + 1) / steps.length) * 100}%`;
+        progressLabel.textContent = `Step ${current + 1} of ${steps.length}`;
+        backBtn.disabled = current === 0;
+        nextBtn.textContent = current === steps.length - 1 ? 'Finish →' : 'Next →';
+      }
+
+      backBtn.addEventListener('click', () => { if (current > 0) { current -= 1; render(); } });
+
+      nextBtn.addEventListener('click', async () => {
+        if (current < steps.length - 1) {
+          current += 1;
+          render();
+          return;
+        }
+        nextBtn.disabled = true;
+        nextBtn.textContent = 'Saving…';
+        const fd = new FormData(form);
+        const { error } = await supabase.from('profiles').upsert({
+          id: userId,
+          full_name: fd.get('fullName'),
+          current_location: fd.get('currentLocation'),
+          education_level: fd.get('educationLevel'),
+          career_field: fd.get('careerField'),
+          language_ability: fd.get('languageAbility'),
+          budget_amount: Number(fd.get('budgetAmount')),
+          timeline_urgency: fd.get('timelineUrgency'),
+          country_interest: fd.get('countryInterest') || null,
+          onboarding_completed_at: new Date().toISOString(),
+        });
+        if (error) {
+          message.hidden = false;
+          message.textContent = `⚠️ Couldn't save your answers: ${error.message}`;
+          nextBtn.disabled = false;
+          nextBtn.textContent = 'Finish →';
+          return;
+        }
+        window.location.href = '/dashboard';
+      });
+
+      render();
+    }
+
+    init();
+  </script>
+</Layout>

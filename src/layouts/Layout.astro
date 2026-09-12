@@ -200,6 +200,42 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     .breadcrumb a { color: var(--ink2); }
     .breadcrumb a:hover { color: var(--green); }
 
+    /* SHARED FORM / STEP-WIDGET / CALLOUT PRIMITIVES
+       (used by the CRS calculator, onboarding, signup/login, dashboard —
+       kept here, not page-local, so every page that reuses this pattern
+       actually gets the CSS instead of silently rendering unstyled) */
+    .crs-widget { background: var(--white); border: 1px solid var(--border); border-radius: var(--rl); padding: 2rem; max-width: 680px; }
+    .crs-progress { margin-bottom: 2rem; }
+    .crs-progress-bar { height: 6px; background: var(--bg2); border-radius: 99px; overflow: hidden; margin-bottom: 0.6rem; }
+    .crs-progress-fill { height: 100%; width: 14.28%; background: linear-gradient(90deg, var(--green), #7bc97b); border-radius: 99px; transition: width 0.3s ease; }
+    .crs-progress-label { font-size: 0.75rem; font-weight: 600; color: var(--ink2); letter-spacing: 0.04em; text-transform: uppercase; }
+    .crs-step h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .crs-hint { font-size: 0.85rem; color: var(--ink2); font-weight: 300; margin-bottom: 1.25rem; }
+    .crs-options { display: flex; flex-direction: column; gap: 0.75rem; }
+    .crs-option {
+      display: flex; align-items: center; gap: 0.75rem; font-size: 0.92rem; color: var(--ink);
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); padding: 0.85rem 1rem; cursor: pointer;
+    }
+    .crs-input, .crs-clb {
+      width: 100%; padding: 0.7rem 0.9rem; border-radius: var(--r); border: 1px solid var(--border);
+      background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 0.92rem; color: var(--ink); margin-top: 0.4rem;
+    }
+    .crs-field { display: block; font-size: 0.85rem; font-weight: 600; color: var(--ink); margin-bottom: 1.25rem; }
+    .crs-clb-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .crs-clb-grid label { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
+    .crs-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .crs-nav button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .cp-note { background: var(--gold-bg); border: 1px solid rgba(200,150,14,0.25); color: #8a6a0a; font-size: 0.82rem; padding: 0.75rem 1rem; border-radius: var(--r); margin-bottom: 1rem; }
+    .cp-route-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem; }
+    .cp-route-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2); display: block; margin-bottom: 0.4rem; }
+    .cp-route-grid p { font-size: 0.88rem; color: var(--ink); font-weight: 500; }
+    .cp-list { list-style: disc; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; color: var(--ink2); font-weight: 300; }
+    @media (max-width: 560px) {
+      .crs-widget { padding: 1.5rem; }
+      .crs-clb-grid { grid-template-columns: 1fr; }
+      .cp-route-grid { grid-template-columns: 1fr; }
+    }
+
     /* FOOTER */
     footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3.5rem 5vw 2.5rem; }
     .footer-inner { max-width: 1160px; margin: 0 auto; }
@@ -246,8 +282,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
       <li><a href="/how-it-works">How it works</a></li>
       <li><a href="/destinations">Destinations</a></li>
       <li><a href="/blog">Guides</a></li>
+      <li><a href="/login">Log in</a></li>
     </ul>
-    <a href="/canada/crs-calculator" class="nav-cta">Start free →</a>
+    <a href="/signup" class="nav-cta">Start free →</a>
   </nav>
 
   <main>
