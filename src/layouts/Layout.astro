@@ -226,6 +226,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     .crs-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
     .crs-nav button:disabled { opacity: 0.4; cursor: not-allowed; }
     .cp-note { background: var(--gold-bg); border: 1px solid rgba(200,150,14,0.25); color: #8a6a0a; font-size: 0.82rem; padding: 0.75rem 1rem; border-radius: var(--r); margin-bottom: 1rem; }
+    .cp-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+    .cp-tag { font-size: 0.72rem; background: var(--bg); border: 1px solid var(--border); color: var(--ink2); padding: 0.25rem 0.6rem; border-radius: 999px; }
     .cp-route-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem; }
     .cp-route-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2); display: block; margin-bottom: 0.4rem; }
     .cp-route-grid p { font-size: 0.88rem; color: var(--ink); font-weight: 500; }
@@ -281,6 +283,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
       <li><a href="/tools">Tools</a></li>
       <li><a href="/how-it-works">How it works</a></li>
       <li><a href="/destinations">Destinations</a></li>
+      <li><a href="/career-planner">Career Planner</a></li>
       <li><a href="/community">Find Your Community</a></li>
       <li><a href="/blog">Guides</a></li>
       <li><a href="/login">Log in</a></li>
@@ -317,6 +320,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
             <li><a href="/canada/crs-calculator">CRS Calculator</a></li>
             <li><a href="/uk/skilled-worker-visa-checker">UK Visa Checker</a></li>
             <li><a href="/australia/points-calculator">Australia Points Calculator</a></li>
+            <li><a href="/career-planner">Career Planner</a></li>
             <li><a href="/community">Find Your Community</a></li>
             <li><a href="/tools">All tools</a></li>
           </ul>

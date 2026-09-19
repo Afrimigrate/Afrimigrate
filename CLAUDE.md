@@ -220,6 +220,30 @@ the default "Demo" tier) — cache fetched photo URLs (e.g. in the database
 alongside each tourist site, refreshed periodically) rather than calling the
 API on every page load.
 
+**Built** (`src/lib/unsplash.ts`): unlike the Google Places integration,
+Unsplash photos are fetched at **build time**, inside `.astro` frontmatter
+(a Node context), not from the browser. This means:
+- A visitor's page load never calls Unsplash — the photo URL is already
+  baked into the static HTML by the time it's deployed, so there's no
+  per-visitor rate-limit risk at all.
+- Photos re-fetch on every `astro build` (i.e. every deploy), which is fine
+  at this site's deploy frequency and well inside the free-tier limit, but
+  is a candidate for the "cache in the database" optimisation mentioned
+  above if deploys ever become much more frequent.
+- If the key is absent, `fetchUnsplashPhoto()` returns `null` and every
+  consumer (country page hero, tourist site cards, career planner country
+  cards) renders its existing layout without the photo — nothing breaks.
+- Unsplash's API terms require attribution: every photo shown carries a
+  small "Photo: [name] / Unsplash" credit linking to the photographer's
+  profile. Don't remove this if editing the photo markup.
+
+**Where photos show up:** each country page's hero now shows a real photo
+of that country's flagship city (Toronto, London, Sydney, Amsterdam,
+Brussels, New York) instead of a plain text hero — chosen deliberately over
+a generic flag/stock image so it feels like a specific place, not a cliché.
+Each tourist site card gets its own photo. The career planner (see below)
+shows a country thumbnail on each ranked result.
+
 ## Architecture — Google Places (Live Ratings/Hours + "Find Your Community")
 
 Added to supplement the free tourist-attraction listings with live data, and
@@ -296,6 +320,33 @@ cities (Toronto, London, Sydney, Amsterdam, Brussels, New York):
   general guidance on what visa officers look for in proof of accommodation
   and typical booking platforms, linking out to Booking.com — never a list
   of specific hotels, same "guide, don't host" principle as the area guides.
+
+## Career Planner (`/career-planner`)
+
+Built to cover all six countries equally, not Canada-first — each country's
+existing `careerPathways` array (in `src/data/countries/<slug>.ts`) was
+extended with two new fields per entry: `salaryRange` (approximate, local
+currency) and `visaPathway` (the specific visa route name, from that
+country's own `visaCategories`, this career typically qualifies for).
+
+The planner page itself is a client-side search: type a profession (e.g.
+"nurse"), and it scores every country's `careerPathways` entries by how well
+their `inDemandRoles` and `field` match, then ranks all six countries by
+that score — so a search surfaces *every* country where that career has
+real demand, not just one. All matching happens against data already baked
+into the page at build time (no live API call), and the "browse everything"
+section below the search box shows every field for every country when
+nothing's been searched yet.
+
+**Honesty over completeness on visa pathways**: where a career genuinely
+doesn't have a clean, direct visa route in a given country — e.g. US
+registered nurses don't typically qualify for H-1B (it requires a role
+classed as a "specialty occupation," which nursing generally isn't), and US
+skilled trades have no formal sponsored-visa route without a family or
+diversity-visa connection — the `visaPathway` field says so plainly (`'No
+Formal Route'`, or a route name with a caveat) rather than pointing at a
+route that wouldn't actually work. Same principle as the Data Sourcing
+Flags below: never invent a pathway that doesn't exist.
 
 ## Data Sourcing Flags (real data required — do not fabricate)
 

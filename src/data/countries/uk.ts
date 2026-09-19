@@ -215,10 +215,10 @@ export const uk: CountryProfile = {
     },
   ],
   careerPathways: [
-    { field: 'Healthcare', description: 'NHS expansion and an ageing population keep nursing, care work and allied health roles in persistent demand.', inDemandRoles: ['Registered Nurse', 'Care Assistant', 'Allied Health Professional'] },
-    { field: 'Technology', description: "The UK's fastest-growing sector, with over 2.5 million tech jobs and strong demand for AI, cybersecurity and cloud skills.", inDemandRoles: ['Software Engineer', 'Cybersecurity Analyst', 'Cloud/DevOps Engineer'] },
-    { field: 'Business & Finance', description: 'Sustained demand for management, digital marketing, and finance professionals as businesses digitise.', inDemandRoles: ['Financial Analyst', 'Digital Marketing Manager', 'Operations Manager'] },
-    { field: 'Education', description: 'Teacher shortages persist in several subjects, particularly STEM and languages.', inDemandRoles: ['STEM Teacher', 'SEN Teaching Assistant'] },
+    { field: 'Healthcare', description: 'NHS expansion and an ageing population keep nursing, care work and allied health roles in persistent demand — several are on the Immigration Salary List, which lowers the salary threshold you need to meet.', inDemandRoles: ['Registered Nurse', 'Care Assistant', 'Allied Health Professional'], salaryRange: '£24,000-£45,000', visaPathway: 'Skilled Worker Visa' },
+    { field: 'Technology', description: "The UK's fastest-growing sector, with over 2.5 million tech jobs and strong demand for AI, cybersecurity and cloud skills.", inDemandRoles: ['Software Engineer', 'Cybersecurity Analyst', 'Cloud/DevOps Engineer'], salaryRange: '£35,000-£70,000', visaPathway: 'Skilled Worker Visa' },
+    { field: 'Business & Finance', description: 'Sustained demand for management, digital marketing, and finance professionals as businesses digitise.', inDemandRoles: ['Financial Analyst', 'Digital Marketing Manager', 'Operations Manager'], salaryRange: '£30,000-£65,000', visaPathway: 'Skilled Worker Visa' },
+    { field: 'Education', description: 'Teacher shortages persist in several subjects, particularly STEM and languages.', inDemandRoles: ['STEM Teacher', 'SEN Teaching Assistant'], salaryRange: '£28,000-£45,000', visaPathway: 'Skilled Worker Visa' },
   ],
   culture: [
     { title: 'Politeness over directness', description: 'British communication favours understatement and can be hard to read — "that\'s an interesting idea" sometimes means the opposite. Watch tone as much as words.' },
