@@ -187,9 +187,12 @@ const touristPhotos = await Promise.all(
   <div class="eyebrow">Just Visiting?</div>
   <h2>Tourist &amp; visiting visas</h2>
   <p class="lead" style="margin-bottom: 1.5rem;">Kept deliberately separate from the work/study/family routes above — this is specifically for a holiday, family visit, or short trip.</p>
-  <div class="cp-note" style="margin-bottom: 1.5rem;">
+  <div class="cp-note" style="margin-bottom: 1rem;">
     🏨 <strong>Booking accommodation for your visa application:</strong> {country.touristAccommodation.guidance}
-    {' '}<a href={country.touristAccommodation.platformUrl} target="_blank" rel="noopener" style="color: #8a6a0a; font-weight: 700; text-decoration: underline;">Search on {country.touristAccommodation.platformName} →</a>
+  </div>
+  <div class="cp-tool-links" style="margin-bottom: 1.5rem;">
+    <a href={country.touristAccommodation.platformUrl} target="_blank" rel="noopener" class="btn-ghost">Find accommodation on {country.touristAccommodation.platformName} →</a>
+    <a href="https://www.airbnb.com" target="_blank" rel="noopener" class="btn-ghost">Find accommodation on Airbnb →</a>
   </div>
   {country.visitingVisas.map((route) => (
     <div class="cp-route-card">

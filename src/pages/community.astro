@@ -1,5 +1,27 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { fetchUnsplashPhoto } from '../lib/unsplash';
+
+// One authentic photo per flagship city, of the specific neighbourhood
+// already documented as a real diaspora hub in that country's area guide
+// (src/data/countries/<slug>.ts) — not a generic skyline or airport shot,
+// and not reused from the country page hero. Fetched once at build time,
+// same pattern as src/components/CountryProfile.astro — see CLAUDE.md
+// "Architecture — Unsplash".
+const cityPhotoQueries: Record<string, string> = {
+  'Toronto, Canada': 'Scarborough, Toronto',
+  'London, UK': 'Peckham, London',
+  'Sydney, Australia': 'Cabramatta, Sydney',
+  'Amsterdam, Netherlands': 'Bos en Lommer, Amsterdam',
+  'Brussels, Belgium': 'Matongé, Ixelles Brussels',
+  'New York City, USA': 'Jackson Heights, Queens New York',
+};
+const cityPhotos: Record<string, { url: string; alt: string; creditName: string; creditUrl: string } | null> = {};
+for (const [city, query] of Object.entries(cityPhotoQueries)) {
+  cityPhotos[city] = await fetchUnsplashPhoto(query);
+}
+const cities = Object.keys(cityPhotoQueries);
+const firstPhoto = cityPhotos[cities[0]];
 ---
 <Layout
   title="Find Your Community | AfriMigrate"
@@ -11,6 +33,13 @@ import Layout from '../layouts/Layout.astro';
   <p class="lead" style="margin-bottom: 2rem;">
     Moving abroad doesn't mean leaving everything familiar behind. Search for African grocery stores, churches, mosques and community centres already established where you're headed — real places, with live ratings and hours from Google.
   </p>
+
+  {firstPhoto && (
+    <div class="cp-hero-photo-wrap" style="max-width: 640px;">
+      <img id="communityCityPhoto" src={firstPhoto.url} alt={firstPhoto.alt} width="640" height="280" />
+      <a id="communityPhotoCredit" href={firstPhoto.creditUrl} target="_blank" rel="noopener" class="cp-photo-credit">Photo: {firstPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
 
   <div class="card" style="max-width: 640px; display: flex; flex-direction: column; gap: 1.25rem;">
     <label class="crs-field">
@@ -39,6 +68,28 @@ import Layout from '../layouts/Layout.astro';
 
   <div id="communityStatus" class="cp-note" style="margin-top: 1.5rem; max-width: 640px;" hidden></div>
   <div id="communityResults" class="tools-grid" style="margin-top: 2rem;"></div>
+
+  <script define:vars={{ cityPhotos }}>
+    const cityPhoto = document.getElementById('communityCityPhoto');
+    const photoCredit = document.getElementById('communityPhotoCredit');
+
+    function updatePhoto(city) {
+      if (!cityPhoto) return;
+      const photo = cityPhotos[city];
+      if (!photo) { cityPhoto.closest('.cp-hero-photo-wrap')?.setAttribute('hidden', ''); return; }
+      cityPhoto.closest('.cp-hero-photo-wrap')?.removeAttribute('hidden');
+      cityPhoto.src = photo.url;
+      cityPhoto.alt = photo.alt;
+      if (photoCredit) {
+        photoCredit.href = photo.creditUrl;
+        photoCredit.textContent = `Photo: ${photo.creditName} / Unsplash`;
+      }
+    }
+
+    document.getElementById('communityCity')?.addEventListener('change', (e) => {
+      updatePhoto(e.target.value);
+    });
+  </script>
 
   <script>
     import { searchPlacesText, isPlacesConfigured } from '../lib/places';

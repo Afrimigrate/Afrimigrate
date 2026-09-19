@@ -242,7 +242,33 @@ of that country's flagship city (Toronto, London, Sydney, Amsterdam,
 Brussels, New York) instead of a plain text hero — chosen deliberately over
 a generic flag/stock image so it feels like a specific place, not a cliché.
 Each tourist site card gets its own photo. The career planner (see below)
-shows a country thumbnail on each ranked result.
+shows a country thumbnail on each ranked result. `/community` ("Find Your
+Community") shows a photo of the *specific diaspora neighbourhood* already
+documented in that city's `areaGuide` (e.g. Peckham for London, Matongé for
+Brussels, Jackson Heights for New York) — deliberately not the same skyline
+photo as the country page hero, and deliberately not a generic
+"airport"/"handshake" stock image, so it feels authentic to the audience
+this feature is actually for. The photo swaps (pre-fetched at build time
+for all six cities, no live API calls) when the visitor changes the city
+dropdown.
+
+**Typography — considered and kept, not changed.** Asked whether the
+Fraunces/DM Sans pairing reads as "generic AI template" or as a deliberate
+choice: it's deliberate, and changing it would violate this file's own
+Non-Negotiable to keep the visual identity exactly as established. Fraunces
+is a distinctive, characterful display serif (irregular ink-trap details,
+dramatic italics) built specifically for editorial/warm branding — not a
+default like Inter or system-ui, which is what actually reads as
+generic/AI-templated. DM Sans is a clean, professional companion that gets
+out of the way for body text. A pass across the newer Phase 3 pages
+(dashboard, onboarding, signup, login, career planner, community, premium)
+found consistent spacing, hierarchy and card patterns already — no
+unstyled/placeholder-looking sections. The one genuine bug found and fixed
+in this pass: `.cp-tags`/`.cp-tag` were only defined in `CountryProfile.astro`'s
+local `<style>` block, so they rendered unstyled (no pill background, no
+gap) on `/career-planner`, which does reuse them — moved into
+`Layout.astro`'s global styles, the same fix pattern already used twice
+before in this project for the same class of bug.
 
 ## Architecture — Google Places (Live Ratings/Hours + "Find Your Community")
 
@@ -317,9 +343,12 @@ cities (Toronto, London, Sydney, Amsterdam, Brussels, New York):
   money before they've even landed.
 - **Tourist-visa accommodation guidance** (`touristAccommodation` field,
   shown as a callout in the visiting-visa section of each country page):
-  general guidance on what visa officers look for in proof of accommodation
-  and typical booking platforms, linking out to Booking.com — never a list
-  of specific hotels, same "guide, don't host" principle as the area guides.
+  general guidance on what visa officers look for in proof of accommodation,
+  with two "Find accommodation" buttons — Booking.com (per-country, from
+  the data file) and Airbnb (a fixed generic link, same for every country,
+  hardcoded in `CountryProfile.astro` since it needs no per-country
+  customisation) — never a list of specific hotels, same "guide, don't
+  host" principle as the area guides.
 
 ## Career Planner (`/career-planner`)
 
