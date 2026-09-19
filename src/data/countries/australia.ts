@@ -206,10 +206,10 @@ export const australia: CountryProfile = {
     },
   ],
   careerPathways: [
-    { field: 'Healthcare', description: 'Nursing, aged care and allied health remain chronically short-staffed as the population ages.', inDemandRoles: ['Registered Nurse', 'Aged Care Worker', 'Occupational Therapist'] },
-    { field: 'Technology', description: 'Cybersecurity, software engineering and data roles are consistently on skilled occupation lists.', inDemandRoles: ['Software Engineer', 'Cybersecurity Specialist', 'ICT Business Analyst'] },
-    { field: 'Construction & Trades', description: 'A sustained construction boom keeps trades in high demand across most states.', inDemandRoles: ['Electrician', 'Carpenter', 'Civil Engineer'] },
-    { field: 'Education', description: 'Teacher shortages, especially in regional areas and STEM subjects, continue to drive demand.', inDemandRoles: ['Secondary School Teacher', 'Early Childhood Educator'] },
+    { field: 'Healthcare', description: 'Nursing, aged care and allied health remain chronically short-staffed as the population ages, and most roles sit on the Core Skills Occupation List.', inDemandRoles: ['Registered Nurse', 'Aged Care Worker', 'Occupational Therapist'], salaryRange: 'AUD $65,000-$110,000', visaPathway: 'Skills in Demand Visa (subclass 482)' },
+    { field: 'Technology', description: 'Cybersecurity, software engineering and data roles are consistently on skilled occupation lists.', inDemandRoles: ['Software Engineer', 'Cybersecurity Specialist', 'ICT Business Analyst'], salaryRange: 'AUD $85,000-$140,000', visaPathway: 'Skilled Independent Visa (subclass 189)' },
+    { field: 'Construction & Trades', description: 'A sustained construction boom keeps trades in high demand across most states, and several trades qualify for state/regional nomination.', inDemandRoles: ['Electrician', 'Carpenter', 'Civil Engineer'], salaryRange: 'AUD $70,000-$120,000', visaPathway: 'Skilled Nominated / Regional Visas (subclass 190 / 491)' },
+    { field: 'Education', description: 'Teacher shortages, especially in regional areas and STEM subjects, continue to drive demand.', inDemandRoles: ['Secondary School Teacher', 'Early Childhood Educator'], salaryRange: 'AUD $75,000-$100,000', visaPathway: 'Skills in Demand Visa (subclass 482)' },
   ],
   culture: [
     { title: 'Informal and direct', description: 'Australian workplaces are typically informal — first names, casual dress in many industries, and direct (but polite) communication.' },

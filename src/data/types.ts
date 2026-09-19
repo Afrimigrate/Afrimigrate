@@ -28,6 +28,8 @@ export interface CareerPathway {
   field: string;
   description: string;
   inDemandRoles: string[];
+  salaryRange: string; // approximate, local currency, e.g. "CAD $70,000-$130,000"
+  visaPathway: string; // the route name (from visaCategories) this career typically qualifies for
 }
 
 export interface CultureNote {

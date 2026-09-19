@@ -196,10 +196,10 @@ export const netherlands: CountryProfile = {
     },
   ],
   careerPathways: [
-    { field: 'Technology', description: 'AI, cybersecurity and cloud infrastructure roles remain strongly in demand, especially at Amsterdam-based international tech employers.', inDemandRoles: ['Software Developer', 'Cybersecurity Specialist', 'Cloud Engineer'] },
-    { field: 'Healthcare', description: 'An ageing population and staff shortages keep nursing and allied health roles in demand.', inDemandRoles: ['Registered Nurse', 'Allied Health Professional'] },
-    { field: 'Logistics & Engineering', description: "Rotterdam's port and Schiphol's airport make the Netherlands a European logistics hub, alongside strong engineering demand.", inDemandRoles: ['Logistics Specialist', 'Mechanical Engineer', 'Electrician'] },
-    { field: 'Renewable Energy', description: 'A national push into offshore wind and green energy is creating sustained new roles.', inDemandRoles: ['Renewable Energy Engineer', 'Project Manager'] },
+    { field: 'Technology', description: 'AI, cybersecurity and cloud infrastructure roles remain strongly in demand, especially at Amsterdam-based international tech employers — salaries here comfortably clear the Highly Skilled Migrant threshold.', inDemandRoles: ['Software Developer', 'Cybersecurity Specialist', 'Cloud Engineer'], salaryRange: '€45,000-€80,000', visaPathway: 'Highly Skilled Migrant Permit (Kennismigrant)' },
+    { field: 'Healthcare', description: 'An ageing population and staff shortages keep nursing and allied health roles in demand, but note: many nursing salaries fall below the Highly Skilled Migrant threshold, so employer-sponsored routes vary — check with the specific employer.', inDemandRoles: ['Registered Nurse', 'Allied Health Professional'], salaryRange: '€40,000-€65,000', visaPathway: 'Highly Skilled Migrant Permit (salary threshold applies — confirm with employer)' },
+    { field: 'Logistics & Engineering', description: "Rotterdam's port and Schiphol's airport make the Netherlands a European logistics hub, alongside strong engineering demand.", inDemandRoles: ['Logistics Specialist', 'Mechanical Engineer', 'Electrician'], salaryRange: '€40,000-€75,000', visaPathway: 'Highly Skilled Migrant Permit (Kennismigrant)' },
+    { field: 'Renewable Energy', description: 'A national push into offshore wind and green energy is creating sustained new roles.', inDemandRoles: ['Renewable Energy Engineer', 'Project Manager'], salaryRange: '€45,000-€80,000', visaPathway: 'Highly Skilled Migrant Permit (Kennismigrant)' },
   ],
   culture: [
     { title: 'Directness is respect, not rudeness', description: 'Dutch colleagues say what they mean plainly — critical feedback is about the work, not a personal attack, and is meant to save everyone time.' },

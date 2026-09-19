@@ -155,10 +155,10 @@ export const belgium: CountryProfile = {
     },
   ],
   careerPathways: [
-    { field: 'ICT & Technology', description: 'Belgium\'s tech federation reports over 15,000 unfilled ICT vacancies at any given time — one of the strongest opportunities on this list.', inDemandRoles: ['Software Developer', 'Cybersecurity Analyst', 'ICT Specialist'] },
-    { field: 'Healthcare', description: 'Nurses and care assistants remain on every regional shortage list.', inDemandRoles: ['Registered Nurse', 'Care Assistant'] },
-    { field: 'Engineering & Trades', description: 'Engineering technicians, electricians and industrial maintenance roles are consistently short-staffed.', inDemandRoles: ['Engineering Technician', 'Electrician', 'CNC Operator'] },
-    { field: 'Logistics', description: 'Belgium\'s central European location and ports keep logistics and customs roles in steady demand.', inDemandRoles: ['Logistics Coordinator', 'Customs Specialist'] },
+    { field: 'ICT & Technology', description: 'Belgium\'s tech federation reports over 15,000 unfilled ICT vacancies at any given time — one of the strongest opportunities on this list, and senior roles typically clear the EU Blue Card salary threshold.', inDemandRoles: ['Software Developer', 'Cybersecurity Analyst', 'ICT Specialist'], salaryRange: '€40,000-€75,000', visaPathway: 'EU Blue Card' },
+    { field: 'Healthcare', description: 'Nurses and care assistants remain on every regional shortage list, exempting these roles from labour market testing.', inDemandRoles: ['Registered Nurse', 'Care Assistant'], salaryRange: '€35,000-€55,000', visaPathway: 'Single Permit (combined work + residence)' },
+    { field: 'Engineering & Trades', description: 'Engineering technicians, electricians and industrial maintenance roles are consistently short-staffed on both the Flanders and Wallonia shortage lists.', inDemandRoles: ['Engineering Technician', 'Electrician', 'CNC Operator'], salaryRange: '€38,000-€60,000', visaPathway: 'Single Permit (combined work + residence)' },
+    { field: 'Logistics', description: 'Belgium\'s central European location and ports keep logistics and customs roles in steady demand.', inDemandRoles: ['Logistics Coordinator', 'Customs Specialist'], salaryRange: '€35,000-€55,000', visaPathway: 'Single Permit (combined work + residence)' },
   ],
   culture: [
     { title: 'Formal and title-conscious', description: 'Belgian business culture leans formal — use last names and appropriate titles until invited to do otherwise.' },

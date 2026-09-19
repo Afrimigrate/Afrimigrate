@@ -1,5 +1,6 @@
 ---
 import type { CountryProfile } from '../data/types';
+import { fetchUnsplashPhoto, isUnsplashConfigured } from '../lib/unsplash';
 
 export interface Props {
   country: CountryProfile;
@@ -18,8 +19,21 @@ const prLabel: Record<string, string> = {
   no: 'No direct PR path',
   conditional: 'Conditional path to PR',
 };
+
+// Fetched once at build time (see src/lib/unsplash.ts) — a real photo of the
+// flagship city, not a generic stock/flag image, per the "feel authentic" brief.
+const heroPhoto = await fetchUnsplashPhoto(`${country.areaGuide.city} skyline`);
+const touristPhotos = await Promise.all(
+  country.touristSites.map((t) => fetchUnsplashPhoto(`${t.name} ${country.name}`))
+);
 ---
 <div class="cp-hero">
+  {heroPhoto && (
+    <div class="cp-hero-photo-wrap">
+      <img src={heroPhoto.url} alt={heroPhoto.alt} class="cp-hero-photo" width="1200" height="420" />
+      <a href={heroPhoto.creditUrl} target="_blank" rel="noopener" class="cp-photo-credit">Photo: {heroPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
   <div class="cp-flag">{country.flag}</div>
   <div class="eyebrow">{country.heroTagline}</div>
   <h1>Move to {country.name}, every legal route</h1>
@@ -85,15 +99,18 @@ const prLabel: Record<string, string> = {
   </div>
 </section>
 
-<section class="section section-alt" style="border-radius: var(--rl);">
+<section id="careers" class="section section-alt" style="border-radius: var(--rl);">
   <div class="eyebrow">Careers</div>
   <h2>Best career pathways right now</h2>
+  <p class="lead" style="margin-bottom: 1.5rem;">Not sure which of the six countries fits your profession best? <a href="/career-planner" style="color: var(--green); font-weight: 600;">Try the career planner →</a></p>
   <div class="tools-grid">
     {country.careerPathways.map((c) => (
       <div class="tool-card">
         <h3>{c.field}</h3>
         <p>{c.description}</p>
         <div class="cp-tags">{c.inDemandRoles.map((r) => <span class="cp-tag">{r}</span>)}</div>
+        <p style="font-size: 0.82rem; color: var(--ink2); margin-top: 0.9rem; margin-bottom: 0.25rem;"><strong style="color: var(--ink);">Typical salary:</strong> {c.salaryRange}</p>
+        <p style="font-size: 0.82rem; color: var(--ink2); margin-bottom: 0;"><strong style="color: var(--ink);">Usual visa route:</strong> {c.visaPathway}</p>
       </div>
     ))}
   </div>
@@ -207,8 +224,14 @@ const prLabel: Record<string, string> = {
   <div class="eyebrow">While You're There</div>
   <h2>Best places to visit</h2>
   <div class="tools-grid">
-    {country.touristSites.map((t) => (
+    {country.touristSites.map((t, i) => (
       <div class="tool-card cp-tourist-card" data-place-query={t.name}>
+        {touristPhotos[i] && (
+          <div class="cp-tourist-photo-wrap">
+            <img src={touristPhotos[i]!.url} alt={touristPhotos[i]!.alt} class="cp-tourist-photo" loading="lazy" width="400" height="240" />
+            <a href={touristPhotos[i]!.creditUrl} target="_blank" rel="noopener" class="cp-photo-credit cp-photo-credit-inline">Photo: {touristPhotos[i]!.creditName} / Unsplash</a>
+          </div>
+        )}
         <h3>{t.name}</h3>
         <p>{t.description}</p>
         <button class="tool-link cp-live-info-btn" style="background: none; border: none; padding: 0; cursor: pointer; font: inherit;">See live rating &amp; hours →</button>
@@ -257,6 +280,16 @@ const prLabel: Record<string, string> = {
 
 <style>
   .cp-hero { text-align: left; margin-bottom: 1rem; }
+  .cp-hero-photo-wrap { position: relative; margin-bottom: 1.5rem; border-radius: var(--radius-lg); overflow: hidden; }
+  .cp-hero-photo { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 420; object-fit: cover; }
+  .cp-photo-credit {
+    position: absolute; bottom: 0.6rem; right: 0.6rem; background: rgba(20,18,16,0.55); color: var(--white);
+    font-size: 0.65rem; padding: 0.25rem 0.6rem; border-radius: 999px; text-decoration: none; opacity: 0.85;
+  }
+  .cp-photo-credit:hover { opacity: 1; }
+  .cp-tourist-photo-wrap { position: relative; margin: -2.25rem -2.25rem 1.25rem; border-radius: var(--radius-lg) var(--radius-lg) 0 0; overflow: hidden; }
+  .cp-tourist-photo { display: block; width: 100%; height: auto; aspect-ratio: 400 / 240; object-fit: cover; }
+  .cp-photo-credit-inline { font-size: 0.6rem; }
   .cp-flag { font-size: 2.5rem; margin-bottom: 0.75rem; }
   .cp-facts { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem; }
   .cp-fact { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 0.5rem 0.9rem; display: flex; flex-direction: column; gap: 0.15rem; }
@@ -298,9 +331,6 @@ const prLabel: Record<string, string> = {
   .cp-route-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2); display: block; margin-bottom: 0.4rem; }
   .cp-route-grid p { font-size: 0.88rem; color: var(--ink); font-weight: 500; }
   .cp-list { list-style: disc; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; color: var(--ink2); font-weight: 300; }
-
-  .cp-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
-  .cp-tag { font-size: 0.72rem; background: var(--bg); border: 1px solid var(--border); color: var(--ink2); padding: 0.25rem 0.6rem; border-radius: 999px; }
 
   .cp-checklist { display: flex; flex-direction: column; gap: 1rem; }
   .cp-checklist-item { display: flex; gap: 1rem; align-items: flex-start; background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 1.1rem 1.25rem; }
