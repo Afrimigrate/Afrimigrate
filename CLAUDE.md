@@ -536,6 +536,31 @@ at the old host rather than wherever the newest work is being previewed.
 5. DNS changes can take up to 24-48 hours to propagate globally, so the
    switch won't be instant even once saved correctly.
 
+**Until that switch happens, `afrimigrate.com` and `<project>.vercel.app`
+are two genuinely different deployments of this code, built by two
+different systems, and they can look different from each other** — this
+caused real confusion once already (2026-09): photos, live ratings, and
+accounts all appeared "missing" because `.github/workflows/deploy.yml`
+(which builds the GitHub Pages / `afrimigrate.com` copy) had none of the
+API keys Vercel had — GitHub Actions and Vercel each need secrets
+configured **separately**, they don't share Vercel's environment
+variables. Two things fixed this:
+1. The workflow now passes `PUBLIC_SUPABASE_URL`,
+   `PUBLIC_SUPABASE_ANON_KEY`, `PUBLIC_UNSPLASH_ACCESS_KEY`, and
+   `PUBLIC_GOOGLE_PLACES_API_KEY` through as build-time env vars, sourced
+   from `${{ secrets.* }}` — but Augustine still has to add each one as a
+   **repository secret** (Settings → Secrets and variables → Actions →
+   New repository secret) using the exact same names as in Vercel; adding
+   them to Vercel does not also add them here.
+2. **Stripe payments will never work on GitHub Pages, with or without
+   secrets** — `/api/create-checkout-session.js` and `/api/stripe-webhook.js`
+   are serverless functions, and GitHub Pages only serves static files. Any
+   Stripe/Apple Pay testing must happen on the Vercel-hosted URL until the
+   DNS switch is complete.
+
+When something looks like it "isn't showing up," check which URL is being
+tested before assuming the code is broken.
+
 ---
 
 ## Monetisation

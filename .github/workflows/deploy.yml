@@ -24,6 +24,19 @@ jobs:
           node-version: 20
       - run: npm ci
       - run: npm run build
+        env:
+          # This workflow builds the GitHub Pages copy of the site — a
+          # separate deployment from Vercel with its own, separate set of
+          # secrets. Without these, GitHub Pages builds with none of the
+          # photo/account/live-data features switched on, even if the same
+          # keys are already set in Vercel. Add each one under this repo's
+          # Settings -> Secrets and variables -> Actions -> New repository
+          # secret, using the exact names below (see .env.example for what
+          # each key is and where to get it).
+          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+          PUBLIC_UNSPLASH_ACCESS_KEY: ${{ secrets.PUBLIC_UNSPLASH_ACCESS_KEY }}
+          PUBLIC_GOOGLE_PLACES_API_KEY: ${{ secrets.PUBLIC_GOOGLE_PLACES_API_KEY }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
