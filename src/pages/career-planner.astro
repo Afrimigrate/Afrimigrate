@@ -21,11 +21,17 @@ for (const c of countries) {
 
 // Flattened, build-time dataset the client script searches against — no API
 // calls happen when a visitor uses the planner, it's all baked in already.
+// relatedToolHref lets a result link straight into that country's own visa
+// tool (CRS calculator, points calculator, etc.) rather than just the
+// profile page — falls back to the profile's careers anchor if a country
+// has no bespoke tool yet.
 const matchData = countries.map((c) => ({
   slug: c.slug,
   name: c.name,
   flag: c.flag,
   photo: photosByCountry[c.slug],
+  toolHref: c.relatedTools[0]?.href ?? null,
+  toolLabel: c.relatedTools[0]?.label ?? null,
   careers: c.careerPathways.map((cp) => ({
     field: cp.field,
     roles: cp.inDemandRoles,
@@ -36,19 +42,27 @@ const matchData = countries.map((c) => ({
 ---
 <Layout
   title="Career Planner — Which Country Fits Your Profession? | AfriMigrate"
-  description="Type your profession and see how it ranks for in-demand careers, salaries and visa pathways across Canada, the UK, Australia, Netherlands, Belgium and the US."
+  description="Type your profession and experience level to see a ranked comparison across Canada, the UK, Australia, Netherlands, Belgium and the US — salary, visa route, and why each country ranks where it does."
 >
   <div class="breadcrumb"><a href="/">Home</a> / Career Planner</div>
   <div class="eyebrow">Free, Forever</div>
   <h1>Where does your career take you furthest?</h1>
   <p class="lead" style="margin-bottom: 2rem;">
-    Type your profession or field below and see how it ranks for demand, salary and the visa route it typically qualifies for — across all six countries at once, not just one.
+    Tell us your profession and experience level, and see a ranked comparison across all six countries at once — demand, salary, the visa route it typically qualifies for, and a plain-language reason for the ranking.
   </p>
 
-  <div class="card" style="max-width: 640px; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem;">
+  <div class="card" style="max-width: 640px; display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2.5rem;">
     <label class="crs-field" style="margin-bottom: 0;">
       Your profession or field
       <input id="careerInput" class="crs-input" type="text" placeholder="e.g. nurse, software engineer, electrician, teacher" autocomplete="off" />
+    </label>
+    <label class="crs-field" style="margin-bottom: 0;">
+      Experience level
+      <select id="careerExperience" class="crs-input">
+        <option value="entry">Entry-level (0-2 years)</option>
+        <option value="mid" selected>Mid-career (3-7 years)</option>
+        <option value="senior">Senior (8+ years)</option>
+      </select>
     </label>
     <button id="careerSearchBtn" class="btn-primary" style="border: none; cursor: pointer; align-self: flex-start;">See my rankings →</button>
     <p style="font-size: 0.78rem; color: var(--ink2); margin-bottom: 0;">Try: nurse · software engineer · electrician · teacher · data scientist · welder</p>
@@ -74,11 +88,41 @@ const matchData = countries.map((c) => ({
 
   <script define:vars={{ matchData }}>
     const input = document.getElementById('careerInput');
+    const experienceSelect = document.getElementById('careerExperience');
     const btn = document.getElementById('careerSearchBtn');
     const results = document.getElementById('careerResults');
     const emptyState = document.getElementById('careerEmpty');
 
-    function scoreCountry(country, query) {
+    const EXPERIENCE_LABEL = {
+      entry: 'entry-level',
+      mid: 'mid-career',
+      senior: 'senior-level',
+    };
+
+    // Salary ranges are stored as free text (e.g. "CAD $70,000-$130,000") so
+    // they can carry real, researched local-currency figures per country —
+    // this pulls the two numbers back out to bias ranking toward the band
+    // an entry/mid/senior applicant would actually land in, without needing
+    // a second, parallel numeric-only data field to keep in sync.
+    function parseSalaryBand(salaryRange) {
+      const numbers = (salaryRange.match(/[\d,]{4,}/g) || []).map((n) => parseInt(n.replace(/,/g, ''), 10));
+      if (numbers.length < 2) return null;
+      return { low: Math.min(...numbers), high: Math.max(...numbers) };
+    }
+
+    function experienceMultiplier(band, experience) {
+      // A senior applicant is a stronger fit for a career whose range runs
+      // high; an entry-level applicant is a stronger fit where the range
+      // stays modest. This nudges ranking order, it doesn't invent data.
+      if (!band) return 1;
+      const spread = band.high - band.low;
+      const position = spread > 0 ? (band.high - band.low) / band.high : 0.5;
+      if (experience === 'senior') return 1 + position * 0.5;
+      if (experience === 'entry') return 1 + (1 - position) * 0.3;
+      return 1;
+    }
+
+    function scoreCountry(country, query, experience) {
       const q = query.trim().toLowerCase();
       if (!q) return { score: 0, matches: [] };
       let score = 0;
@@ -92,16 +136,36 @@ const matchData = countries.map((c) => ({
         }
         if (career.field.toLowerCase().includes(q)) careerScore = Math.max(careerScore, 1);
         if (careerScore > 0) {
-          score += careerScore;
-          matches.push({ ...career, careerScore });
+          const band = parseSalaryBand(career.salaryRange);
+          const weighted = careerScore * experienceMultiplier(band, experience);
+          score += weighted;
+          matches.push({ ...career, careerScore: weighted });
         }
       }
       return { score, matches };
     }
 
-    function render(query) {
+    // A short, legible reason for the ranking — not a bare score. Built
+    // from data already on the match (visa route health, exact vs. partial
+    // role match) rather than a canned line repeated for every result.
+    function rankingReason(r, rank, experienceLabel) {
+      const best = r.matches.reduce((a, b) => (b.careerScore > a.careerScore ? b : a), r.matches[0]);
+      const hasRealRoute = !best.visaPathway.toLowerCase().startsWith('no formal route');
+      const exactMatch = best.careerScore >= 3;
+      if (rank === 0) {
+        if (exactMatch && hasRealRoute) return `Highest demand and a clear, direct visa route for a ${experienceLabel} profile.`;
+        if (hasRealRoute) return `Strong related demand here, with a workable visa route for a ${experienceLabel} profile.`;
+        return `Ranks first on demand and salary, but check the visa route note below closely.`;
+      }
+      if (!hasRealRoute) return `Real demand, but no clean sponsored visa route for this career today — read the note below.`;
+      if (exactMatch) return `A direct match with a clear visa pathway, just behind higher-ranked options above.`;
+      return `A related-field match worth considering alongside the top result.`;
+    }
+
+    function render(query, experience) {
+      const experienceLabel = EXPERIENCE_LABEL[experience] || 'mid-career';
       const ranked = matchData
-        .map((c) => ({ country: c, ...scoreCountry(c, query) }))
+        .map((c) => ({ country: c, ...scoreCountry(c, query, experience) }))
         .filter((r) => r.score > 0)
         .sort((a, b) => b.score - a.score);
 
@@ -114,15 +178,16 @@ const matchData = countries.map((c) => ({
       emptyState.hidden = true;
       results.innerHTML = `
         <div class="eyebrow">Ranked For You</div>
-        <h2 style="margin-bottom: 1.5rem;">Best fits for "${query}"</h2>
+        <h2 style="margin-bottom: 1.5rem;">Best fits for a ${experienceLabel} "${query}"</h2>
         <div class="tools-grid" style="margin-bottom: 2.5rem;">
           ${ranked.map((r, i) => `
             <div class="tool-card">
-              ${r.country.photo ? `<img src="${r.country.photo}" alt="${r.country.name}" style="width: calc(100% + 4.5rem); height: 160px; object-fit: cover; margin: -2.25rem -2.25rem 1.25rem; border-radius: var(--radius-lg) var(--radius-lg) 0 0; display: block;" loading="lazy" />` : ''}
-              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              ${r.country.photo ? `<img src="${r.country.photo}" alt="${r.country.name}" style="width: calc(100% + 4.5rem); height: 160px; object-fit: cover; margin: -2.25rem -2.25rem 1.25rem; border-radius: var(--rl) var(--rl) 0 0; display: block;" loading="lazy" />` : ''}
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
                 <span style="font-size: 1.5rem;">${r.country.flag}</span>
                 <h3 style="margin-bottom: 0;">#${i + 1}: ${r.country.name}</h3>
               </div>
+              <p style="font-size: 0.85rem; color: var(--green); font-weight: 600; margin-bottom: 0.75rem;">${rankingReason(r, i, experienceLabel)}</p>
               ${r.matches.map((m) => `
                 <div style="border-top: 1px solid var(--border); padding-top: 0.85rem; margin-top: 0.85rem;">
                   <p style="font-weight: 600; color: var(--ink); margin-bottom: 0.35rem; font-size: 0.9rem;">${m.field}</p>
@@ -130,7 +195,10 @@ const matchData = countries.map((c) => ({
                   <p style="font-size: 0.82rem; color: var(--ink2); margin-bottom: 0;"><strong style="color: var(--ink);">Visa route:</strong> ${m.visaPathway}</p>
                 </div>
               `).join('')}
-              <a href="/${r.country.slug}#careers" class="tool-link" style="margin-top: 1rem;">See full ${r.country.name} profile →</a>
+              <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.25rem;">
+                ${r.country.toolHref ? `<a href="${r.country.toolHref}" class="tool-link">${r.country.toolLabel} →</a>` : ''}
+                <a href="/${r.country.slug}#careers" class="tool-link${r.country.toolHref ? ' muted' : ''}">${r.country.toolHref ? 'Full profile' : 'See full profile'} →</a>
+              </div>
             </div>
           `).join('')}
         </div>
@@ -139,12 +207,13 @@ const matchData = countries.map((c) => ({
 
     function runSearch() {
       const query = input.value;
+      const experience = experienceSelect.value;
       if (!query.trim()) {
         results.innerHTML = '';
         emptyState.hidden = false;
         return;
       }
-      render(query);
+      render(query, experience);
     }
 
     btn.addEventListener('click', runSearch);

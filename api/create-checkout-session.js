@@ -8,6 +8,13 @@
 //   STRIPE_PRICE_PDF_REPORT      - Price ID from the Stripe Dashboard
 //   STRIPE_PRICE_AI_COVER_LETTER - Price ID from the Stripe Dashboard
 //   PUBLIC_SITE_URL              - e.g. https://afrimigrate.com (for redirect URLs)
+//
+// Request body: { product: 'pdf-report' | 'ai-cover-letter', userId?: string }
+// userId is the signed-in Supabase user's id (src/pages/premium.astro reads
+// it from the current session) — passed through as Stripe's own
+// client_reference_id so stripe-webhook.js knows whose profile to mark
+// premium once payment succeeds. Optional: an anonymous visitor can still
+// buy, there's just no account to unlock.
 
 import Stripe from 'stripe';
 
@@ -26,7 +33,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Stripe is not configured yet on this deployment.' });
   }
 
-  const { product } = req.body ?? {};
+  const { product, userId } = req.body ?? {};
   const priceEnvVar = PRICE_ENV_BY_PRODUCT[product];
   const priceId = priceEnvVar && process.env[priceEnvVar];
   if (!priceId) {
@@ -42,6 +49,12 @@ export default async function handler(req, res) {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${siteUrl}/premium?success=1&product=${encodeURIComponent(product)}`,
       cancel_url: `${siteUrl}/premium?canceled=1`,
+      metadata: { product },
+      // Ties this purchase back to the logged-in Supabase user, if any, so
+      // the webhook knows whose profile to mark premium. Omitted entirely
+      // for an anonymous purchase — nothing to unlock without an account,
+      // but the payment itself still works.
+      ...(userId ? { client_reference_id: userId } : {}),
     });
     return res.status(200).json({ url: session.url });
   } catch (err) {

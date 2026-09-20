@@ -377,6 +377,19 @@ Formal Route'`, or a route name with a caveat) rather than pointing at a
 route that wouldn't actually work. Same principle as the Data Sourcing
 Flags below: never invent a pathway that doesn't exist.
 
+**v2 additions**: an experience-level selector (entry/mid/senior) biases the
+ranking — a career whose salary range runs high favours a senior search, a
+tighter/lower range favours entry-level — using the salary figures already
+in the data, not a second parallel field to keep in sync. Each ranked
+result now gets a one-line, plain-language reason built from the match
+itself (exact vs. related-field match, whether a real visa route exists),
+not a canned line repeated for every card. Results link out two ways: to
+that country's own bespoke tool where one exists (CRS Calculator, Points
+Calculator, Skilled Worker Visa Checker — from `relatedTools[0]` in the
+country's data file) and to the full country profile — a country with no
+bespoke tool yet (Netherlands, Belgium, US) only shows the profile link,
+never a fake/duplicate one.
+
 ## Data Sourcing Flags (real data required — do not fabricate)
 
 - **UK sponsor licence register**: the UK government publishes the full,
@@ -567,7 +580,29 @@ gated by Supabase auth once accounts exist, not by Stripe directly — Stripe
 unlocks the premium *content* inside an already-logged-in account, rather
 than gating login itself.
 
-The webhook currently only logs a successful payment — actual PDF rendering
+**Built**: the checkout → account link now actually works, not just the
+checkout itself. `/premium` reads the current Supabase session client-side
+and, if logged in, passes the user's id to `create-checkout-session.js` as
+`userId`; that function sets it as Stripe's own `client_reference_id` on the
+Checkout Session (an anonymous visitor can still buy, there's just no
+account to flag). `stripe-webhook.js` reads `client_reference_id` back off
+the completed session and, using a new **Supabase service_role key**
+(`SUPABASE_SERVICE_ROLE_KEY` — server-only, see `.env.example`, bypasses RLS
+by design since the webhook has no logged-in session of its own to act as),
+sets that user's `profiles.is_premium = true`. `/premium` shows a "Payment
+received" banner on return from Checkout, and a persistent "your account is
+Premium" banner once `is_premium` is confirmed true; `/dashboard` shows a
+small "✓ Premium" badge next to the greeting under the same condition.
+
+**What this does and doesn't unlock, honestly**: `is_premium` flipping to
+true is real and tested. It does not, by itself, make the document vault,
+migration timeline, or UK sponsor tracker appear — those are separate,
+not-yet-built features (Phase 3 steps 4-6 above). Marking `is_premium` now,
+correctly and automatically, means there's nothing left to wire up
+retroactively once those features do get built — they'll check the same
+flag that's already being set correctly today.
+
+The webhook still only logs the payment beyond that — actual PDF rendering
 and AI letter generation need their own follow-up decisions (a PDF library
 needs no new account; the AI cover letter needs an LLM API key from
 whichever provider Augustine picks) before that fulfillment logic gets built.

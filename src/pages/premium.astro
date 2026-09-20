@@ -8,9 +8,13 @@ import Layout from '../layouts/Layout.astro';
   <div class="breadcrumb"><a href="/">Home</a> / Premium</div>
   <div class="eyebrow">Optional, Never Required</div>
   <h1>Everything free stays free. These are extras.</h1>
-  <p class="lead" style="margin-bottom: 2.5rem;">
+  <p class="lead" style="margin-bottom: 1.5rem;">
     The CRS calculator, every visa guide, the document checklists and all country profiles are free forever — that's not changing. These are optional add-ons for people who want a little more.
   </p>
+  <div id="premiumSuccessBanner" class="cp-note" style="margin-bottom: 1.5rem; display: none;"></div>
+  <div id="premiumUnlockedBanner" class="cp-note" style="margin-bottom: 2.5rem; display: none; background: #EEF7EE; border-color: #C3DEC3; color: var(--green);">
+    ✓ Your account is on Premium. The document vault, migration timeline and UK sponsor tracker will unlock here automatically as each one ships — <a href="/dashboard" style="color: var(--green); font-weight: 700; text-decoration: underline;">check your dashboard</a>.
+  </div>
 
   <section class="section" style="padding-top: 0;">
     <div class="tools-grid">
@@ -48,6 +52,31 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <script>
+    import { supabase, isSupabaseConfigured } from '../lib/supabase';
+
+    let currentUserId: string | undefined;
+
+    async function initAccountState() {
+      const successBanner = document.getElementById('premiumSuccessBanner')!;
+      const unlockedBanner = document.getElementById('premiumUnlockedBanner')!;
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('success') === '1') {
+        successBanner.style.display = 'block';
+        successBanner.textContent = '✅ Payment received — thank you! If you were logged in, your account is now marked Premium below.';
+      }
+
+      if (!isSupabaseConfigured) return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      currentUserId = session.user.id;
+
+      const { data: profile } = await supabase.from('profiles').select('is_premium').eq('id', session.user.id).maybeSingle();
+      if (profile?.is_premium) {
+        unlockedBanner.style.display = 'block';
+      }
+    }
+
     document.querySelectorAll<HTMLButtonElement>('.premium-buy').forEach((btn) => {
       btn.addEventListener('click', async () => {
         const status = document.getElementById('premiumStatus')!;
@@ -58,7 +87,7 @@ import Layout from '../layouts/Layout.astro';
           const res = await fetch('/api/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ product: btn.dataset.product }),
+            body: JSON.stringify({ product: btn.dataset.product, userId: currentUserId }),
           });
           const data = await res.json();
           if (data.url) {
@@ -75,5 +104,7 @@ import Layout from '../layouts/Layout.astro';
         }
       });
     });
+
+    initAccountState();
   </script>
 </Layout>
