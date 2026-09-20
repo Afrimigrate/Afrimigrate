@@ -12,6 +12,7 @@ import Layout from '../layouts/Layout.astro';
       <div>
         <div class="eyebrow">Your Dashboard</div>
         <h1 id="dashGreeting">Welcome back</h1>
+        <span id="dashPremiumBadge" class="hot" style="position: static; display: none; margin-top: 0.5rem;">✓ Premium</span>
       </div>
       <button id="logoutBtn" class="btn-ghost" style="background: none; border: none; cursor: pointer;">Log out</button>
     </div>
@@ -123,6 +124,10 @@ import Layout from '../layouts/Layout.astro';
 
     function render(profile: Record<string, any>) {
       document.getElementById('dashGreeting')!.textContent = `Welcome, ${profile.full_name || 'there'}`;
+
+      if (profile.is_premium) {
+        (document.getElementById('dashPremiumBadge') as HTMLElement).style.display = 'inline-block';
+      }
 
       if (profile.recommended_country) {
         document.getElementById('dashRecommendation')!.textContent =
