@@ -31,7 +31,7 @@ const destPhotos = await Promise.all(
     .hero-card { position: relative; overflow: hidden; }
     .hero-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--green) 60%, var(--gold)); }
     .card-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink2); margin-bottom: 1rem; }
-    .crs-num { font-family: 'Fraunces', serif; font-size: 4.5rem; font-weight: 900; color: var(--ink); line-height: 1; letter-spacing: -3px; margin-bottom: 0.2rem; }
+    .crs-num { font-family: 'Newsreader', serif; font-size: 4.5rem; font-weight: 700; color: var(--ink); line-height: 1; letter-spacing: -3px; margin-bottom: 0.2rem; }
     .crs-num span { color: var(--green); }
     .crs-of { font-size: 0.82rem; color: var(--ink2); margin-bottom: 1.25rem; font-weight: 300; }
     .bar { height: 4px; background: var(--bg2); border-radius: 99px; overflow: hidden; margin-bottom: 1.5rem; }
@@ -71,7 +71,7 @@ const destPhotos = await Promise.all(
 
     <div class="card hero-card">
       <div class="card-eyebrow">Free, 2-Minute Quiz</div>
-      <div style="font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.5rem; color: var(--ink); line-height: 1.2; margin-bottom: 1rem;">Which country<br/>actually fits <span style="color: var(--green);">you?</span></div>
+      <div style="font-family: 'Newsreader', serif; font-weight: 700; font-size: 1.5rem; color: var(--ink); line-height: 1.2; margin-bottom: 1rem;">Which country<br/>actually fits <span style="color: var(--green);">you?</span></div>
       <div class="rows">
         <div class="row"><span class="l">🇨🇦 Canada</span><span class="v">Points-based</span></div>
         <div class="row"><span class="l">🇬🇧 UK</span><span class="v">Sponsor-led</span></div>
@@ -218,6 +218,8 @@ const destPhotos = await Promise.all(
   </section>
 
   <script>
+    import { supabase, isSupabaseConfigured } from '../lib/supabase';
+
     const els = document.querySelectorAll('.reveal');
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
@@ -226,18 +228,35 @@ const destPhotos = await Promise.all(
       els.forEach((el) => io.observe(el));
     }
 
-    const form = document.getElementById('waitlistForm');
+    const form = document.getElementById('waitlistForm') as HTMLFormElement;
     if (form) {
-      form.addEventListener('submit', () => {
-        const input = document.getElementById('emailInput');
-        const email = input.value;
+      form.addEventListener('submit', async () => {
+        const input = document.getElementById('emailInput') as HTMLInputElement;
+        const btn = document.getElementById('waitlistBtn') as HTMLButtonElement;
+        const email = input.value.trim();
         if (!email || !email.includes('@')) {
           input.style.outline = '2px solid #e74c3c';
           return;
         }
-        // TODO: connect to Mailchimp/ConvertKit — see CLAUDE.md Outstanding Ops Items
+        if (!isSupabaseConfigured) {
+          input.style.outline = '2px solid #e74c3c';
+          input.title = 'Waitlist signup is not switched on yet — check back soon.';
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = 'Joining…';
+        // Duplicate emails hit the table's unique constraint — treat that
+        // as success too, since the person is already on the list either way.
+        const { error } = await supabase.from('waitlist_emails').insert({ email });
+        if (error && !error.message.includes('duplicate')) {
+          btn.disabled = false;
+          btn.textContent = 'Join the waitlist';
+          input.style.outline = '2px solid #e74c3c';
+          input.title = `Couldn't join the waitlist: ${error.message}`;
+          return;
+        }
         form.style.display = 'none';
-        document.getElementById('waitlistSuccess').style.display = 'block';
+        document.getElementById('waitlistSuccess')!.style.display = 'block';
       });
     }
   </script>

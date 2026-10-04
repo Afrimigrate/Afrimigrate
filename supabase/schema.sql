@@ -147,6 +147,26 @@ create policy "saved_destinations: crud own" on public.saved_destinations
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- ============================================================
+-- waitlist_emails: the homepage "Join the waitlist" form. Public,
+-- insert-only — anyone can submit an email (no login required to join
+-- the waitlist), but nobody can read the list back through the anon
+-- key, so collected emails stay private to the project owner (visible
+-- only via the Supabase Dashboard's Table Editor, which uses a
+-- privileged connection, not the public anon key).
+-- ============================================================
+create table if not exists public.waitlist_emails (
+  id uuid primary key default gen_random_uuid(),
+  email text not null unique,
+  created_at timestamptz not null default now()
+);
+
+alter table public.waitlist_emails enable row level security;
+
+drop policy if exists "waitlist_emails: anyone can join" on public.waitlist_emails;
+create policy "waitlist_emails: anyone can join" on public.waitlist_emails
+  for insert with check (true);
+
+-- ============================================================
 -- Storage bucket for the document vault.
 -- Run this too — creates a private bucket where each user can only
 -- access files under a path starting with their own user id.
