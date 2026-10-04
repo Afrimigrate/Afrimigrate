@@ -257,16 +257,16 @@ const matchData = countries.map((c) => ({
             <div class="tool-card">
               ${r.country.photo ? `<img src="${r.country.photo}" alt="${r.country.name}" style="width: calc(100% + 4.5rem); height: 160px; object-fit: cover; margin: -2.25rem -2.25rem 1.25rem; border-radius: var(--rl) var(--rl) 0 0; display: block;" loading="lazy" />` : ''}
               ${i === 0 ? '<div class="hot-terracotta">Best match</div>' : ''}
-              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <a href="/${r.country.slug}#visa-routes" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
                 <span style="font-size: 1.5rem;">${r.country.flag}</span>
                 <h3 style="margin-bottom: 0;">#${i + 1}: ${r.country.name}</h3>
-              </div>
+              </a>
               <p style="font-size: 0.85rem; color: var(--green); font-weight: 600; margin-bottom: 0.75rem;">${reasonLine(r, answers)}</p>
               <p style="font-size: 0.82rem; color: var(--ink2); margin-bottom: 0.25rem;">${r.profile.sellingPoint}</p>
               ${r.career.best ? `<p style="font-size: 0.82rem; color: var(--ink2); margin: 0.5rem 0;"><strong style="color: var(--ink);">Likely visa route:</strong> ${r.career.best.visaPathway}</p>` : ''}
               <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.25rem;">
                 ${r.country.toolHref ? `<a href="${r.country.toolHref}" class="tool-link">${r.country.toolLabel} →</a>` : ''}
-                <a href="/${r.country.slug}" class="tool-link${r.country.toolHref ? ' muted' : ''}">Full profile →</a>
+                <a href="/${r.country.slug}#visa-routes" class="tool-link">See visa pathways →</a>
               </div>
             </div>
           `).join('')}
