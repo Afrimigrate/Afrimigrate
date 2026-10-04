@@ -1,5 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { fetchUnsplashPhoto } from '../../lib/unsplash';
+
+const heroPhoto = await fetchUnsplashPhoto('Toronto skyline');
 ---
 <Layout
   title="Cost of Moving to Canada from Nigeria & Africa | AfriMigrate"
@@ -11,6 +14,13 @@ import Layout from '../../layouts/Layout.astro';
   <p class="lead" style="margin-bottom: 2.5rem;">
     Consultants often quote thousands of dollars just to "help" with an application you can do yourself for free. Here's a realistic breakdown of the costs Canada's immigration system actually requires — figures are indicative in CAD and change over time, so always confirm current fees on the official IRCC fee schedule.
   </p>
+
+  {heroPhoto && (
+    <div class="page-hero-photo-wrap">
+      <img src={heroPhoto.url} alt={heroPhoto.alt} class="page-hero-photo" width="1200" height="360" />
+      <a href={heroPhoto.creditUrl} target="_blank" rel="noopener" class="photo-credit">Photo: {heroPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
 
   <section class="section">
     <div class="eyebrow">Government Fees</div>

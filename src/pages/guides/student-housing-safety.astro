@@ -1,5 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { fetchUnsplashPhoto } from '../../lib/unsplash';
+
+const heroPhoto = await fetchUnsplashPhoto('student apartment housing');
 
 const redFlags = [
   { title: 'Rent that\'s suspiciously cheap', description: 'If the price is well below every comparable listing nearby, treat it as a warning, not a bargain — scammers use unrealistically low rent to attract urgent replies.' },
@@ -21,6 +24,13 @@ const redFlags = [
   <p class="lead" style="margin-bottom: 2.5rem;">
     Rental fraud is one of the most common scams targeting international students, precisely because you're searching for a home from thousands of miles away, under time pressure, before you've even landed. This guide exists so you don't lose money before your journey even starts.
   </p>
+
+  {heroPhoto && (
+    <div class="page-hero-photo-wrap">
+      <img src={heroPhoto.url} alt={heroPhoto.alt} class="page-hero-photo" width="1200" height="360" />
+      <a href={heroPhoto.creditUrl} target="_blank" rel="noopener" class="photo-credit">Photo: {heroPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
 
   <section class="section" style="padding-top: 0;">
     <div class="eyebrow">Start Here</div>

@@ -1,0 +1,315 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { canada } from '../data/countries/canada';
+import { uk } from '../data/countries/uk';
+import { australia } from '../data/countries/australia';
+import { netherlands } from '../data/countries/netherlands';
+import { belgium } from '../data/countries/belgium';
+import { us } from '../data/countries/us';
+import { fetchUnsplashPhoto } from '../lib/unsplash';
+
+const countries = [canada, uk, australia, netherlands, belgium, us];
+
+// Same "<city> skyline" query already used for each country's own hero
+// photo (CountryProfile.astro) and the career planner — reusing the exact
+// string hits the build-time Unsplash cache instead of a fresh API call.
+const photosByCountry: Record<string, string | null> = {};
+for (const c of countries) {
+  const photo = await fetchUnsplashPhoto(`${c.areaGuide.city} skyline`);
+  photosByCountry[c.slug] = photo?.url ?? null;
+}
+
+// Rough, clearly-approximate per-country figures used only to RANK options
+// against the user's own budget/timeline answers — not official costs or
+// processing times. Each result links to that country's real cost/timeline
+// pages (relatedTools, areaGuide) for the actual figures. Kept here as a
+// small static table rather than parsed from the free-text quickFacts/cost
+// strings in each country file, which vary in wording and would be fragile
+// to parse reliably.
+const RANKING_PROFILE: Record<string, { approxBudgetUSD: number; timelineMonths: number; noJobOfferFriendly: boolean; easyLanguage: boolean; sellingPoint: string }> = {
+  canada: { approxBudgetUSD: 15000, timelineMonths: 12, noJobOfferFriendly: true, easyLanguage: true, sellingPoint: 'No job offer needed for Express Entry, and 11 provinces run their own nominee programs.' },
+  uk: { approxBudgetUSD: 10000, timelineMonths: 8, noJobOfferFriendly: false, easyLanguage: true, sellingPoint: 'Sponsor-led — fastest once a licensed UK employer takes you on.' },
+  australia: { approxBudgetUSD: 20000, timelineMonths: 14, noJobOfferFriendly: true, easyLanguage: true, sellingPoint: 'Skills-first and points-tested, with no job offer required for the main independent visa.' },
+  netherlands: { approxBudgetUSD: 8000, timelineMonths: 6, noJobOfferFriendly: false, easyLanguage: true, sellingPoint: "One of Europe's fastest work-permit systems, with a real tax break for skilled migrants." },
+  belgium: { approxBudgetUSD: 7000, timelineMonths: 6, noJobOfferFriendly: false, easyLanguage: true, sellingPoint: 'Real shortages in IT and healthcare, with fast-tracked shortage-occupation permits.' },
+  us: { approxBudgetUSD: 5000, timelineMonths: 18, noJobOfferFriendly: false, easyLanguage: true, sellingPoint: 'Employer routes are competitive, but the free Diversity Visa lottery is open to almost every African country.' },
+};
+
+const matchData = countries.map((c) => ({
+  slug: c.slug,
+  name: c.name,
+  flag: c.flag,
+  photo: photosByCountry[c.slug],
+  toolHref: c.relatedTools[0]?.href ?? null,
+  toolLabel: c.relatedTools[0]?.label ?? null,
+  profile: RANKING_PROFILE[c.slug],
+  careers: c.careerPathways.map((cp) => ({
+    field: cp.field,
+    roles: cp.inDemandRoles,
+    salaryRange: cp.salaryRange,
+    visaPathway: cp.visaPathway,
+  })),
+}));
+---
+<Layout
+  title="Find Your Best-Fit Country | AfriMigrate Quiz"
+  description="A free, 2-minute quiz that recommends the best migration destination, visa route, and realistic cost for your budget, career, and timeline — across Canada, UK, Australia, Netherlands, Belgium and the US."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / Find Your Country</div>
+  <div class="eyebrow">Free, Forever · 2 Minutes</div>
+  <h1>Which country actually fits you?</h1>
+  <p class="lead" style="margin-bottom: 2rem; max-width: 620px;">
+    Answer five quick questions about your career, budget, timeline and language — we'll score all six countries and recommend the one (plus the visa route) that genuinely fits, with plain-language reasoning, not just a name.
+  </p>
+
+  <div id="quizRoot">
+    <div class="crs-widget" style="margin: 0 auto;">
+      <div class="crs-progress">
+        <div class="crs-progress-bar"><div class="crs-progress-fill" id="qzProgressFill"></div></div>
+        <div class="crs-progress-label" id="qzProgressLabel">Step 1 of 5</div>
+      </div>
+
+      <form id="quizForm">
+        <section class="crs-step" data-step="1">
+          <h2>Your career</h2>
+          <label class="crs-field">What field do you work in?<input type="text" name="careerField" placeholder="e.g. nurse, software engineer, electrician, teacher" required class="crs-input" /></label>
+          <label class="crs-field">
+            Education level
+            <select name="educationLevel" class="crs-input">
+              <option value="high-school">High school</option>
+              <option value="diploma">Diploma / 1-2 year post-secondary</option>
+              <option value="bachelors" selected>Bachelor's degree</option>
+              <option value="masters">Master's degree</option>
+              <option value="phd">PhD / doctorate</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="crs-step" data-step="2" hidden>
+          <h2>Budget</h2>
+          <label class="crs-field">
+            Funds you realistically have available for the whole process (visa fees, tests, travel, settlement)
+            <select name="budgetAmount" class="crs-input">
+              <option value="2000">Under $2,000</option>
+              <option value="5000" selected>$2,000 – $5,000</option>
+              <option value="10000">$5,000 – $10,000</option>
+              <option value="20000">$10,000 – $20,000</option>
+              <option value="50000">$20,000+</option>
+            </select>
+          </label>
+          <p class="crs-hint">Rough figures are fine — this just helps rule out pathways you can't realistically afford yet.</p>
+        </section>
+
+        <section class="crs-step" data-step="3" hidden>
+          <h2>Timeline</h2>
+          <div class="crs-options">
+            <label class="crs-option"><input type="radio" name="timelineUrgency" value="asap" /> As soon as possible</label>
+            <label class="crs-option"><input type="radio" name="timelineUrgency" value="6-12-months" checked /> Within 6–12 months</label>
+            <label class="crs-option"><input type="radio" name="timelineUrgency" value="1-2-years" /> 1–2 years</label>
+            <label class="crs-option"><input type="radio" name="timelineUrgency" value="just-exploring" /> Just exploring for now</label>
+          </div>
+        </section>
+
+        <section class="crs-step" data-step="4" hidden>
+          <h2>Language</h2>
+          <label class="crs-field">
+            English (or other local language) ability
+            <select name="languageAbility" class="crs-input">
+              <option value="beginner">Beginner</option>
+              <option value="intermediate" selected>Intermediate</option>
+              <option value="advanced">Advanced / fluent</option>
+              <option value="native">Native / first language</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="crs-step" data-step="5" hidden>
+          <h2>What matters most?</h2>
+          <div class="crs-options">
+            <label class="crs-option"><input type="radio" name="priority" value="fastest-pr" checked /> Fastest path to permanent residency</label>
+            <label class="crs-option"><input type="radio" name="priority" value="lowest-cost" /> Lowest upfront cost</label>
+            <label class="crs-option"><input type="radio" name="priority" value="highest-salary" /> Highest salary potential</label>
+            <label class="crs-option"><input type="radio" name="priority" value="family-friendly" /> Family-friendly, easiest to bring dependants</label>
+          </div>
+        </section>
+
+        <div class="crs-nav">
+          <button type="button" id="qzBack" class="btn-ghost" disabled>← Back</button>
+          <button type="button" id="qzNext" class="btn-primary">Next →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="quizResults" hidden></div>
+
+  <script define:vars={{ matchData }}>
+    const steps = Array.from(document.querySelectorAll('#quizForm .crs-step'));
+    const backBtn = document.getElementById('qzBack');
+    const nextBtn = document.getElementById('qzNext');
+    const progressFill = document.getElementById('qzProgressFill');
+    const progressLabel = document.getElementById('qzProgressLabel');
+    const quizRoot = document.getElementById('quizRoot');
+    const resultsRoot = document.getElementById('quizResults');
+    let current = 0;
+
+    function renderStep() {
+      steps.forEach((s, i) => { s.hidden = i !== current; });
+      progressFill.style.width = `${((current + 1) / steps.length) * 100}%`;
+      progressLabel.textContent = `Step ${current + 1} of ${steps.length}`;
+      backBtn.disabled = current === 0;
+      nextBtn.textContent = current === steps.length - 1 ? 'See my recommendation →' : 'Next →';
+    }
+
+    backBtn.addEventListener('click', () => { if (current > 0) { current -= 1; renderStep(); } });
+
+    const TIMELINE_MONTHS = { asap: 4, '6-12-months': 9, '1-2-years': 18, 'just-exploring': 24 };
+    const PRIORITY_LABEL = {
+      'fastest-pr': 'the fastest path to permanent residency',
+      'lowest-cost': 'the lowest upfront cost',
+      'highest-salary': 'the highest salary potential',
+      'family-friendly': 'bringing family along easily',
+    };
+
+    function careerScore(country, query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return { score: 20, best: country.careers[0] || null };
+      let best = null;
+      let score = 20;
+      for (const career of country.careers) {
+        let s = 0;
+        for (const role of career.roles) {
+          const r = role.toLowerCase();
+          if (r === q) s = Math.max(s, 100);
+          else if (r.includes(q) || q.includes(r)) s = Math.max(s, 80);
+        }
+        if (career.field.toLowerCase().includes(q)) s = Math.max(s, 55);
+        if (s > score) { score = s; best = career; }
+      }
+      if (best && !best.visaPathway.toLowerCase().startsWith('no formal route')) score += 10;
+      return { score: Math.min(100, score), best };
+    }
+
+    function budgetScore(approxBudgetUSD, budgetAmount) {
+      if (budgetAmount >= approxBudgetUSD * 1.3) return 100;
+      if (budgetAmount >= approxBudgetUSD) return 85;
+      if (budgetAmount >= approxBudgetUSD * 0.7) return 55;
+      return 25;
+    }
+
+    function timelineScore(countryMonths, desiredMonths) {
+      const diff = Math.abs(desiredMonths - countryMonths);
+      return Math.max(20, 100 - diff * 4);
+    }
+
+    function languageScore(profile, languageAbility) {
+      if (profile.easyLanguage) return 100;
+      if (languageAbility === 'beginner') return 55;
+      if (languageAbility === 'intermediate') return 75;
+      return 95;
+    }
+
+    function priorityScore(profile, priority) {
+      if (priority === 'fastest-pr') return profile.noJobOfferFriendly ? 100 - profile.timelineMonths : 60 - profile.timelineMonths * 0.5;
+      if (priority === 'lowest-cost') return 100 - profile.approxBudgetUSD / 300;
+      if (priority === 'highest-salary') return ['uk', 'us', 'australia', 'netherlands'].includes(profile._slug) ? 90 : 65;
+      if (priority === 'family-friendly') return ['canada', 'australia'].includes(profile._slug) ? 90 : 65;
+      return 60;
+    }
+
+    function scoreAll(answers) {
+      const desiredMonths = TIMELINE_MONTHS[answers.timelineUrgency] ?? 9;
+      return matchData.map((c) => {
+        const profile = { ...c.profile, _slug: c.slug };
+        const career = careerScore(c, answers.careerField);
+        const budget = budgetScore(profile.approxBudgetUSD, answers.budgetAmount);
+        const timeline = timelineScore(profile.timelineMonths, desiredMonths);
+        const language = languageScore(profile, answers.languageAbility);
+        const priority = Math.max(0, Math.min(100, priorityScore(profile, answers.priority)));
+        const total = career.score * 0.35 + budget * 0.25 + timeline * 0.2 + language * 0.1 + priority * 0.1;
+        return { country: c, profile, career, budget, timeline, language, priority, total };
+      }).sort((a, b) => b.total - a.total);
+    }
+
+    function reasonLine(r, answers) {
+      const bits = [];
+      if (r.career.best) bits.push(`your ${answers.careerField || 'field'} background matches real demand here`);
+      if (r.budget >= 85) bits.push('your budget comfortably covers the typical process');
+      else if (r.budget <= 40) bits.push('it stretches your stated budget — worth double-checking real costs before committing');
+      if (r.timeline >= 80) bits.push(`the timeline lines up with wanting to move ${answers.timelineUrgency === 'asap' ? 'as soon as possible' : 'within your window'}`);
+      bits.push(`it ranked well for ${PRIORITY_LABEL[answers.priority] || 'your main priority'}`);
+      return bits.slice(0, 3).join(', ') + '.';
+    }
+
+    function renderResults(answers) {
+      const ranked = scoreAll(answers);
+      const top3 = ranked.slice(0, 3);
+      quizRoot.hidden = true;
+      resultsRoot.hidden = false;
+      resultsRoot.innerHTML = `
+        <div class="eyebrow">Your Recommendation</div>
+        <h2 style="margin-bottom: 0.5rem;">${top3[0].country.flag} ${top3[0].country.name} looks like your best fit</h2>
+        <p class="lead" style="margin-bottom: 2rem; max-width: 640px;">
+          ${top3[0].country.name} ranked highest for you because ${reasonLine(top3[0], answers)}
+        </p>
+        <div class="tools-grid" style="margin-bottom: 2rem;">
+          ${top3.map((r, i) => `
+            <div class="tool-card">
+              ${r.country.photo ? `<img src="${r.country.photo}" alt="${r.country.name}" style="width: calc(100% + 4.5rem); height: 160px; object-fit: cover; margin: -2.25rem -2.25rem 1.25rem; border-radius: var(--rl) var(--rl) 0 0; display: block;" loading="lazy" />` : ''}
+              ${i === 0 ? '<div class="hot-terracotta">Best match</div>' : ''}
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                <span style="font-size: 1.5rem;">${r.country.flag}</span>
+                <h3 style="margin-bottom: 0;">#${i + 1}: ${r.country.name}</h3>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--green); font-weight: 600; margin-bottom: 0.75rem;">${reasonLine(r, answers)}</p>
+              <p style="font-size: 0.82rem; color: var(--ink2); margin-bottom: 0.25rem;">${r.profile.sellingPoint}</p>
+              ${r.career.best ? `<p style="font-size: 0.82rem; color: var(--ink2); margin: 0.5rem 0;"><strong style="color: var(--ink);">Likely visa route:</strong> ${r.career.best.visaPathway}</p>` : ''}
+              <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.25rem;">
+                ${r.country.toolHref ? `<a href="${r.country.toolHref}" class="tool-link">${r.country.toolLabel} →</a>` : ''}
+                <a href="/${r.country.slug}" class="tool-link${r.country.toolHref ? ' muted' : ''}">Full profile →</a>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="cp-note" style="max-width: 640px;">
+          This is a quick, free estimate based on general patterns — not a guarantee of eligibility. Costs and timelines above are rounded for comparison; always check each country's own cost and timeline pages (linked above) before deciding.
+        </div>
+        <button id="qzRetake" class="btn-ghost" style="margin-top: 1.5rem; border: none; cursor: pointer; background: none;">← Retake the quiz</button>
+      `;
+      document.getElementById('qzRetake').addEventListener('click', () => {
+        resultsRoot.hidden = true;
+        quizRoot.hidden = false;
+        current = 0;
+        renderStep();
+        window.scrollTo({ top: quizRoot.offsetTop - 80, behavior: 'smooth' });
+      });
+    }
+
+    nextBtn.addEventListener('click', () => {
+      const activeStep = steps[current];
+      const requiredInput = activeStep.querySelector('[required]');
+      if (requiredInput && !requiredInput.value.trim()) {
+        requiredInput.style.outline = '2px solid #e74c3c';
+        requiredInput.focus();
+        return;
+      }
+      if (current < steps.length - 1) {
+        current += 1;
+        renderStep();
+        return;
+      }
+      const fd = new FormData(document.getElementById('quizForm'));
+      const answers = {
+        careerField: fd.get('careerField') || '',
+        educationLevel: fd.get('educationLevel'),
+        budgetAmount: Number(fd.get('budgetAmount')),
+        timelineUrgency: fd.get('timelineUrgency'),
+        languageAbility: fd.get('languageAbility'),
+        priority: fd.get('priority'),
+      };
+      renderResults(answers);
+    });
+
+    renderStep();
+  </script>
+</Layout>

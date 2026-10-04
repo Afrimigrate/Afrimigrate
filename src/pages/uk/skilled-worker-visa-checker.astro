@@ -1,5 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { fetchUnsplashPhoto } from '../../lib/unsplash';
+
+const heroPhoto = await fetchUnsplashPhoto('London skyline');
 ---
 <Layout
   title="UK Skilled Worker Visa Eligibility Checker | AfriMigrate"
@@ -11,6 +14,13 @@ import Layout from '../../layouts/Layout.astro';
   <p class="lead" style="margin-bottom: 2rem;">
     Answer these questions honestly to get an instant, informal read on whether you meet the UK Skilled Worker visa's core requirements. This is a free guide, not immigration advice — always confirm with a licensed sponsor or the official gov.uk guidance before making decisions.
   </p>
+
+  {heroPhoto && (
+    <div class="page-hero-photo-wrap">
+      <img src={heroPhoto.url} alt={heroPhoto.alt} class="page-hero-photo" width="1200" height="360" />
+      <a href={heroPhoto.creditUrl} target="_blank" rel="noopener" class="photo-credit">Photo: {heroPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
 
   <div class="card" id="checker" style="max-width: 600px; display: flex; flex-direction: column; gap: 1.25rem;">
     <label style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.9rem; color: var(--ink2);">

@@ -1,5 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { fetchUnsplashPhoto } from '../lib/unsplash';
+
+const heroPhoto = await fetchUnsplashPhoto('person using laptop calculator desk');
 
 const faqs = [
   { q: 'Is AfriMigrate really free?', a: 'Yes. Every calculator, checklist and guide is 100% free, and always will be. We plan to offer optional paid add-ons in the future (like a downloadable PDF report), but the core tools stay free forever — that\'s our founding promise.' },
@@ -28,6 +31,13 @@ const faqs = [
   <div class="eyebrow">FAQ</div>
   <h1>Frequently asked questions</h1>
   <p class="lead" style="margin-bottom: 2.5rem;">Everything you need to know about AfriMigrate.</p>
+
+  {heroPhoto && (
+    <div class="page-hero-photo-wrap">
+      <img src={heroPhoto.url} alt={heroPhoto.alt} class="page-hero-photo" width="1200" height="360" />
+      <a href={heroPhoto.creditUrl} target="_blank" rel="noopener" class="photo-credit">Photo: {heroPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
 
   <section class="section" style="padding-top: 0;">
     {faqs.map((f) => (

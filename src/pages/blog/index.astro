@@ -1,13 +1,21 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { fetchUnsplashPhoto } from '../../lib/unsplash';
 
+// city queries reuse the exact strings CountryProfile.astro already fetches
+// for each country's own hero photo, so these hit the build-time cache
+// (src/lib/unsplash.ts) instead of spending extra API calls.
 const posts = [
-  { href: '/blog/nigeria-to-canada-guide', flag: '🇳🇬→🇨🇦', title: 'Moving from Nigeria to Canada: The Complete Guide', desc: 'Every route from Lagos or Abuja to Canadian permanent residence, with real cost and timeline expectations.' },
-  { href: '/blog/ghana-to-uk-guide', flag: '🇬🇭→🇬🇧', title: 'Moving from Ghana to the UK: The Complete Guide', desc: 'How Ghanaian professionals qualify for the Skilled Worker visa and what to budget for.' },
-  { href: '/blog/kenya-to-australia-guide', flag: '🇰🇪→🇦🇺', title: 'Moving from Kenya to Australia: The Complete Guide', desc: 'The skills assessment, points test and visa subclasses that matter most for Kenyan applicants.' },
-  { href: '/blog/how-crs-score-works', flag: '🧮', title: 'How Does the CRS Score Work?', desc: 'A deep dive into Canada’s Comprehensive Ranking System — every factor, explained simply.' },
-  { href: '/blog/document-checklist-guide', flag: '📋', title: 'The Immigration Document Checklist Guide', desc: 'How to gather police clearances, ECAs and reference letters without losing months to delays.' },
+  { href: '/blog/nigeria-to-canada-guide', flag: '🇳🇬→🇨🇦', title: 'Moving from Nigeria to Canada: The Complete Guide', desc: 'Every route from Lagos or Abuja to Canadian permanent residence, with real cost and timeline expectations.', cityQuery: 'Toronto skyline' },
+  { href: '/blog/ghana-to-uk-guide', flag: '🇬🇭→🇬🇧', title: 'Moving from Ghana to the UK: The Complete Guide', desc: 'How Ghanaian professionals qualify for the Skilled Worker visa and what to budget for.', cityQuery: 'London skyline' },
+  { href: '/blog/kenya-to-australia-guide', flag: '🇰🇪→🇦🇺', title: 'Moving from Kenya to Australia: The Complete Guide', desc: 'The skills assessment, points test and visa subclasses that matter most for Kenyan applicants.', cityQuery: 'Sydney skyline' },
+  { href: '/blog/how-crs-score-works', flag: '🧮', title: 'How Does the CRS Score Work?', desc: 'A deep dive into Canada’s Comprehensive Ranking System — every factor, explained simply.', cityQuery: null },
+  { href: '/blog/document-checklist-guide', flag: '📋', title: 'The Immigration Document Checklist Guide', desc: 'How to gather police clearances, ECAs and reference letters without losing months to delays.', cityQuery: null },
 ];
+const postPhotos = await Promise.all(
+  posts.map((p) => (p.cityQuery ? fetchUnsplashPhoto(p.cityQuery) : Promise.resolve(null)))
+);
+const heroPhoto = await fetchUnsplashPhoto('notebook map planning journey');
 ---
 <Layout
   title="Migration Guides for Africans | AfriMigrate Blog"
@@ -16,19 +24,35 @@ const posts = [
   <div class="breadcrumb"><a href="/">Home</a> / Blog</div>
   <div class="eyebrow">Guides</div>
   <h1>Migration guides for Africans</h1>
-  <p class="lead" style="margin-bottom: 2.5rem;">
+  <p class="lead" style="margin-bottom: 1.5rem;">
     Practical, no-jargon guides written for African applicants — not general audiences. New guides added regularly.
   </p>
 
+  {heroPhoto && (
+    <div class="page-hero-photo-wrap">
+      <img src={heroPhoto.url} alt={heroPhoto.alt} class="page-hero-photo" width="1200" height="360" />
+      <a href={heroPhoto.creditUrl} target="_blank" rel="noopener" class="photo-credit">Photo: {heroPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
+
   <div class="tools-grid" style="grid-template-columns: 1fr;">
-    {posts.map((p) => (
-      <a href={p.href} class="tool-card" style="display: flex; align-items: flex-start; gap: 1.5rem;">
-        <div class="tool-icon" style="flex-shrink: 0;">{p.flag}</div>
-        <div>
-          <h3>{p.title}</h3>
-          <p style="margin-bottom: 0;">{p.desc}</p>
-        </div>
-      </a>
+    {posts.map((p, i) => (
+      <div class="tool-card" style="position: relative; padding-right: 2.5rem;">
+        <a href={p.href} style="display: flex; align-items: center; gap: 1.5rem;">
+          {postPhotos[i] ? (
+            <img src={postPhotos[i]!.url} alt={postPhotos[i]!.alt} loading="lazy" width="90" height="90" style="flex-shrink: 0; width: 90px; height: 90px; object-fit: cover; border-radius: var(--r);" />
+          ) : (
+            <div class="tool-icon" style="flex-shrink: 0;">{p.flag}</div>
+          )}
+          <div>
+            <h3>{p.title}</h3>
+            <p style="margin-bottom: 0;">{p.desc}</p>
+          </div>
+        </a>
+        {postPhotos[i] && (
+          <a href={postPhotos[i]!.creditUrl} target="_blank" rel="noopener" class="photo-credit photo-credit-mini" style="position: absolute; bottom: 0.6rem; right: 0.6rem; background: rgba(20,18,16,0.08); color: var(--ink2);">Photo: {postPhotos[i]!.creditName}</a>
+        )}
+      </div>
     ))}
   </div>
 </Layout>
