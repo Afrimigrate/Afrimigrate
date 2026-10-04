@@ -1,5 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { fetchUnsplashPhoto } from '../../lib/unsplash';
+
+const heroPhoto = await fetchUnsplashPhoto('London skyline');
 ---
 <Layout
   title="UK Visa Cost Calculator – IHS & Application Fees | AfriMigrate"
@@ -11,6 +14,13 @@ import Layout from '../../layouts/Layout.astro';
   <p class="lead" style="margin-bottom: 2rem;">
     Estimate the total upfront cost of a UK Skilled Worker visa, including the Immigration Health Surcharge (IHS). Figures below use indicative published rates — always confirm exact current fees on gov.uk before you pay, as they change periodically.
   </p>
+
+  {heroPhoto && (
+    <div class="page-hero-photo-wrap">
+      <img src={heroPhoto.url} alt={heroPhoto.alt} class="page-hero-photo" width="1200" height="360" />
+      <a href={heroPhoto.creditUrl} target="_blank" rel="noopener" class="photo-credit">Photo: {heroPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
 
   <div class="card" style="max-width: 560px; display: flex; flex-direction: column; gap: 1.25rem;">
     <div>

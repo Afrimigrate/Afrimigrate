@@ -1,5 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { fetchUnsplashPhoto } from '../../lib/unsplash';
+
+const heroPhoto = await fetchUnsplashPhoto('Toronto skyline');
 
 const faqs = [
   {
@@ -40,6 +43,13 @@ const faqs = [
   <p class="lead" style="margin-bottom: 2rem;">
     A genuinely native calculator — no external embed. Answer a few short steps to get your Comprehensive Ranking System score with a full breakdown of exactly where every point came from. Built with IRCC's current point tables, including the March 2025 removal of job-offer points that many older calculators still get wrong.
   </p>
+
+  {heroPhoto && (
+    <div class="page-hero-photo-wrap">
+      <img src={heroPhoto.url} alt={heroPhoto.alt} class="page-hero-photo" width="1200" height="360" />
+      <a href={heroPhoto.creditUrl} target="_blank" rel="noopener" class="photo-credit">Photo: {heroPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
 
   <div class="crs-widget">
     <div class="crs-progress">

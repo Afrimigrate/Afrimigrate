@@ -1,5 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { fetchUnsplashPhoto } from '../../lib/unsplash';
+
+const heroPhoto = await fetchUnsplashPhoto('Sydney skyline');
 ---
 <Layout
   title="Moving from Kenya to Australia: The Complete Guide | AfriMigrate"
@@ -11,6 +14,13 @@ import Layout from '../../layouts/Layout.astro';
   <p class="lead" style="margin-bottom: 2.5rem;">
     Kenyan professionals in engineering, ICT, healthcare and accounting have a genuine no-job-offer route into Australia through the points-tested skilled migration program. Here's how it works.
   </p>
+
+  {heroPhoto && (
+    <div class="page-hero-photo-wrap">
+      <img src={heroPhoto.url} alt={heroPhoto.alt} class="page-hero-photo" width="1200" height="360" />
+      <a href={heroPhoto.creditUrl} target="_blank" rel="noopener" class="photo-credit">Photo: {heroPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
 
   <section class="section">
     <div class="eyebrow">Step 1</div>
