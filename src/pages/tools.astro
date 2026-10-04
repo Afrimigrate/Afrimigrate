@@ -1,5 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { fetchUnsplashPhoto } from '../lib/unsplash';
+
+const heroPhoto = await fetchUnsplashPhoto('person using laptop calculator desk');
 ---
 <Layout
   title="Free Immigration Tools for Africans | AfriMigrate"
@@ -8,9 +11,16 @@ import Layout from '../layouts/Layout.astro';
   <div class="breadcrumb"><a href="/">Home</a> / Tools</div>
   <div class="eyebrow">All Tools</div>
   <h1>Every free tool, in one place</h1>
-  <p class="lead" style="margin-bottom: 2.5rem;">
+  <p class="lead" style="margin-bottom: 1.5rem;">
     No paywalls, no upsells, no "unlock the full report" screens. Every tool below is 100% free, forever.
   </p>
+
+  {heroPhoto && (
+    <div class="page-hero-photo-wrap">
+      <img src={heroPhoto.url} alt={heroPhoto.alt} class="page-hero-photo" width="1200" height="360" />
+      <a href={heroPhoto.creditUrl} target="_blank" rel="noopener" class="photo-credit">Photo: {heroPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
 
   <section class="section">
     <div class="eyebrow">Canada</div>

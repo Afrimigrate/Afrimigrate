@@ -1,5 +1,20 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { canada } from '../data/countries/canada';
+import { uk } from '../data/countries/uk';
+import { australia } from '../data/countries/australia';
+import { netherlands } from '../data/countries/netherlands';
+import { belgium } from '../data/countries/belgium';
+import { us } from '../data/countries/us';
+import { fetchUnsplashPhoto } from '../lib/unsplash';
+
+// Same "<city> skyline" query CountryProfile.astro uses for each country's
+// own hero photo — reusing the exact string hits the build-time Unsplash
+// cache (src/lib/unsplash.ts) instead of spending a fresh API call here.
+const destCountries = [canada, uk, australia, netherlands, belgium, us];
+const destPhotos = await Promise.all(
+  destCountries.map((c) => fetchUnsplashPhoto(`${c.areaGuide.city} skyline`))
+);
 ---
 <Layout
   title="AfriMigrate – Free Migration Planning Tools for Africans"
@@ -170,12 +185,19 @@ import Layout from '../layouts/Layout.astro';
     <h2>Where do you want to go?</h2>
     <p class="lead">Tools for the most popular African migration destinations, with more added every month.</p>
     <div class="dest-grid">
-      <a href="/canada" class="dest-card live"><div class="dest-flag">🇨🇦</div><div class="dest-name">Canada</div><div class="live-pip">Live</div></a>
-      <a href="/uk" class="dest-card live"><div class="dest-flag">🇬🇧</div><div class="dest-name">UK</div><div class="live-pip">Live</div></a>
-      <a href="/australia" class="dest-card live"><div class="dest-flag">🇦🇺</div><div class="dest-name">Australia</div><div class="live-pip">Live</div></a>
-      <a href="/netherlands" class="dest-card live"><div class="dest-flag">🇳🇱</div><div class="dest-name">Netherlands</div><div class="live-pip">Live</div></a>
-      <a href="/belgium" class="dest-card live"><div class="dest-flag">🇧🇪</div><div class="dest-name">Belgium</div><div class="live-pip">Live</div></a>
-      <a href="/us" class="dest-card live"><div class="dest-flag">🇺🇸</div><div class="dest-name">USA</div><div class="live-pip">Live</div></a>
+      {destCountries.map((c, i) => (
+        <div class={`dest-card live ${destPhotos[i] ? 'has-photo' : ''}`} style="position: relative;">
+          <a href={`/${c.slug}`} style="display: contents;">
+            {destPhotos[i] && <img src={destPhotos[i]!.url} alt={destPhotos[i]!.alt} class="dest-photo" loading="lazy" width="300" height="150" />}
+            <div class="dest-flag">{c.flag}</div>
+            <div class="dest-name">{c.slug === 'us' ? 'USA' : c.name}</div>
+            <div class="live-pip">Live</div>
+          </a>
+          {destPhotos[i] && (
+            <a href={destPhotos[i]!.creditUrl} target="_blank" rel="noopener" class="photo-credit photo-credit-mini" style="bottom: auto; top: 0.4rem; right: 0.4rem; z-index: 3;">Photo: {destPhotos[i]!.creditName}</a>
+          )}
+        </div>
+      ))}
     </div>
   </section>
 

@@ -181,6 +181,37 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
     .soon-pip { font-size: 0.68rem; color: var(--ink2); opacity: 0.6; }
 
+    /* DESTINATION CARD PHOTO VARIANT — used wherever a dest-grid shows real
+       city photos (home, /destinations, /how-it-works) instead of a plain
+       flag tile. Falls back to the plain .dest-card above when a photo
+       isn't available (e.g. Unsplash key missing at build time). */
+    .dest-card.has-photo { position: relative; overflow: hidden; min-height: 150px; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.1rem 1rem; }
+    .dest-card.has-photo img.dest-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; transition: transform 0.35s ease; }
+    .dest-card.has-photo:hover img.dest-photo { transform: scale(1.06); }
+    .dest-card.has-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,18,16,0) 35%, rgba(20,18,16,0.8) 100%); z-index: 1; }
+    .dest-card.has-photo .dest-flag, .dest-card.has-photo .dest-name, .dest-card.has-photo .live-pip { position: relative; z-index: 2; }
+    .dest-card.has-photo .dest-flag { font-size: 1.4rem; margin-bottom: 0.3rem; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
+    .dest-card.has-photo .dest-name { color: var(--white); }
+    .dest-card.has-photo .live-pip { color: #9fe39f; }
+
+    /* GENERIC PAGE-HERO PHOTO BANNER — used on hub pages (/tools,
+       /how-it-works, /blog, /destinations) that don't have their own
+       bespoke hero. Mirrors CountryProfile.astro's .cp-hero-photo-wrap
+       pattern so photo framing + attribution look consistent sitewide. */
+    .page-hero-photo-wrap { position: relative; margin: 0 0 2.5rem; border-radius: var(--rl); overflow: hidden; }
+    .page-hero-photo { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 360; object-fit: cover; }
+    .photo-credit {
+      position: absolute; bottom: 0.6rem; right: 0.6rem; background: rgba(20,18,16,0.55); color: var(--white);
+      font-size: 0.65rem; padding: 0.25rem 0.6rem; border-radius: 999px; text-decoration: none; opacity: 0.85;
+    }
+    .photo-credit:hover { opacity: 1; }
+
+    /* TOOL / POST CARD PHOTO — pulls an image to the top edge of a
+       .tool-card, same -padding trick already used on /career-planner. */
+    .tool-card-photo-wrap { position: relative; margin: -2.25rem -2.25rem 1.25rem; border-radius: var(--rl) var(--rl) 0 0; overflow: hidden; }
+    .tool-card-photo { display: block; width: 100%; height: 150px; object-fit: cover; }
+    .photo-credit-mini { font-size: 0.6rem; }
+
     /* MANIFESTO */
     .manifesto { background: var(--green); border-radius: var(--rl); padding: 4rem 2rem; text-align: center; position: relative; overflow: hidden; }
     .manifesto h2 { color: var(--white); }
@@ -295,6 +326,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
       <li><a href="/career-planner">Career Planner</a></li>
       <li><a href="/community">Find Your Community</a></li>
       <li><a href="/blog">Guides</a></li>
+      <li><a href="/premium">Premium</a></li>
       <li><a href="/login">Log in</a></li>
     </ul>
     <a href="/signup" class="nav-cta">Start free →</a>

@@ -1,5 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { canada } from '../data/countries/canada';
+import { uk } from '../data/countries/uk';
+import { australia } from '../data/countries/australia';
+import { fetchUnsplashPhoto } from '../lib/unsplash';
+
+const howCountries = [canada, uk, australia];
+const howPhotos = await Promise.all(
+  howCountries.map((c) => fetchUnsplashPhoto(`${c.areaGuide.city} skyline`))
+);
+const heroPhoto = await fetchUnsplashPhoto('person planning travel documents');
 ---
 <Layout
   title="How to Plan Your Migration Abroad | AfriMigrate"
@@ -8,9 +18,16 @@ import Layout from '../layouts/Layout.astro';
   <div class="breadcrumb"><a href="/">Home</a> / How It Works</div>
   <div class="eyebrow">How It Works</div>
   <h1>From idea to invitation</h1>
-  <p class="lead" style="margin-bottom: 2.5rem;">
+  <p class="lead" style="margin-bottom: 1.5rem;">
     Migration planning shouldn't require a consultant and a few thousand pounds. Here's exactly how to use AfriMigrate to go from "which country?" to a submitted, confident application.
   </p>
+
+  {heroPhoto && (
+    <div class="page-hero-photo-wrap">
+      <img src={heroPhoto.url} alt={heroPhoto.alt} class="page-hero-photo" width="1200" height="360" />
+      <a href={heroPhoto.creditUrl} target="_blank" rel="noopener" class="photo-credit">Photo: {heroPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
 
   <section class="section">
     <div class="steps" style="grid-template-columns: repeat(4, 1fr);">
@@ -26,9 +43,19 @@ import Layout from '../layouts/Layout.astro';
     <h2>Where do you want to go?</h2>
     <p class="lead" style="margin-bottom: 1.5rem;">Each destination has its own points system, document requirements and timelines. Start with the one you're most drawn to.</p>
     <div class="dest-grid" style="grid-template-columns: repeat(3, 1fr);">
-      <a href="/canada" class="dest-card live"><div class="dest-flag">🇨🇦</div><div class="dest-name">Canada</div><div class="live-pip">Live</div></a>
-      <a href="/uk" class="dest-card live"><div class="dest-flag">🇬🇧</div><div class="dest-name">UK</div><div class="live-pip">Live</div></a>
-      <a href="/australia" class="dest-card live"><div class="dest-flag">🇦🇺</div><div class="dest-name">Australia</div><div class="live-pip">Live</div></a>
+      {howCountries.map((c, i) => (
+        <div class={`dest-card live ${howPhotos[i] ? 'has-photo' : ''}`} style="position: relative;">
+          <a href={`/${c.slug}`} style="display: contents;">
+            {howPhotos[i] && <img src={howPhotos[i]!.url} alt={howPhotos[i]!.alt} class="dest-photo" loading="lazy" width="300" height="150" />}
+            <div class="dest-flag">{c.flag}</div>
+            <div class="dest-name">{c.name}</div>
+            <div class="live-pip">Live</div>
+          </a>
+          {howPhotos[i] && (
+            <a href={howPhotos[i]!.creditUrl} target="_blank" rel="noopener" class="photo-credit photo-credit-mini" style="bottom: auto; top: 0.4rem; right: 0.4rem; z-index: 3;">Photo: {howPhotos[i]!.creditName}</a>
+          )}
+        </div>
+      ))}
     </div>
   </section>
 
