@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
 import { canada } from '../data/countries/canada';
 import { uk } from '../data/countries/uk';
 import { australia } from '../data/countries/australia';
@@ -110,25 +111,25 @@ const destPhotos = await Promise.all(
     <div class="tools-grid">
       <div class="tool-card">
         <div class="hot">Most popular</div>
-        <div class="tool-icon">🧭</div>
+        <div class="tool-icon"><Icon name="compass" /></div>
         <h3>Find My Best Country</h3>
         <p>Answer 5 quick questions about your career, budget and timeline — get a ranked recommendation across all six countries, with real reasoning.</p>
         <a href="/quiz" class="tool-link">Take the quiz →</a>
       </div>
       <div class="tool-card">
-        <div class="tool-icon">🧮</div>
+        <div class="tool-icon"><Icon name="calculator" /></div>
         <h3>Canada CRS Calculator</h3>
         <p>Enter your age, education, language scores and work history to instantly know your Express Entry Comprehensive Ranking System score.</p>
         <a href="/canada/crs-calculator" class="tool-link">Calculate now →</a>
       </div>
       <div class="tool-card">
-        <div class="tool-icon">✅</div>
+        <div class="tool-icon"><Icon name="check" /></div>
         <h3>UK Skilled Worker Visa Checker</h3>
         <p>Check your core eligibility for the UK's main sponsored work route in about two minutes.</p>
         <a href="/uk/skilled-worker-visa-checker" class="tool-link">Check eligibility →</a>
       </div>
       <div class="tool-card">
-        <div class="tool-icon">🇦🇺</div>
+        <div class="tool-icon"><Icon name="target" /></div>
         <h3>Australia Points Calculator</h3>
         <p>Estimate your subclass 189/190 points score for Australia's skilled independent and nominated visas.</p>
         <a href="/australia/points-calculator" class="tool-link">Calculate now →</a>
@@ -143,22 +144,22 @@ const destPhotos = await Promise.all(
     <p class="lead">Four steps. No jargon. One clear plan.</p>
     <div class="steps">
       <div class="step">
-        <div class="step-icon">🧮</div>
+        <div class="step-icon"><Icon name="calculator" /></div>
         <h3>Calculate</h3>
         <p>Get your CRS or points test score in under 3 minutes.</p>
       </div>
       <div class="step">
-        <div class="step-icon">🔍</div>
+        <div class="step-icon"><Icon name="search" /></div>
         <h3>Discover</h3>
         <p>See which visa pathways you qualify for, ranked by your chances.</p>
       </div>
       <div class="step">
-        <div class="step-icon">📋</div>
+        <div class="step-icon"><Icon name="document" /></div>
         <h3>Prepare</h3>
         <p>Build your document checklist and know exactly what to gather.</p>
       </div>
       <div class="step">
-        <div class="step-icon">✈️</div>
+        <div class="step-icon"><Icon name="send" /></div>
         <h3>Apply</h3>
         <p>Follow your roadmap and submit with total confidence.</p>
       </div>
