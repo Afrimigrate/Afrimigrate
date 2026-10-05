@@ -59,6 +59,10 @@ export default async function handler(req, res) {
     return res.status(200).json({ url: session.url });
   } catch (err) {
     console.error('Stripe checkout session error:', err);
-    return res.status(500).json({ error: 'Could not start checkout. Please try again.' });
+    // Surfaced to the browser (src/pages/premium.astro shows it directly) so
+    // a misconfigured key/price is diagnosable without digging through
+    // Vercel's function logs — Stripe's own error messages never include
+    // secret values, only things like "No such price" or "Invalid API Key".
+    return res.status(500).json({ error: err.message || 'Could not start checkout. Please try again.' });
   }
 }
