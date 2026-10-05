@@ -50,6 +50,13 @@ export default async function handler(req, res) {
       success_url: `${siteUrl}/premium?success=1&product=${encodeURIComponent(product)}`,
       cancel_url: `${siteUrl}/premium?canceled=1`,
       metadata: { product },
+      // Stripe's "Managed Payments" (Stripe acting as merchant of record)
+      // requires every product to carry a tax_code, which ours don't — it's
+      // on by default for new accounts and otherwise blocks every checkout
+      // with "the product tax code is missing". These are digital add-ons
+      // sold directly by AfriMigrate, not through Stripe as merchant of
+      // record, so this session opts out of it explicitly.
+      managed_payments: { enabled: false },
       // Ties this purchase back to the logged-in Supabase user, if any, so
       // the webhook knows whose profile to mark premium. Omitted entirely
       // for an anonymous purchase — nothing to unlock without an account,
