@@ -293,6 +293,20 @@ const faqs = [
   <script>
     import { scoreCRS } from '../../lib/crs';
     import type { CRSInput, CLB } from '../../lib/crs';
+    import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+
+    // If the visitor is signed in, quietly save their score to their
+    // profile so it's waiting for them on /dashboard next time — this is
+    // what "Saved Profile & Progress" on /premium actually refers to.
+    // Never blocks or errors the calculator itself: a logged-out visitor,
+    // or any save failure, just means the free tool works exactly as
+    // before with nothing persisted.
+    async function saveScoreToProfile(score: number) {
+      if (!isSupabaseConfigured) return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.from('profiles').update({ crs_score: score }).eq('id', session.user.id);
+    }
 
     const CLB_OPTIONS: { value: CLB | 3; label: string }[] = [
       { value: 3, label: 'CLB 3 or below' },
@@ -392,6 +406,7 @@ const faqs = [
       document.querySelector('.crs-progress')!.setAttribute('hidden', 'true');
       resultsPanel.hidden = false;
       document.getElementById('crsScoreNum')!.textContent = String(result.total);
+      saveScoreToProfile(result.total);
 
       const groups = [
         { title: 'Core human capital', subtotal: result.coreHumanCapital.subtotal, rows: [
