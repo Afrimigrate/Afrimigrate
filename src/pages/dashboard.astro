@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
 ---
 <Layout
   title="Dashboard | AfriMigrate"
@@ -31,35 +32,35 @@ import Layout from '../layouts/Layout.astro';
     <section class="section" style="padding-top: 0.5rem;">
       <div class="tools-grid">
         <div class="tool-card">
-          <div class="tool-icon">🎯</div>
+          <div class="tool-icon"><Icon name="target" /></div>
           <h3>Recommended pathway</h3>
           <p id="dashRecommendation">Coming in the next update — your answers are saved, and the recommendation engine is next on the build list.</p>
         </div>
         <div class="tool-card">
-          <div class="tool-icon">🧮</div>
+          <div class="tool-icon"><Icon name="calculator" /></div>
           <h3>CRS score</h3>
           <p id="dashCrs">Not calculated yet.</p>
           <a href="/canada/crs-calculator" class="tool-link">Calculate now →</a>
         </div>
-        <div class="tool-card">
-          <div class="tool-icon">🗓️</div>
+        <div class="tool-card dash-soon">
+          <div class="hot">Coming soon</div>
+          <div class="tool-icon"><Icon name="calendar" /></div>
           <h3>Migration timeline</h3>
-          <p>Your staged, month-by-month plan — coming soon.</p>
-          <span class="tool-link muted">Not built yet</span>
+          <p>Your staged, month-by-month plan, with milestones and email reminders as dates approach.</p>
         </div>
-        <div class="tool-card">
-          <div class="tool-icon">🔒</div>
+        <div class="tool-card dash-soon">
+          <div class="hot">Coming soon</div>
+          <div class="tool-icon"><Icon name="lock" /></div>
           <h3>Document vault</h3>
-          <p>Securely store your passport, language certs and degree certificates here — coming soon.</p>
-          <span class="tool-link muted">Not built yet</span>
+          <p>Securely store your passport, language certs and degree certificates, with expiry tracking.</p>
         </div>
         <div class="tool-card">
-          <div class="tool-icon">🔔</div>
+          <div class="tool-icon"><Icon name="bell" /></div>
           <h3>Reminders</h3>
           <p>No reminders yet — these appear once your timeline is set up.</p>
         </div>
         <div class="tool-card">
-          <div class="tool-icon">🏆</div>
+          <div class="tool-icon"><Icon name="trophy" /></div>
           <h3>Badges</h3>
           <p id="dashBadges">None earned yet.</p>
         </div>
@@ -77,6 +78,7 @@ import Layout from '../layouts/Layout.astro';
   <style is:global>
     .dash-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; }
     .dash-readiness { max-width: 100%; }
+    .dash-soon .tool-icon { color: var(--ink2); opacity: 0.6; }
   </style>
 
   <script>

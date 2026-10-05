@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
 import { canada } from '../data/countries/canada';
 import { uk } from '../data/countries/uk';
 import { australia } from '../data/countries/australia';
@@ -31,10 +32,10 @@ const heroPhoto = await fetchUnsplashPhoto('person planning travel documents');
 
   <section class="section">
     <div class="steps" style="grid-template-columns: repeat(4, 1fr);">
-      <div class="step"><div class="step-icon">🧮</div><h3>1. Calculate</h3><p>Get your CRS score or points test score in under 3 minutes, for free.</p></div>
-      <div class="step"><div class="step-icon">🔍</div><h3>2. Discover</h3><p>See which visa pathways you actually qualify for, ranked by your chances.</p></div>
-      <div class="step"><div class="step-icon">📋</div><h3>3. Prepare</h3><p>Build your document checklist and know exactly what to gather, and when.</p></div>
-      <div class="step"><div class="step-icon">✈️</div><h3>4. Apply</h3><p>Follow your roadmap and submit your application with total confidence.</p></div>
+      <div class="step"><div class="step-icon"><Icon name="calculator" /></div><h3>1. Calculate</h3><p>Get your CRS score or points test score in under 3 minutes, for free.</p></div>
+      <div class="step"><div class="step-icon"><Icon name="search" /></div><h3>2. Discover</h3><p>See which visa pathways you actually qualify for, ranked by your chances.</p></div>
+      <div class="step"><div class="step-icon"><Icon name="document" /></div><h3>3. Prepare</h3><p>Build your document checklist and know exactly what to gather, and when.</p></div>
+      <div class="step"><div class="step-icon"><Icon name="send" /></div><h3>4. Apply</h3><p>Follow your roadmap and submit your application with total confidence.</p></div>
     </div>
   </section>
 
