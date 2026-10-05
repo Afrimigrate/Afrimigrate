@@ -143,6 +143,24 @@ const matchData = countries.map((c) => ({
 
   <div id="quizResults" hidden></div>
 
+  <script>
+    import { supabase, isSupabaseConfigured } from '../lib/supabase';
+
+    // Exposed on window because the results-rendering script below uses
+    // define:vars (Astro inlines it as a plain, non-module script to inject
+    // server data directly, so it can't use `import` itself) — this is the
+    // bridge that lets it quietly save a signed-in visitor's result.
+    (window as any).__saveQuizResult = async (country: string, reasoning: string) => {
+      if (!isSupabaseConfigured) return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.from('profiles').update({
+        recommended_country: country,
+        recommendation_reasoning: reasoning,
+      }).eq('id', session.user.id);
+    };
+  </script>
+
   <script define:vars={{ matchData }}>
     const steps = Array.from(document.querySelectorAll('#quizForm .crs-step'));
     const backBtn = document.getElementById('qzBack');
@@ -246,11 +264,13 @@ const matchData = countries.map((c) => ({
       const top3 = ranked.slice(0, 3);
       quizRoot.hidden = true;
       resultsRoot.hidden = false;
+      const topReason = reasonLine(top3[0], answers);
+      window.__saveQuizResult?.(top3[0].country.name, topReason);
       resultsRoot.innerHTML = `
         <div class="eyebrow">Your Recommendation</div>
         <h2 style="margin-bottom: 0.5rem;">${top3[0].country.flag} ${top3[0].country.name} looks like your best fit</h2>
         <p class="lead" style="margin-bottom: 2rem; max-width: 640px;">
-          ${top3[0].country.name} ranked highest for you because ${reasonLine(top3[0], answers)}
+          ${top3[0].country.name} ranked highest for you because ${topReason}
         </p>
         <div class="tools-grid" style="margin-bottom: 2rem;">
           ${top3.map((r, i) => `
