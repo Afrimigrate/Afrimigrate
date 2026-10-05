@@ -89,16 +89,24 @@ import Layout from '../layouts/Layout.astro';
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ product: btn.dataset.product, userId: currentUserId }),
           });
-          const data = await res.json();
-          if (data.url) {
+          let data: any = null;
+          try {
+            data = await res.json();
+          } catch {
+            // Response wasn't JSON at all (e.g. a plain 404 HTML page) — res.ok below catches this.
+          }
+          if (data?.url) {
             window.location.href = data.url;
             return;
           }
-          throw new Error(data.error || 'Something went wrong.');
+          // Surface the real reason instead of a generic message, so a broken
+          // deployment (wrong/missing env var, Stripe key/price mismatch,
+          // etc.) is diagnosable from the page itself.
+          throw new Error(data?.error || `Server returned ${res.status} ${res.statusText}`);
         } catch (err) {
           status.hidden = false;
           status.style.display = 'block';
-          status.textContent = "⚠️ Payments aren't switched on for this site yet — check back soon.";
+          status.textContent = `⚠️ Checkout failed: ${err instanceof Error ? err.message : 'Unknown error'}`;
           btn.disabled = false;
           btn.textContent = originalText;
         }
