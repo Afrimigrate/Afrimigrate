@@ -1,0 +1,211 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+---
+<Layout
+  title="Document Vault | AfriMigrate"
+  description="Securely store your passport, language certificates and degree certificates, with expiry tracking and reminders."
+>
+  <div id="vaultGate" class="lead" style="text-align: center; padding: 4rem 0;">Loading your document vault…</div>
+
+  <div id="vaultRoot" hidden>
+    <div class="breadcrumb"><a href="/dashboard">Dashboard</a> / Document Vault</div>
+    <div class="eyebrow">Your Documents</div>
+    <h1>Document Vault</h1>
+    <p class="lead" style="margin-bottom: 2rem;">Store your passport, language certificates and degree certificates here — only you can see or download them.</p>
+
+    <div class="card" style="max-width: 640px; margin-bottom: 2.5rem;">
+      <h3>Add a document</h3>
+      <form id="uploadForm" style="display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1rem;">
+        <label class="crs-field" style="margin-bottom: 0;">
+          Document type
+          <select id="docType" class="crs-input" required>
+            <option value="passport">Passport</option>
+            <option value="language_cert">Language test certificate</option>
+            <option value="degree_certificate">Degree / qualification certificate</option>
+            <option value="police_clearance">Police clearance certificate</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+        <label class="crs-field" style="margin-bottom: 0;">
+          A name for this document
+          <input id="docName" type="text" class="crs-input" placeholder="e.g. Nigerian passport" required />
+        </label>
+        <label class="crs-field" style="margin-bottom: 0;">
+          Expiry date (optional — leave blank if it doesn't expire)
+          <input id="docExpiry" type="date" class="crs-input" />
+        </label>
+        <label class="crs-field" style="margin-bottom: 0;">
+          File (PDF, JPG or PNG, up to 10MB)
+          <input id="docFile" type="file" class="crs-input" accept=".pdf,.jpg,.jpeg,.png" required style="padding: 0.5rem;" />
+        </label>
+        <button type="submit" id="uploadBtn" class="btn-primary" style="border: none; cursor: pointer; align-self: flex-start;">Upload document →</button>
+        <div id="uploadMessage" class="cp-note" hidden></div>
+      </form>
+    </div>
+
+    <div class="eyebrow">Stored Documents</div>
+    <h2 style="margin-bottom: 1.5rem;">Your files</h2>
+    <div id="docList" class="tools-grid"></div>
+    <p id="docEmpty" class="lead" hidden>No documents uploaded yet — add your first one above.</p>
+  </div>
+
+  <style is:global>
+    .doc-expiry-badge { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; }
+    .doc-expiry-ok { background: #EEF7EE; color: var(--green); }
+    .doc-expiry-soon { background: var(--gold-bg); color: var(--gold); }
+    .doc-expiry-over { background: rgba(181,85,46,0.12); color: var(--terracotta); }
+    .doc-expiry-none { background: var(--bg); color: var(--ink2); }
+  </style>
+
+  <script>
+    import { supabase, isSupabaseConfigured } from '../lib/supabase';
+
+    const gate = document.getElementById('vaultGate') as HTMLElement;
+    const root = document.getElementById('vaultRoot') as HTMLElement;
+    let currentUserId = '';
+
+    async function init() {
+      if (!isSupabaseConfigured) {
+        gate.textContent = "⚠️ Accounts aren't switched on for this site yet — check back soon.";
+        return;
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = '/login';
+        return;
+      }
+      const { data: profile } = await supabase.from('profiles').select('onboarding_completed_at').eq('id', session.user.id).maybeSingle();
+      if (!profile || !profile.onboarding_completed_at) {
+        window.location.href = '/onboarding';
+        return;
+      }
+      currentUserId = session.user.id;
+      gate.hidden = true;
+      root.hidden = false;
+      await loadDocuments();
+
+      document.getElementById('uploadForm')!.addEventListener('submit', onUpload);
+    }
+
+    function expiryBadge(expiry: string | null): string {
+      if (!expiry) return '<span class="doc-expiry-badge doc-expiry-none">No expiry</span>';
+      const days = Math.ceil((new Date(expiry).getTime() - Date.now()) / 86400000);
+      if (days < 0) return `<span class="doc-expiry-badge doc-expiry-over">Expired ${new Date(expiry).toLocaleDateString()}</span>`;
+      if (days <= 60) return `<span class="doc-expiry-badge doc-expiry-soon">Expires in ${days} days</span>`;
+      return `<span class="doc-expiry-badge doc-expiry-ok">Valid until ${new Date(expiry).toLocaleDateString()}</span>`;
+    }
+
+    const TYPE_LABEL: Record<string, string> = {
+      passport: 'Passport',
+      language_cert: 'Language test certificate',
+      degree_certificate: 'Degree / qualification certificate',
+      police_clearance: 'Police clearance certificate',
+      other: 'Other document',
+    };
+
+    async function loadDocuments() {
+      const { data: docs, error } = await supabase
+        .from('documents')
+        .select('*')
+        .eq('user_id', currentUserId)
+        .order('uploaded_at', { ascending: false });
+
+      const list = document.getElementById('docList')!;
+      const empty = document.getElementById('docEmpty') as HTMLElement;
+
+      if (error || !docs || docs.length === 0) {
+        list.innerHTML = '';
+        empty.hidden = false;
+        return;
+      }
+      empty.hidden = true;
+
+      list.innerHTML = docs.map((d: any) => `
+        <div class="tool-card" data-id="${d.id}" data-path="${d.storage_path}">
+          <div class="tool-icon active"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg></div>
+          <h3>${d.display_name}</h3>
+          <p style="margin-bottom: 0.25rem;">${TYPE_LABEL[d.document_type] || d.document_type}</p>
+          ${expiryBadge(d.expiry_date)}
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.25rem;">
+            <a href="#" class="tool-link doc-view-link">View →</a>
+            <a href="#" class="tool-link muted doc-delete-link" style="color: var(--terracotta);">Delete</a>
+          </div>
+        </div>
+      `).join('');
+
+      list.querySelectorAll('.doc-view-link').forEach((el) => {
+        el.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const card = (e.target as HTMLElement).closest('[data-path]') as HTMLElement;
+          const { data, error } = await supabase.storage.from('documents').createSignedUrl(card.dataset.path!, 300);
+          if (data?.signedUrl) window.open(data.signedUrl, '_blank');
+          else alert(error?.message || 'Could not open this file.');
+        });
+      });
+
+      list.querySelectorAll('.doc-delete-link').forEach((el) => {
+        el.addEventListener('click', async (e) => {
+          e.preventDefault();
+          if (!confirm('Delete this document? This cannot be undone.')) return;
+          const card = (e.target as HTMLElement).closest('[data-id]') as HTMLElement;
+          await supabase.storage.from('documents').remove([card.dataset.path!]);
+          await supabase.from('documents').delete().eq('id', card.dataset.id!);
+          await loadDocuments();
+        });
+      });
+    }
+
+    async function onUpload(e: Event) {
+      e.preventDefault();
+      const btn = document.getElementById('uploadBtn') as HTMLButtonElement;
+      const message = document.getElementById('uploadMessage') as HTMLElement;
+      const fileInput = document.getElementById('docFile') as HTMLInputElement;
+      const file = fileInput.files?.[0];
+      if (!file) return;
+      if (file.size > 10 * 1024 * 1024) {
+        message.hidden = false;
+        message.textContent = '⚠️ That file is over 10MB — please use a smaller file.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Uploading…';
+      message.hidden = true;
+
+      const docType = (document.getElementById('docType') as HTMLSelectElement).value;
+      const docName = (document.getElementById('docName') as HTMLInputElement).value.trim();
+      const docExpiry = (document.getElementById('docExpiry') as HTMLInputElement).value || null;
+      const ext = file.name.split('.').pop();
+      const storagePath = `${currentUserId}/${Date.now()}-${docType}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage.from('documents').upload(storagePath, file);
+      if (uploadError) {
+        message.hidden = false;
+        message.textContent = `⚠️ Upload failed: ${uploadError.message}`;
+        btn.disabled = false;
+        btn.textContent = 'Upload document →';
+        return;
+      }
+
+      const { error: insertError } = await supabase.from('documents').insert({
+        user_id: currentUserId,
+        document_type: docType,
+        display_name: docName,
+        storage_path: storagePath,
+        expiry_date: docExpiry,
+      });
+      if (insertError) {
+        message.hidden = false;
+        message.textContent = `⚠️ Saved the file but couldn't record it: ${insertError.message}`;
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Upload document →';
+      (e.target as HTMLFormElement).reset();
+      await loadDocuments();
+    }
+
+    init();
+  </script>
+</Layout>

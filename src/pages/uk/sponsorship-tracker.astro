@@ -1,0 +1,242 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { fetchSponsorRegister, isSponsorRegisterConfigured } from '../../lib/sponsors';
+import { fetchUnsplashPhoto } from '../../lib/unsplash';
+
+const sponsors = await fetchSponsorRegister();
+const heroPhoto = await fetchUnsplashPhoto('London skyline');
+---
+<Layout
+  title="UK Sponsorship Tracker | AfriMigrate"
+  description="Search licensed UK Skilled Worker sponsors, track the applications you've sent, and follow the pathway from sponsored visa to ILR."
+>
+  <div class="breadcrumb"><a href="/">Home</a> / <a href="/uk">UK</a> / Sponsorship Tracker</div>
+  <div class="eyebrow">UK Skilled Worker</div>
+  <h1>UK Sponsorship Tracker</h1>
+  <p class="lead" style="margin-bottom: 1.5rem;">Search licensed sponsors, track the applications you've sent, and see exactly where each one stands.</p>
+
+  {heroPhoto && (
+    <div class="page-hero-photo-wrap">
+      <img src={heroPhoto.url} alt={heroPhoto.alt} class="page-hero-photo" width="1200" height="360" />
+      <a href={heroPhoto.creditUrl} target="_blank" rel="noopener" class="photo-credit">Photo: {heroPhoto.creditName} / Unsplash</a>
+    </div>
+  )}
+
+  <section class="section" style="padding-top: 0;">
+    <div class="eyebrow">Search Licensed Sponsors</div>
+    <h2>Which employers can sponsor you?</h2>
+    {isSponsorRegisterConfigured && sponsors.length > 0 ? (
+      <>
+        <p class="lead" style="margin-bottom: 1.5rem;">Searching {sponsors.length.toLocaleString()} licensed sponsors from the UK government's official register.</p>
+        <div class="card" style="max-width: 500px; margin-bottom: 1.5rem;">
+          <input id="sponsorSearch" class="crs-input" type="text" placeholder="Search by employer name or town…" autocomplete="off" />
+        </div>
+        <div id="sponsorResults"></div>
+        <p id="sponsorEmpty" class="lead" hidden>No matches — try a different spelling or search by town instead.</p>
+      </>
+    ) : (
+      <div class="cp-note" style="max-width: 640px;">
+        ⚠️ The live, searchable sponsor directory isn't switched on yet — it needs to be connected to the UK government's official register first.
+        In the meantime, search it directly yourself: <a href="https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers" target="_blank" rel="noopener">gov.uk's Register of Licensed Sponsors →</a>
+      </div>
+    )}
+  </section>
+
+  <section class="section section-alt" style="border-radius: var(--rl);">
+    <div class="eyebrow">Where To Look</div>
+    <h2>Sectors that commonly sponsor</h2>
+    <p class="lead" style="margin-bottom: 1.5rem;">The Skilled Worker route isn't evenly spread across the economy — some sectors sponsor constantly, others almost never. Focus your search here first.</p>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <h3>Healthcare &amp; social care</h3>
+        <p>NHS trusts, private hospital groups and care providers sponsor at real volume — nurses, care workers and allied health professionals are consistently in demand.</p>
+      </div>
+      <div class="tool-card">
+        <h3>IT &amp; technology</h3>
+        <p>Software engineers, data specialists and cybersecurity roles are commonly sponsored, especially at mid-size and larger tech employers.</p>
+      </div>
+      <div class="tool-card">
+        <h3>Engineering</h3>
+        <p>Civil, mechanical and electrical engineers are sponsored by construction, infrastructure and manufacturing firms, particularly on major projects.</p>
+      </div>
+      <div class="tool-card">
+        <h3>Education</h3>
+        <p>Universities and some secondary schools sponsor academic and specialist teaching staff, especially in shortage subjects like maths and sciences.</p>
+      </div>
+    </div>
+    <p style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--ink2);">This is general guidance on where sponsorship is concentrated — always confirm a specific employer's current licence status on the official register above before applying.</p>
+  </section>
+
+  <section class="section" id="my-applications">
+    <div class="eyebrow">Your Applications</div>
+    <h2>Track what you've sent</h2>
+    <div id="appGate" class="lead" style="padding: 1rem 0;">Loading…</div>
+    <div id="appRoot" hidden>
+      <div class="card" style="max-width: 640px; margin-bottom: 2rem;">
+        <h3>Log an application</h3>
+        <form id="appForm" style="display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1rem;">
+          <label class="crs-field" style="margin-bottom: 0;">
+            Employer name
+            <input id="appEmployer" type="text" class="crs-input" required />
+          </label>
+          <label class="crs-field" style="margin-bottom: 0;">
+            Role applied for
+            <input id="appRole" type="text" class="crs-input" />
+          </label>
+          <label class="crs-field" style="margin-bottom: 0;">
+            Date applied
+            <input id="appDate" type="date" class="crs-input" />
+          </label>
+          <label class="crs-field" style="margin-bottom: 0;">
+            Notes (optional)
+            <input id="appNotes" type="text" class="crs-input" placeholder="e.g. Applied via careers page, referral from a friend" />
+          </label>
+          <button type="submit" class="btn-primary" style="border: none; cursor: pointer; align-self: flex-start;">Add application →</button>
+        </form>
+      </div>
+      <div id="appList" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+      <p id="appEmpty" class="lead" hidden>No applications logged yet — add one above once you start applying.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt" style="border-radius: var(--rl);">
+    <div class="eyebrow">What Happens Next</div>
+    <h2>From sponsored visa to settlement</h2>
+    <p class="lead" style="margin-bottom: 1rem;">Once you have a Skilled Worker visa, here's the realistic path through to Indefinite Leave to Remain.</p>
+    <a href="/uk/ilr-roadmap" class="btn-primary">See the full ILR roadmap →</a>
+  </section>
+
+  <style is:global>
+    .app-row { display: flex; align-items: flex-start; gap: 1rem; background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 1rem 1.25rem; }
+    .app-title { font-weight: 600; color: var(--ink); }
+    .app-meta { font-size: 0.82rem; color: var(--ink2); margin-top: 0.2rem; }
+    .app-status { font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 999px; margin-top: 0.4rem; display: inline-block; text-transform: capitalize; }
+    .app-status-applied { background: var(--bg); color: var(--ink2); }
+    .app-status-interviewing { background: var(--gold-bg); color: var(--gold); }
+    .app-status-offer, .app-status-sponsored { background: #EEF7EE; color: var(--green); }
+    .app-status-rejected { background: rgba(181,85,46,0.12); color: var(--terracotta); }
+    .app-select { font-size: 0.8rem; padding: 0.3rem 0.5rem; border-radius: var(--r); border: 1px solid var(--border); background: var(--bg); margin-top: 0.5rem; }
+    .app-delete { margin-left: auto; font-size: 0.78rem; color: var(--ink2); cursor: pointer; flex-shrink: 0; }
+    .app-delete:hover { color: var(--terracotta); }
+    .sponsor-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .sponsor-row:last-child { border-bottom: none; }
+  </style>
+
+  <script define:vars={{ sponsors }}>
+    const searchInput = document.getElementById('sponsorSearch');
+    if (searchInput) {
+      const results = document.getElementById('sponsorResults');
+      const empty = document.getElementById('sponsorEmpty');
+      function render(query) {
+        const q = query.trim().toLowerCase();
+        if (!q) { results.innerHTML = ''; empty.hidden = true; return; }
+        const matches = sponsors.filter((s) =>
+          s.name.toLowerCase().includes(q) || s.town.toLowerCase().includes(q)
+        ).slice(0, 100);
+        if (matches.length === 0) {
+          results.innerHTML = '';
+          empty.hidden = false;
+          return;
+        }
+        empty.hidden = true;
+        results.innerHTML = `<div class="card" style="max-width: 700px;">${matches.map((s) => `
+          <div class="sponsor-row">
+            <span><strong>${s.name}</strong>${s.town ? ` — ${s.town}` : ''}</span>
+            <span style="color: var(--ink2); font-size: 0.8rem;">${s.route || s.rating || ''}</span>
+          </div>
+        `).join('')}</div>`;
+      }
+      searchInput.addEventListener('input', (e) => render(e.target.value));
+    }
+  </script>
+
+  <script>
+    import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+
+    const gate = document.getElementById('appGate') as HTMLElement;
+    const root = document.getElementById('appRoot') as HTMLElement;
+    let currentUserId = '';
+
+    const STATUSES = ['applied', 'interviewing', 'offer', 'sponsored', 'rejected'];
+
+    async function init() {
+      if (!isSupabaseConfigured) {
+        gate.textContent = "⚠️ Accounts aren't switched on for this site yet — this tracker needs a free account to save your applications.";
+        return;
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        gate.innerHTML = 'Want to track your applications here? <a href="/login">Log in</a> or <a href="/signup">create a free account</a> first.';
+        return;
+      }
+      currentUserId = session.user.id;
+      gate.hidden = true;
+      root.hidden = false;
+      await loadApps();
+
+      document.getElementById('appForm')!.addEventListener('submit', onAdd);
+    }
+
+    async function loadApps() {
+      const { data: apps } = await supabase
+        .from('sponsor_applications')
+        .select('*')
+        .eq('user_id', currentUserId)
+        .order('created_at', { ascending: false });
+
+      const list = document.getElementById('appList')!;
+      const empty = document.getElementById('appEmpty') as HTMLElement;
+
+      if (!apps || apps.length === 0) {
+        list.innerHTML = '';
+        empty.hidden = false;
+        return;
+      }
+      empty.hidden = true;
+
+      list.innerHTML = apps.map((a: any) => `
+        <div class="app-row" data-id="${a.id}">
+          <div style="flex: 1;">
+            <div class="app-title">${a.employer_name}${a.role_title ? ` — ${a.role_title}` : ''}</div>
+            ${a.date_applied ? `<div class="app-meta">Applied ${new Date(a.date_applied).toLocaleDateString()}</div>` : ''}
+            ${a.notes ? `<div class="app-meta">${a.notes}</div>` : ''}
+            <select class="app-select">
+              ${STATUSES.map((s) => `<option value="${s}" ${a.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+            </select>
+          </div>
+          <span class="app-delete">Delete</span>
+        </div>
+      `).join('');
+
+      list.querySelectorAll('.app-select').forEach((el) => {
+        el.addEventListener('change', async (e) => {
+          const row = (e.target as HTMLElement).closest('[data-id]') as HTMLElement;
+          await supabase.from('sponsor_applications').update({ status: (e.target as HTMLSelectElement).value }).eq('id', row.dataset.id!);
+        });
+      });
+
+      list.querySelectorAll('.app-delete').forEach((el) => {
+        el.addEventListener('click', async (e) => {
+          const row = (e.target as HTMLElement).closest('[data-id]') as HTMLElement;
+          if (!confirm('Delete this application?')) return;
+          await supabase.from('sponsor_applications').delete().eq('id', row.dataset.id!);
+          await loadApps();
+        });
+      });
+    }
+
+    async function onAdd(e: Event) {
+      e.preventDefault();
+      const employer_name = (document.getElementById('appEmployer') as HTMLInputElement).value.trim();
+      const role_title = (document.getElementById('appRole') as HTMLInputElement).value.trim() || null;
+      const date_applied = (document.getElementById('appDate') as HTMLInputElement).value || null;
+      const notes = (document.getElementById('appNotes') as HTMLInputElement).value.trim() || null;
+      if (!employer_name) return;
+      await supabase.from('sponsor_applications').insert({ user_id: currentUserId, employer_name, role_title, date_applied, notes });
+      (e.target as HTMLFormElement).reset();
+      await loadApps();
+    }
+
+    init();
+  </script>
+</Layout>

@@ -18,6 +18,7 @@ export const uk: CountryProfile = {
     { label: 'Skilled Worker Visa Checker', href: '/uk/skilled-worker-visa-checker' },
     { label: 'Visa Cost Calculator', href: '/uk/visa-cost-calculator' },
     { label: 'Visa to ILR Roadmap', href: '/uk/ilr-roadmap' },
+    { label: 'Sponsorship Tracker', href: '/uk/sponsorship-tracker' },
   ],
   visaCategories: [
     {

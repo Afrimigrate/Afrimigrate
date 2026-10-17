@@ -1,0 +1,221 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="Migration Timeline | AfriMigrate"
+  description="A staged, month-by-month migration timeline with milestones and due dates."
+>
+  <div id="tlGate" class="lead" style="text-align: center; padding: 4rem 0;">Loading your timeline…</div>
+
+  <div id="tlRoot" hidden>
+    <div class="breadcrumb"><a href="/dashboard">Dashboard</a> / Migration Timeline</div>
+    <div class="eyebrow">Your Plan</div>
+    <h1>Migration Timeline</h1>
+    <p class="lead" style="margin-bottom: 1rem;">Track every milestone from today to landing, with due dates so nothing slips.</p>
+    <div class="cp-note" style="max-width: 640px; margin-bottom: 2rem;">
+      📧 Email reminders aren't switched on yet — this page tracks your dates so you can see what's coming up here. We'll add automatic email alerts in a later update.
+    </div>
+
+    <div class="card dash-readiness" style="margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+        <h3 style="margin-bottom: 0;">Timeline progress</h3>
+        <span id="tlPct" style="font-family: 'Newsreader', serif; font-weight: 700; font-size: 1.4rem; color: var(--green);">0%</span>
+      </div>
+      <div class="crs-progress-bar"><div class="crs-progress-fill" id="tlFill" style="width: 0%;"></div></div>
+    </div>
+
+    <div id="tlQuickStart" class="card" style="max-width: 640px; margin-bottom: 2.5rem;" hidden>
+      <h3>Start with a standard plan</h3>
+      <p style="margin: 0.5rem 0 1rem;">New here? Add a typical 6-stage migration plan you can edit, reorder, or delete freely.</p>
+      <button id="tlQuickStartBtn" class="btn-primary" style="border: none; cursor: pointer;">Add standard milestones →</button>
+    </div>
+
+    <div class="card" style="max-width: 640px; margin-bottom: 2.5rem;">
+      <h3>Add a milestone</h3>
+      <form id="milestoneForm" style="display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1rem;">
+        <label class="crs-field" style="margin-bottom: 0;">
+          Title
+          <input id="msTitle" type="text" class="crs-input" placeholder="e.g. Book IELTS test" required />
+        </label>
+        <label class="crs-field" style="margin-bottom: 0;">
+          Notes (optional)
+          <input id="msDesc" type="text" class="crs-input" placeholder="e.g. Book the earliest available slot in Lagos" />
+        </label>
+        <label class="crs-field" style="margin-bottom: 0;">
+          Due date
+          <input id="msDue" type="date" class="crs-input" required />
+        </label>
+        <button type="submit" class="btn-primary" style="border: none; cursor: pointer; align-self: flex-start;">Add milestone →</button>
+      </form>
+    </div>
+
+    <div class="eyebrow">Your Milestones</div>
+    <h2 style="margin-bottom: 1.5rem;">The plan</h2>
+    <div id="msList" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+    <p id="msEmpty" class="lead" hidden>No milestones yet — add one above, or use the standard plan.</p>
+  </div>
+
+  <style is:global>
+    .ms-row {
+      display: flex; align-items: flex-start; gap: 1rem; background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1rem 1.25rem;
+    }
+    .ms-row.ms-done { opacity: 0.6; }
+    .ms-row.ms-done .ms-title { text-decoration: line-through; }
+    .ms-checkbox { width: 20px; height: 20px; flex-shrink: 0; margin-top: 0.2rem; cursor: pointer; accent-color: var(--green); }
+    .ms-title { font-weight: 600; color: var(--ink); }
+    .ms-desc { font-size: 0.85rem; color: var(--ink2); margin-top: 0.2rem; }
+    .ms-due { font-size: 0.78rem; font-weight: 600; margin-top: 0.4rem; }
+    .ms-due-overdue { color: var(--terracotta); }
+    .ms-due-soon { color: var(--gold); }
+    .ms-due-ok { color: var(--ink2); }
+    .ms-delete { margin-left: auto; font-size: 0.78rem; color: var(--ink2); cursor: pointer; flex-shrink: 0; }
+    .ms-delete:hover { color: var(--terracotta); }
+  </style>
+
+  <script>
+    import { supabase, isSupabaseConfigured } from '../lib/supabase';
+
+    const gate = document.getElementById('tlGate') as HTMLElement;
+    const root = document.getElementById('tlRoot') as HTMLElement;
+    let currentUserId = '';
+
+    const STANDARD_MILESTONES = [
+      { title: 'Book language test (IELTS/CELPIP/other)', offsetDays: 14 },
+      { title: 'Gather core documents (passport, degree certs, police clearance)', offsetDays: 30 },
+      { title: 'Get credentials assessed (ECA)', offsetDays: 60 },
+      { title: 'Submit expression of interest / profile', offsetDays: 90 },
+      { title: 'Complete medical exam', offsetDays: 150 },
+      { title: 'Submit full application', offsetDays: 180 },
+    ];
+
+    async function init() {
+      if (!isSupabaseConfigured) {
+        gate.textContent = "⚠️ Accounts aren't switched on for this site yet — check back soon.";
+        return;
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = '/login';
+        return;
+      }
+      const { data: profile } = await supabase.from('profiles').select('onboarding_completed_at').eq('id', session.user.id).maybeSingle();
+      if (!profile || !profile.onboarding_completed_at) {
+        window.location.href = '/onboarding';
+        return;
+      }
+      currentUserId = session.user.id;
+      gate.hidden = true;
+      root.hidden = false;
+      await loadMilestones();
+
+      document.getElementById('milestoneForm')!.addEventListener('submit', onAdd);
+      document.getElementById('tlQuickStartBtn')!.addEventListener('click', onQuickStart);
+    }
+
+    function dueClass(due: string, done: boolean): string {
+      if (done) return 'ms-due-ok';
+      const days = Math.ceil((new Date(due).getTime() - Date.now()) / 86400000);
+      if (days < 0) return 'ms-due-overdue';
+      if (days <= 14) return 'ms-due-soon';
+      return 'ms-due-ok';
+    }
+
+    function dueLabel(due: string, done: boolean): string {
+      const date = new Date(due).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+      if (done) return `Due ${date}`;
+      const days = Math.ceil((new Date(due).getTime() - Date.now()) / 86400000);
+      if (days < 0) return `Overdue — was due ${date}`;
+      if (days === 0) return `Due today`;
+      return `Due ${date} (${days} days)`;
+    }
+
+    async function loadMilestones() {
+      const { data: milestones } = await supabase
+        .from('timeline_milestones')
+        .select('*')
+        .eq('user_id', currentUserId)
+        .order('due_date', { ascending: true });
+
+      const list = document.getElementById('msList')!;
+      const empty = document.getElementById('msEmpty') as HTMLElement;
+      const quickStart = document.getElementById('tlQuickStart') as HTMLElement;
+
+      if (!milestones || milestones.length === 0) {
+        list.innerHTML = '';
+        empty.hidden = false;
+        quickStart.hidden = false;
+        document.getElementById('tlPct')!.textContent = '0%';
+        (document.getElementById('tlFill') as HTMLElement).style.width = '0%';
+        return;
+      }
+      empty.hidden = true;
+      quickStart.hidden = true;
+
+      const doneCount = milestones.filter((m: any) => m.completed).length;
+      const pct = Math.round((doneCount / milestones.length) * 100);
+      document.getElementById('tlPct')!.textContent = `${pct}%`;
+      (document.getElementById('tlFill') as HTMLElement).style.width = `${pct}%`;
+
+      list.innerHTML = milestones.map((m: any) => `
+        <div class="ms-row ${m.completed ? 'ms-done' : ''}" data-id="${m.id}">
+          <input type="checkbox" class="ms-checkbox" ${m.completed ? 'checked' : ''} />
+          <div style="flex: 1;">
+            <div class="ms-title">${m.title}</div>
+            ${m.description ? `<div class="ms-desc">${m.description}</div>` : ''}
+            <div class="ms-due ${dueClass(m.due_date, m.completed)}">${dueLabel(m.due_date, m.completed)}</div>
+          </div>
+          <span class="ms-delete">Delete</span>
+        </div>
+      `).join('');
+
+      list.querySelectorAll('.ms-checkbox').forEach((el) => {
+        el.addEventListener('change', async (e) => {
+          const row = (e.target as HTMLElement).closest('[data-id]') as HTMLElement;
+          const checked = (e.target as HTMLInputElement).checked;
+          await supabase.from('timeline_milestones').update({
+            completed: checked,
+            completed_at: checked ? new Date().toISOString() : null,
+          }).eq('id', row.dataset.id!);
+          await loadMilestones();
+        });
+      });
+
+      list.querySelectorAll('.ms-delete').forEach((el) => {
+        el.addEventListener('click', async (e) => {
+          const row = (e.target as HTMLElement).closest('[data-id]') as HTMLElement;
+          if (!confirm('Delete this milestone?')) return;
+          await supabase.from('timeline_milestones').delete().eq('id', row.dataset.id!);
+          await loadMilestones();
+        });
+      });
+    }
+
+    async function onAdd(e: Event) {
+      e.preventDefault();
+      const title = (document.getElementById('msTitle') as HTMLInputElement).value.trim();
+      const description = (document.getElementById('msDesc') as HTMLInputElement).value.trim() || null;
+      const due_date = (document.getElementById('msDue') as HTMLInputElement).value;
+      if (!title || !due_date) return;
+      await supabase.from('timeline_milestones').insert({ user_id: currentUserId, title, description, due_date });
+      (e.target as HTMLFormElement).reset();
+      await loadMilestones();
+    }
+
+    async function onQuickStart() {
+      const rows = STANDARD_MILESTONES.map((m) => {
+        const due = new Date();
+        due.setDate(due.getDate() + m.offsetDays);
+        return {
+          user_id: currentUserId,
+          title: m.title,
+          due_date: due.toISOString().slice(0, 10),
+        };
+      });
+      await supabase.from('timeline_milestones').insert(rows);
+      await loadMilestones();
+    }
+
+    init();
+  </script>
+</Layout>

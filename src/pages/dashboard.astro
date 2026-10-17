@@ -43,22 +43,29 @@ import Icon from '../components/Icon.astro';
           <p id="dashCrs">Not calculated yet.</p>
           <a href="/canada/crs-calculator" class="tool-link">Calculate now →</a>
         </div>
-        <div class="tool-card dash-soon">
-          <div class="hot">Coming soon</div>
+        <div class="tool-card">
           <div class="tool-icon"><Icon name="calendar" /></div>
           <h3>Migration timeline</h3>
-          <p>Your staged, month-by-month plan, with milestones and email reminders as dates approach.</p>
+          <p>Your staged, month-by-month plan with due dates for every milestone.</p>
+          <a href="/timeline" class="tool-link">Open your timeline →</a>
         </div>
-        <div class="tool-card dash-soon">
-          <div class="hot">Coming soon</div>
+        <div class="tool-card">
           <div class="tool-icon"><Icon name="lock" /></div>
           <h3>Document vault</h3>
           <p>Securely store your passport, language certs and degree certificates, with expiry tracking.</p>
+          <a href="/vault" class="tool-link">Open your vault →</a>
         </div>
         <div class="tool-card">
           <div class="tool-icon"><Icon name="bell" /></div>
           <h3>Reminders</h3>
-          <p>No reminders yet — these appear once your timeline is set up.</p>
+          <p id="dashReminders">Due dates from your timeline show up here as they approach.</p>
+          <a href="/timeline" class="tool-link">See what's due →</a>
+        </div>
+        <div class="tool-card">
+          <div class="tool-icon"><Icon name="check" /></div>
+          <h3>UK sponsorship tracker</h3>
+          <p>Search licensed sponsors and track the applications you've sent.</p>
+          <a href="/uk/sponsorship-tracker" class="tool-link">Open tracker →</a>
         </div>
         <div class="tool-card">
           <div class="tool-icon"><Icon name="trophy" /></div>
@@ -117,12 +124,35 @@ import Icon from '../components/Icon.astro';
 
       gate.hidden = true;
       root.hidden = false;
-      render(profile);
+      const baseReadiness = render(profile);
+      loadReminders(session.user.id);
+      addProgressReadiness(session.user.id, baseReadiness);
 
       document.getElementById('logoutBtn')!.addEventListener('click', async () => {
         await supabase.auth.signOut();
         window.location.href = '/';
       });
+    }
+
+    async function loadReminders(userId: string) {
+      const in14Days = new Date();
+      in14Days.setDate(in14Days.getDate() + 14);
+      const { data: due } = await supabase
+        .from('timeline_milestones')
+        .select('title, due_date')
+        .eq('user_id', userId)
+        .eq('completed', false)
+        .lte('due_date', in14Days.toISOString().slice(0, 10))
+        .order('due_date', { ascending: true });
+
+      const el = document.getElementById('dashReminders')!;
+      if (!due || due.length === 0) return;
+      const overdue = due.filter((d: any) => new Date(d.due_date) < new Date());
+      if (overdue.length > 0) {
+        el.textContent = `${overdue.length} overdue — next: "${overdue[0].title}"`;
+      } else {
+        el.textContent = `${due.length} due in the next 14 days — next: "${due[0].title}"`;
+      }
     }
 
     function render(profile: Record<string, any>) {
@@ -141,10 +171,13 @@ import Icon from '../components/Icon.astro';
         document.getElementById('dashCrs')!.textContent = `${profile.crs_score} / 1,200`;
       }
 
-      // Readiness is a simple placeholder for now: onboarding done = 20%,
-      // real weighting (documents, milestones, confirmed pathway) arrives
-      // with the vault and timeline features.
-      const readiness = profile.onboarding_completed_at ? 20 : 0;
+      // Readiness: 20% onboarding + 15% pathway confirmed + 10% CRS scored +
+      // up to 25% documents uploaded (5 docs = full) + up to 30% timeline
+      // milestones completed. Each piece only counts once its feature is
+      // actually used, so this is a real measure of progress, not a guess.
+      let readiness = profile.onboarding_completed_at ? 20 : 0;
+      if (profile.recommended_country) readiness += 15;
+      if (profile.crs_score) readiness += 10;
       document.getElementById('readinessPct')!.textContent = `${readiness}%`;
       (document.getElementById('readinessFill') as HTMLElement).style.width = `${readiness}%`;
 
@@ -159,6 +192,25 @@ import Icon from '../components/Icon.astro';
       document.getElementById('dashProfile')!.innerHTML = fields
         .map(([label, value]) => `<div><span class="cp-route-label">${label}</span><p>${value ?? '—'}</p></div>`)
         .join('');
+
+      return readiness;
+    }
+
+    async function addProgressReadiness(userId: string, base: number) {
+      const [{ count: docCount }, { data: milestones }] = await Promise.all([
+        supabase.from('documents').select('id', { count: 'exact', head: true }).eq('user_id', userId),
+        supabase.from('timeline_milestones').select('completed').eq('user_id', userId),
+      ]);
+
+      const docScore = Math.min(25, Math.round(((docCount || 0) / 5) * 25));
+      let timelineScore = 0;
+      if (milestones && milestones.length > 0) {
+        const done = milestones.filter((m: any) => m.completed).length;
+        timelineScore = Math.round((done / milestones.length) * 30);
+      }
+      const total = Math.min(100, base + docScore + timelineScore);
+      document.getElementById('readinessPct')!.textContent = `${total}%`;
+      (document.getElementById('readinessFill') as HTMLElement).style.width = `${total}%`;
     }
 
     init();
