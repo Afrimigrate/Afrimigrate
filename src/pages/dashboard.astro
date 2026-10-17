@@ -34,7 +34,8 @@ import Icon from '../components/Icon.astro';
         <div class="tool-card">
           <div class="tool-icon"><Icon name="target" /></div>
           <h3>Recommended pathway</h3>
-          <p id="dashRecommendation">Coming in the next update — your answers are saved, and the recommendation engine is next on the build list.</p>
+          <p id="dashRecommendation">Not taken yet.</p>
+          <a id="dashRecommendationLink" href="/quiz" class="tool-link">Take the quiz →</a>
         </div>
         <div class="tool-card">
           <div class="tool-icon"><Icon name="calculator" /></div>
@@ -134,6 +135,7 @@ import Icon from '../components/Icon.astro';
       if (profile.recommended_country) {
         document.getElementById('dashRecommendation')!.textContent =
           `${profile.recommended_country} — ${profile.recommendation_reasoning || ''}`;
+        document.getElementById('dashRecommendationLink')!.textContent = 'Retake the quiz →';
       }
       if (profile.crs_score) {
         document.getElementById('dashCrs')!.textContent = `${profile.crs_score} / 1,200`;

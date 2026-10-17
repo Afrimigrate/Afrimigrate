@@ -8,6 +8,7 @@ import { netherlands } from '../data/countries/netherlands';
 import { belgium } from '../data/countries/belgium';
 import { us } from '../data/countries/us';
 import { fetchUnsplashPhoto } from '../lib/unsplash';
+import { successStories } from '../data/successStories';
 
 // Same "<city> skyline" query CountryProfile.astro uses for each country's
 // own hero photo — reusing the exact string hits the build-time Unsplash
@@ -51,6 +52,17 @@ const destPhotos = await Promise.all(
     }
     .insta-btn:hover { opacity: 0.88; transform: translateY(-1px); }
     @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .hero-card { display: none; } }
+
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+      background: var(--white); border: 1px solid var(--border); border-radius: var(--rl);
+      padding: 2rem 1.5rem; margin-bottom: 3rem; text-align: center;
+    }
+    .stat-num { font-family: 'Newsreader', serif; font-weight: 700; font-size: 2.4rem; color: var(--green); line-height: 1; letter-spacing: -1px; }
+    .stat-label { font-size: 0.78rem; color: var(--ink2); margin-top: 0.5rem; font-weight: 500; }
+    @media (max-width: 700px) { .stats-bar { grid-template-columns: repeat(2, 1fr); } }
+
+    .story-quote { font-size: 0.9rem; color: var(--ink2); font-style: italic; line-height: 1.7; }
   </style>
 
   <section class="hero">
@@ -104,7 +116,14 @@ const destPhotos = await Promise.all(
     </div>
   </div>
 
-  <section class="section" id="tools">
+  <section class="stats-bar reveal">
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Countries Covered</div></div>
+    <div class="stat"><div class="stat-num">10+</div><div class="stat-label">Free Tools &amp; Calculators</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Free, Forever</div></div>
+    <div class="stat"><div class="stat-num">$0</div><div class="stat-label">Consultant Fees, Ever</div></div>
+  </section>
+
+  <section class="section reveal" id="tools">
     <div class="eyebrow">Free Tools</div>
     <h2>Everything you need.<br>Nothing you don't.</h2>
     <p class="lead">Tools consultants charge thousands for — free for every African, forever, across all six countries.</p>
@@ -138,7 +157,7 @@ const destPhotos = await Promise.all(
     <p style="margin-top: 1.5rem;"><a href="/tools" class="tool-link">See every free tool for all six countries →</a></p>
   </section>
 
-  <section class="section section-alt" id="how" style="border-radius: var(--rl);">
+  <section class="section section-alt reveal" id="how" style="border-radius: var(--rl);">
     <div class="eyebrow">How It Works</div>
     <h2>From idea to invitation</h2>
     <p class="lead">Four steps. No jargon. One clear plan.</p>
@@ -166,7 +185,7 @@ const destPhotos = await Promise.all(
     </div>
   </section>
 
-  <section class="section" id="waitlist">
+  <section class="section reveal" id="waitlist">
     <div class="waitlist-section">
       <div class="eyebrow">Early Access</div>
       <h2>Be the first to know</h2>
@@ -180,7 +199,7 @@ const destPhotos = await Promise.all(
     </div>
   </section>
 
-  <section class="section" id="destinations">
+  <section class="section reveal" id="destinations">
     <div class="eyebrow">Destinations</div>
     <h2>Where do you want to go?</h2>
     <p class="lead">Tools for the most popular African migration destinations, with more added every month.</p>
@@ -201,14 +220,33 @@ const destPhotos = await Promise.all(
     </div>
   </section>
 
-  <section class="section">
+  <section class="section reveal">
     <div class="manifesto">
       <h2>Migration shouldn't cost<br>a fortune to <em>plan.</em></h2>
       <p>Consultants charge thousands for information that should be free. AfriMigrate exists to change that — every tool, every checklist, every guide, free for every African, forever.</p>
     </div>
   </section>
 
-  <section class="section social-wrap">
+  <section class="section reveal" id="stories">
+    <div class="eyebrow">Success Stories</div>
+    <h2>Real journeys, once they're shared</h2>
+    <p class="lead" style="margin-bottom: 2rem;">These three cards are placeholder examples of what will appear here — Augustine is collecting real AfriMigrate users' stories to replace them with.</p>
+    <div class="tools-grid">
+      {successStories.map((s) => (
+        <div class="tool-card story-card">
+          {s.isPlaceholder && <div class="hot">Example — not real</div>}
+          <div style="font-size: 1.5rem; margin-bottom: 0.75rem;">{s.flag}</div>
+          <p class="story-quote">"{s.quote}"</p>
+          <p style="font-size: 0.82rem; color: var(--ink2); margin-top: 1rem; margin-bottom: 0;">
+            <strong style="color: var(--ink);">{s.fromCountry} → {s.toCountryName}</strong><br/>
+            {s.pathway}
+          </p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section social-wrap reveal">
     <div class="eyebrow">Community</div>
     <h2>Follow the journey</h2>
     <p class="lead" style="margin:0 auto;">Visa updates, success stories, and migration tips — on Instagram.</p>
@@ -227,6 +265,10 @@ const destPhotos = await Promise.all(
         entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
       }, { threshold: 0.1 });
       els.forEach((el) => io.observe(el));
+    } else {
+      // No IntersectionObserver support — show everything immediately
+      // rather than leaving it permanently at opacity:0.
+      els.forEach((el) => el.classList.add('in'));
     }
 
     const form = document.getElementById('waitlistForm') as HTMLFormElement;
